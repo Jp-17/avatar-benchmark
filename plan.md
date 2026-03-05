@@ -248,7 +248,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase | 内容 | 状态 | 产出文件 |
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
-| Phase 1 | 模型调研 | [ ] 待执行 | model.md |
-| Phase 2 | 环境配置与权重下载 | [ ] 待 Phase 1 完成 | model.md 补充状态列 |
+| Phase 1 | 模型调研 | [x] 完成 | model.md |
+| Phase 2 | 环境配置与权重下载 | [x] 完成（Priority A 3个模型） | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [ ] 与 Phase 2 并行 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
