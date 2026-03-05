@@ -37,3 +37,25 @@ Phase 3 素材收集初步执行：
 - **中文长时语音缺口**：YouTube/archive.org 不可访问；HuggingFace 音频数据集均为 parquet 格式无法直接下载单文件；ModelScope AISHELL-3 无音频实体文件。最终 A001（100s 中文）仅支持到 1min 测试，3min/5min 中文档位待补充
 - **唱歌音频缺口**：模型 demo 中无符合要求的唱歌音频（Wan2.2 sing.MP3 仅 18.8s）
 - **图片分类待确认**：I007/I008 是否全身像、I004/I005 分辨率是否足够，需用户检视
+
+## 2026-03-06 01:30
+
+### 任务内容
+Phase 3 素材补充收集：图片审查与大规模候选扩充
+1. 逐一查看已有 I001-I008 全部图片，发现问题：I004（儿童野外图）、I007（demo 对比截图）为错误素材；I008 分类为 full_body 但实为半身
+2. 从 SadTalker、AniPortrait、EchoMimic v2 refimag set、MimicMotion、UniAnimate 共 5 个源下载候选图片
+3. 逐一视觉审查所有候选，筛选质量：LivePortrait 来源的均为名画/艺术品，排除；EchoMimic v2 ref 图质量极佳（1024×1024 AI生成标准半身）
+4. 新增候选目录 `input/avatar_img/candidates/`，存放 30+ 张候选图供用户挑选
+5. 更新 input.md：为已有图标注审查结果、补充完整候选清单（含推荐等级）、更新待确认事项
+
+### 结果与效果
+- 候选半身像：15 张（EchoMimic v2 × 多张、AniPortrait × 3、SadTalker × 多张）
+- 候选全身像：3 张（MimicMotion demo1 × 1 亚裔女全身⭐⭐⭐⭐⭐、UniAnimate women × 2 西方女全身）
+- 有效 male 候选：AP_lyl.png（中年亚裔男性头肩照，唯一男性候选）
+- input.md 已全面更新，待用户挑选确认
+
+### 遇到的问题与解决方法
+- **HuggingFace 需认证**：Champ 数据集在 HuggingFace 需登录，无法直接下载全身像
+- **LivePortrait 全为艺术品**：其 source 图全是名画（蒙娜丽莎/珍珠耳环少女等），不适合作为真实 avatar 测试素材
+- **男性素材稀缺**：各模型 demo 图普遍为女性，男性头像仅从 AniPortrait 获取 1 张（AP_lyl）
+- **音频缺口未解决**：中文长时语音（>=5min）仍无法自动下载，须用户提供

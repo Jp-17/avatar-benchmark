@@ -1,7 +1,7 @@
 # 素材索引与测试条件组合（Phase 3）
 
-**收集日期**：2026-03-05  
-**来源**：各模型 GitHub demo repo（EchoMimic v2 / Hallo3 / FantasyTalking / StableAvatar / OmniAvatar / LiveAvatar）
+**初次收集**：2026-03-05（来源：EchoMimic v2 / Hallo3 / FantasyTalking / StableAvatar / OmniAvatar / LiveAvatar）
+**补充收集**：2026-03-06（来源：SadTalker / AniPortrait / EchoMimic v2 ref set / MimicMotion / UniAnimate）
 
 ---
 
@@ -31,27 +31,60 @@
 
 ---
 
-### Avatar Image - 半身（half_body）
+### Avatar Image - 半身（half_body）—— 已有（含问题标注）
 
-| ID | 文件路径 | 大小 | 来源 | 描述 |
-|----|----------|------|------|------|
-| I001 | avatar_img/half_body/I001.png | 756KB | EchoMimic v2 demo | 亚裔女性，半身正面，简洁背景（需确认） |
-| I002 | avatar_img/half_body/I002.png | 642KB | StableAvatar case-1 | 半身人物（需确认性别/构图） |
-| I003 | avatar_img/half_body/I003.png | 1.1MB | FantasyTalking woman | 女性半身像，浅色背景 |
-| I004 | avatar_img/half_body/I004.jpg | 23KB | Hallo3 demo 0001 | portrait 头像（分辨率小，需确认） |
-| I005 | avatar_img/half_body/I005.jpg | 25KB | Hallo3 demo 0018 | portrait 头像（分辨率小，需确认） |
-| I006 | avatar_img/half_body/I006.jpeg | 126KB | OmniAvatar demo | 半身像（需确认） |
+| ID | 文件路径 | 分辨率 | 来源 | 人工核查结果 | 备注 |
+|----|----------|--------|------|------------|------|
+| I001 | avatar_img/half_body/I001.png | 576×768 | EchoMimic v2 demo | ✅ 亚裔女性，红色礼服，半身，红色背景 | 背景略复杂 |
+| I002 | avatar_img/half_body/I002.png | 790×790 | StableAvatar case-1 | ✅ 白人女性，播报风格头肩照，蓝色TV背景 | 背景有TV元素 |
+| I003 | avatar_img/half_body/I003.png | 1024×1024 | FantasyTalking woman | ✅ 西方女性，AI生成面部特写，暗色背景 | 仅头部，无上身 |
+| I004 | avatar_img/half_body/I004.jpg | 480×480 | Hallo3 demo 0001 | ❌ **拒绝**：图中为儿童在野外烤棉花糖，完全不是 avatar 图 | 需删除 |
+| I005 | avatar_img/half_body/I005.jpg | 480×480 | Hallo3 demo 0018 | ⚠️ **存疑**：极度艺术化妆侧脸（花冠+橙色羽毛），偏风格化 | 用户判断 |
+| I006 | avatar_img/half_body/I006.jpeg | 1472×1104 | OmniAvatar demo | ✅ 亚裔女性，播客场景半身像，自然坐姿，浅色背景 | 质量好，AI图 |
 
-> ⚠️ I004/I005 文件仅 23-25KB，可能分辨率不足（要求 >=512px）；建议用户检视后决定是否保留。
+### Avatar Image - 全身（full_body）—— 已有（含问题标注）
 
-### Avatar Image - 全身（full_body）
+| ID | 文件路径 | 分辨率 | 来源 | 人工核查结果 | 备注 |
+|----|----------|--------|------|------------|------|
+| I007 | avatar_img/full_body/I007.png | 1447×983 | FantasyTalking fig | ❌ **拒绝**：这是模型 demo 的多图对比展示截图，不是单人照片 | 需删除 |
+| I008 | avatar_img/full_body/I008.png | 1020×1006 | StableAvatar case-2 | ⚠️ **分类错误**：实为中年秃头男性头肩照（非全身），分辨率可，可转至 half_body | 需重新分类 |
 
-| ID | 文件路径 | 大小 | 来源 | 描述 |
-|----|----------|------|------|------|
-| I007 | avatar_img/full_body/I007.png | 1.6MB | FantasyTalking fig0_1_0 | 疑似全身像（需用户确认） |
-| I008 | avatar_img/full_body/I008.png | 689KB | StableAvatar case-2 | 疑似全身像（需用户确认） |
+---
 
-> ⚠️ **I007/I008 分类待确认**：这两张图片来自模型 demo，文件大但实际构图需人工查看确认是否为全身像。若为半身像，则全身像数量为 0，需额外补充。
+### Avatar Image - 候选素材（2026-03-06 新增，待用户审核）
+
+所有候选文件存放在 `input/avatar_img/candidates/` 目录，供用户挑选后移入正式目录并编号。
+
+#### 半身像候选
+
+| 文件名 | 分辨率 | 来源 | 描述 | 推荐等级 |
+|--------|--------|------|------|----------|
+| ST_people_0.png | 474×474 | SadTalker examples | 优雅深发女性，灰色背景，半身，正面，专业照风格 | ⭐⭐⭐（分辨率略低于512px）|
+| ST_happy.png | 256×256 | SadTalker examples | 西方年轻女性，绿色户外背景，头肩正面照 | ⭐⭐ |
+| ST_happy1.png | — | SadTalker examples | 西方女性，白色背景，面部正面，干净 | ⭐⭐⭐ |
+| AP_Aragaki.png | 590×590 | AniPortrait ref | 新垣结衣，日系女性，白色背景，头肩照，极简洁 | ⭐⭐⭐⭐ |
+| AP_lyl.png | 653×660 | AniPortrait ref | **中年亚裔男性**，深色背景，头肩照（有男性多样性） | ⭐⭐⭐ |
+| AP_solo.png | 741×741 | AniPortrait ref | 西方年轻女性，颈部纹身，蓝色背景，头肩照 | ⭐⭐⭐ |
+| EM2_0014.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，白T恤，教室背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0035.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，白T恤，暗绿背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0047.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，灰色上衣，户外自然背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0082.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，黑色T恤，教室背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0163.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，白色长袖，黑板背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0303.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，棕色上衣，户外背景，半身开手姿 | ⭐⭐⭐⭐ |
+| EM2_0510.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，白色T恤，极简白色背景，半身开手姿 | ⭐⭐⭐⭐⭐ |
+| EM2_0213.png | 1024×1024 | EchoMimic v2 ref | AI生成亚裔女性，蓝色上衣，教室背景，双手背后站姿 | ⭐⭐⭐⭐ |
+
+> 注：EM2 系列均为 EchoMimic v2 专用参考图（AI 生成同一人物不同背景/服装版本），选取 2-3 张有代表性的即可。
+
+#### 全身像候选
+
+| 文件名 | 分辨率 | 来源 | 描述 | 推荐等级 |
+|--------|--------|------|------|----------|
+| MM_demo1.jpg | 1080×1920 | MimicMotion demo | **亚裔女性全身照**，蓝色休闲套装，淡色户外背景，站姿 | ⭐⭐⭐⭐⭐ |
+| UA_women1.jpg | 750×1101 | UniAnimate data | 西方女性全身，格子衬衫+黑短裤，白色背景，时尚站姿 | ⭐⭐⭐⭐ |
+| UA_women2.jpg | 750×1101 | UniAnimate data | 西方女性全身，白背心+牛仔短裤，白色背景，时尚站姿 | ⭐⭐⭐⭐ |
+
+> ⚠️ **全身像缺口**：目前仅有女性全身像，**暂无男性全身像候选**。若需要，请用户提供或告知来源。
 
 ---
 
@@ -113,9 +146,17 @@
 
 ## 待用户确认事项
 
-1. **中文长音频**：请提供 >=5min 中文普通话讲话音频，或可直接 wget 的下载链接（WAV/MP3）
-2. **唱歌音频**：若需 singing 测试，请提供（可选，非必须）
-3. **图片确认**：请检视以下图片是否符合要求：
-   - half_body/I004.jpg（23KB，可能太小��
-   - half_body/I005.jpg（25KB，可能太小）
-   - full_body/I007.png 和 I008.png（是否真为全身像？）
+### 紧急（影响 Phase 4 能否进行）
+
+1. **中文长音频（缺口未解决）**：仍需 >=5min 中文普通话讲话音频，方可支持中文 3min/5min 档位。请提供 WAV/MP3 文件或可 wget 的直链。
+
+2. **图片审核（新）**：
+   - **确认删除**：I004.jpg（儿童图，非 avatar）、I007.png（demo 截图，非单人照）
+   - **确认重分类**：I008.png（秃头男性头肩照）→ 从 full_body 移至 half_body
+   - **挑选正式图**：从 `avatar_img/candidates/` 中选出满意的图片，告知文件名，我来重命名为 I009/I010... 并移入正式目录
+   - **推荐优先看**：EM2_0510.png（最干净半身）、AP_Aragaki.png（最自然日系女性）、AP_lyl.png（唯一男性候选）、MM_demo1.jpg（最佳全身）
+
+### 可选（非阻塞）
+
+3. **唱歌音频**：若要测试 singing avatar 场景，请提供 >=3min 唱歌音频（WAV/MP3）
+4. **男性全身像**：目前候选中无男性全身像，若需要请提供

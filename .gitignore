@@ -17,3 +17,6 @@ venv/
 
 # Temp
 *.tmp
+
+# macOS
+.DS_Store
