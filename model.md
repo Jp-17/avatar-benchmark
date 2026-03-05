@@ -396,3 +396,26 @@
 - **MOVA**（18B active，官方推荐多卡，单卡可行性待验证）
 - **LongCat-Video-Avatar**（官方 2 卡示例，单卡存在风险）
 - **SkyReels-V3**（权重信息待确认）
+
+
+---
+
+## 五、Phase 2 环境配置状态（2026-03-05）
+
+### 优先级 A 模型环境状态
+
+| 模型 | Conda 环境 | torch 版本 | 环境状态 | 权重下载 | 说明 |
+|------|-----------|-----------|---------|---------|------|
+| EchoMimic v2 | echomimic2-env | 2.5.1+cu121 | 完成 | 完成（11GB, ModelScope） | diffusers 0.31.0, 所有依赖已安装 |
+| StableAvatar | stableavatar-env | 2.7.0+cu128 | 完成 | 完成（30GB, HF mirror, 无代理）| StableAvatar-1.3B + Wan2.1-Fun + wav2vec2 + Kim_Vocal_2.onnx |
+| LiveTalk | livetalk-env | 2.10.0+cu128 | 完成 | 完成（17GB+, ModelScope + HF mirror）| OmniAvatar 已克隆，patches 已应用，flash-attn 已装，setup.py 完成 |
+
+### 注意事项
+
+- GPU: SSH 中 CUDA 不可用，推理需在 JupyterLab 终端执行
+- flash-attn: livetalk-env 中安装版本为 2.8.3（torch 2.8），但 env 实际 torch 为 2.10.0，推理前需重装对应版本
+- git clone: GitHub 仓库均用 SSH 协议克隆，clone 前须运行 source /etc/network_turbo
+- 权重路径:
+  - EchoMimic v2: models/echomimic_v2/weights/BadToBest/EchoMimicV2/
+  - StableAvatar: models/stableavatar/weights/StableAvatar/ (含全部 checkpoints)
+  - LiveTalk: models/livetalk/weights/ 下的 LiveTalk-1.3B-V0.1/, Wan-AI/Wan2.1-T2V-1.3B/, wav2vec2/
