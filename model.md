@@ -244,6 +244,26 @@
 
 ---
 
+
+---
+
+#### InfiniteTalk
+
+| 字段 | 信息 |
+|------|------|
+| **GitHub** | https://github.com/MeiGen-AI/InfiniteTalk |
+| **论文** | ArXiv 2508.14033 |
+| **模型规格** | 14B（基于 Wan2.1-I2V-14B-480P）+ InfiniteTalk adapter；音频编码器：Chinese-wav2vec2-base |
+| **推理显存** | 低显存模式（`--num_persistent_param_in_dit 0`）约 24GB；标准模式约 80GB；支持 TeaCache 加速和 Int8 量化 |
+| **推理代码** | Yes（Gradio demo 可用；ComfyUI 分支提供） |
+| **可下载权重** | Yes（HuggingFace: MeiGen-AI/InfiniteTalk；需同时下载 Wan-AI/Wan2.1-I2V-14B-480P 和 Chinese-wav2vec2-base） |
+| **最大视频时长** | 理论无限（流式生成）；默认 40s（1000 帧，`--max_frame_num` 可配置） |
+| **Avatar 生成** | Yes（全身 audio-driven avatar；支持 V2V 配音/重配音，精确嘴形同步，自然头身动作） |
+| **输入模态** | video+audio→video（V2V 配音）/ image+audio→video（I2V） |
+| **80G A800 适配** | **可测**（低显存模式约 24GB；标准模式官方在 A100 80GB 测试；A800 同等规格可运行） |
+
+---
+
 #### LongCat-Video-Avatar
 
 | 字段 | 信息 |
@@ -364,6 +384,7 @@
 | 15 | LongCat-Video-Avatar | Avatar 离线 | 13.6B | 80GB(2卡示例) | Yes | Yes(HF) | 分钟级(961帧) | Yes(单/多人) | i+a+t2v | **待确认** |
 | 16 | StableAvatar | Avatar 离线 | 1.3B | 3-20GB | Yes | Yes(HF) | 无限 | Yes(portrait) | i+a2v | **可测** |
 | 17 | FantasyTalking | Avatar 离线 | 14B | 5GB(0持久)/40GB(全) | Yes | Yes(HF) | 待确认(滑窗) | Yes(全/半身) | i+a2v | **可测** |
+| 21 | InfiniteTalk | Avatar 离线 | 14B | 24GB(低显存)/80GB | Yes | Yes(HF) | 无限(default 40s) | Yes(全身,V2V+I2V) | v+a2v, i+a2v | **可测** |
 | 18 | LiveAvatar | Avatar 自回归 | 14B | 48GB(FP8)/80GB(BF16) | Yes | Yes(HF) | 无限(10000s+) | Yes(实时) | i+a2v | **条件可测** |
 | 19 | LiveTalk | Avatar 自回归 | 1.3B | 20GB | Yes | Yes(HF) | 无限 | Yes(实时对话) | i+a2v | **可测** |
 | 20 | SoulX-FlashTalk | Avatar 自回归 | 14B | 40GB(offload)/64GB+ | Yes | Yes(HF) | 无限 | Yes(实时) | i+a2v | **条件可测** |
@@ -372,31 +393,70 @@
 
 ---
 
-## 四、Phase 2 测试优先级建议
+## 四、测试优先级建议
 
-### 优先级 A（显存低、条件最好）
-- **LiveTalk**（1.3B，20GB，无限长，自回归）
-- **StableAvatar**（1.3B，3-20GB，无限长）
-- **EchoMimic v2**（~1.3B，16-24GB）
+### 优先级考量原则
 
-### 优先级 B（14B 级，显存可控）
-- **OmniAvatar**（14B 36GB / 1.3B 8GB，两版本均可测）
-- **FantasyTalking**（14B，40GB 全精度）
-- **MultiTalk**（14B，24GB 低显存模式）
-- **OVI**（11B，24-32GB）
-- **LTX-2**（19B distilled，28GB）
+除显存/硬件约束外，测试优先级主要依据**功能方向**划分。核心目标是比较 **audio-driven avatar 视频生成**能力，尤其是自回归式流式/实时对话场景；其次是通用音视频联合生成；最后是通用视频模型在人物场景中的表现。
 
-### 优先级 C（需要配置优化）
-- **HunyuanVideo-Avatar**（需 FP8+offload，建议降分辨率）
-- **Hallo3**（需 CPU offload，约 26GB）
-- **LiveAvatar**（FP8 约 48GB，条件可用）
-- **SoulX-FlashTalk**（cpu_offload 约 40GB）
+Phase 2 目标：**尽可能完成以下所有模型**的环境配置与权重下载，按优先级顺序推进。
 
-### 优先级 D（需实测确认）
-- **MOVA**（18B active，官方推荐多卡，单卡可行性待验证）
-- **LongCat-Video-Avatar**（官方 2 卡示例，单卡存在风险）
-- **SkyReels-V3**（权重信息待确认）
+---
 
+### 第一优先：自回归音频驱动 Avatar（最核心比较对象）
+
+这类模型是本次 benchmark 最想重点对比的方向——支持无限长度流式/自回归生成，具备实时对话场景能力。
+
+| 模型 | 规格 | 推理显存（最低） | 适配性 | 完成状态 |
+|------|------|----------------|-------|---------|
+| **SoulX-FlashTalk** | 14B | 40GB (cpu_offload) | 条件可测 | [ ] 待配置 |
+| **LiveAvatar** | 14B | 48GB (FP8) | 条件可测 | [ ] 待配置 |
+| **LiveTalk** | 1.3B | 20GB | ✅ 可测 | [x] 已完成 |
+
+---
+
+### 第二优先：其他音频驱动 Avatar（主要比较对象）
+
+非自回归但仍以 image+audio 驱动的 avatar 生成模型，是本次 benchmark 的主体内容。
+
+| 模型 | 规格 | 推理显存（最低） | 适配性 | 完成状态 |
+|------|------|----------------|-------|---------|
+| **FantasyTalking** | 14B | 5GB (0持久参数) | ✅ 可测 | [ ] 待配置 |
+| **StableAvatar** | 1.3B | 3GB | ✅ 可测 | [x] 已完成 |
+| **LongCat-Video-Avatar** | 13.6B | ~80GB (2卡示例) | 待确认 | [ ] 待配置 |
+| **InfiniteTalk** | 14B | 24GB (低显存) | ✅ 可测 | [ ] 待配置 |
+| **MultiTalk** | 14B | 24GB (低显存) | ✅ 可测 | [ ] 待配置 |
+| **OmniAvatar** | 14B/1.3B | 36GB/8GB | ✅ 可测 | [ ] 待配置 |
+| **Wan2.2-S2V** | 14B MoE | 80GB | ✅ 可测 | [ ] 待配置 |
+| **HunyuanVideo-Avatar** | 13B | 10GB (FP8+offload) | 条件可测 | [ ] 待配置 |
+| **Hallo3** | 5B+ | 26GB (offload) | 条件可测 | [ ] 待配置 |
+| **EchoMimic v2** | ~1.3B | 16GB | ✅ 可测 | [x] 已完成 |
+
+---
+
+### 第三优先：音视频联合生成（含人物场景能力）
+
+这类模型原生支持音视频联合输出，虽非 avatar 专用，但可通过含人物的图像或描述人物说话的 prompt 测试其在人物视频生成上的表现。
+
+| 模型 | 规格 | 推理显存（最低） | 适配性 | 完成状态 |
+|------|------|----------------|-------|---------|
+| **MOVA** | 18B active | 36GB (估算) | 待确认 | [ ] 待配置 |
+| **LTX-2** | 19B | 28GB (distilled) | ✅ 可测 | [ ] 待配置 |
+| **OVI** | 11B | 24GB (FP8) | ✅ 可测 | [ ] 待配置 |
+
+---
+
+### 第四优先：通用视频生成（可测人物生成特性）
+
+通用 T2V/I2V 模型，不专为人物/avatar 设计，但可通过包含人物的图像或描述人物说话的 prompt，了解其生成人物视频时的质量与特点，与 avatar 专用模型形成参照对比。
+
+| 模型 | 规格 | 推理显存（最低） | 适配性 | 完成状态 |
+|------|------|----------------|-------|---------|
+| **Wan2.2** | 14B MoE | 24GB (offload) | ✅ 可测 | [ ] 待配置 |
+| **Self-Forcing** | 1.3B | 24GB | ✅ 可测 | [ ] 待配置 |
+| **LongLive** | 1.3B | 40GB | ✅ 可测 | [ ] 待配置 |
+| **HunyuanVideo-1.5** | 8.3B | 14GB (offload) | ✅ 可测 | [ ] 待配置 |
+| **SkyReels-V3** | 待确认 | 待确认 | 待确认 | [ ] 待配置 |
 
 ---
 

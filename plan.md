@@ -34,7 +34,7 @@
 
 | 类别 | 模型 |
 |------|------|
-| 离线生成 | EchoMimic2, Hallo3, HunyuanVideo-Avatar, Wan2.2-S2V, OmniAvatar, MultiTalk, Longcat-Video, StableAvatar, FantasyTalking |
+| 离线生成 | EchoMimic2, Hallo3, HunyuanVideo-Avatar, Wan2.2-S2V, OmniAvatar, MultiTalk, InfiniteTalk, Longcat-Video, StableAvatar, FantasyTalking |
 | 自回归生成 | LiveAvatar, LiveTalk, SoulX-FlashTalk |
 
 **产出**：`autodl-tmp/avatar-benchmark/model.md`
@@ -70,18 +70,55 @@
   1. 优先尝试 `huggingface-cli download`、`modelscope download`、`wget/curl` 直接下载
   2. 下载缓慢或失败时，整理问题信息（URL、错误日志）后寻求帮助
 
-### 2.3 执行顺序
+### 2.3 执行顺序与目标范围
 
-按模型可测性（Phase 1 调研结果）和资源需求从小到大排序，逐个执行：
+**目标**：尽可能完成以下所有模型的配置，按优先级顺序推进。每个模型执行步骤：
 1. 克隆项目到 `models/{model_name}`
-2. 按 README 配置 conda 环境（优先 unified-env）
-3. 下载权重
-4. 运行官方 demo 或最小推理脚本验证可用性
+2. 按 README 配置 conda 环境（优先复用已有环境）
+3. 下载权重（HuggingFace 新格式仓库下载时**不启用** network_turbo 代理）
+4. 运行官方 demo 或最小推理脚本验证可用性（需在 JupyterLab 终端执行，SSH 中无 GPU）
 5. 在 model.md 中标注"已验证可运行"
+
+#### 第一优先：自回归音频驱动 Avatar
+| 模型 | 状态 |
+|------|------|
+| LiveTalk | [x] 环境+权重完成 |
+| SoulX-FlashTalk | [ ] 待配置 |
+| LiveAvatar | [ ] 待配置 |
+
+#### 第二优先：其他音频驱动 Avatar
+| 模型 | 状态 |
+|------|------|
+| EchoMimic v2 | [x] 环境+权重完成 |
+| StableAvatar | [x] 环境+权重完成 |
+| FantasyTalking | [ ] 待配置 |
+| InfiniteTalk | [ ] 待配置 |
+| MultiTalk | [ ] 待配置 |
+| OmniAvatar | [ ] 待配置 |
+| Wan2.2-S2V | [ ] 待配置 |
+| HunyuanVideo-Avatar | [ ] 待配置 |
+| Hallo3 | [ ] 待配置 |
+| LongCat-Video-Avatar | [ ] 待配置（2卡需求，需确认单卡可行性） |
+
+#### 第三优先：音视频联合生成
+| 模型 | 状态 |
+|------|------|
+| LTX-2 | [ ] 待配置 |
+| OVI | [ ] 待配置 |
+| MOVA | [ ] 待配置（单卡可行性待确认） |
+
+#### 第四优先：通用视频生成
+| 模型 | 状态 |
+|------|------|
+| Wan2.2 | [ ] 待配置 |
+| HunyuanVideo-1.5 | [ ] 待配置 |
+| Self-Forcing | [ ] 待配置 |
+| LongLive | [ ] 待配置 |
+| SkyReels-V3 | [ ] 待配置（权重需确认） |
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[ ] 待 Phase 1 完成后执行
+**任务状态**：[x] 完成（Priority A 3个模型）；其余模型持续推进中
 
 ---
 
@@ -249,6 +286,6 @@ autodl-tmp/avatar-benchmark/output/
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
-| Phase 2 | 环境配置与权重下载 | [x] 完成（Priority A 3个模型） | model.md 补充状态列 |
+| Phase 2 | 环境配置与权重下载 | [x] 优先级A完成；其余持续推进 | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [ ] 与 Phase 2 并行 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
