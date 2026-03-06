@@ -83,22 +83,22 @@
 | 模型 | 状态 |
 |------|------|
 | LiveTalk | [x] 环境+权重完成 |
-| SoulX-FlashTalk | [ ] 待配置 |
-| LiveAvatar | [ ] 待配置 |
+| SoulX-FlashTalk | [~] 环境✅(unified-env) + 权重下载中（Soul-AILab/SoulX-FlashTalk-14B） |
+| LiveAvatar | [~] 环境安装中(liveavatar-env) + 权重下载中（Wan2.2-S2V-14B） |
 
 #### 第二优先：其他音频驱动 Avatar
 | 模型 | 状态 |
 |------|------|
 | EchoMimic v2 | [x] 环境+权重完成 |
 | StableAvatar | [x] 环境+权重完成 |
-| FantasyTalking | [ ] 待配置 |
-| InfiniteTalk | [ ] 待配置 |
-| MultiTalk | [ ] 待配置 |
-| OmniAvatar | [ ] 待配置 |
-| Wan2.2-S2V | [ ] 待配置 |
-| HunyuanVideo-Avatar | [ ] 待配置 |
-| Hallo3 | [ ] 待配置 |
-| LongCat-Video-Avatar | [ ] 待配置（2卡需求，需确认单卡可行性） |
+| MultiTalk | [~] 环境✅(unified-env) + 权重下载中（Wan2.1-I2V-14B-480P, MeiGen-MultiTalk） |
+| InfiniteTalk | [~] 环境✅(unified-env) + 权重下载中（共享Wan2.1-I2V-14B-480P + InfiniteTalk adapter） |
+| FantasyTalking | [~] 环境安装中(fantasy-talking-env, transformers==4.46.2) + 权重待下载 |
+| OmniAvatar | [~] 环境安装中(omniavatar-env, transformers==4.52.3) + 权重待下载 |
+| HunyuanVideo-Avatar | [~] 环境安装中(hunyuan-avatar-env, diffusers==0.33.0) + 权重待下载 |
+| Hallo3 | [~] 环境安装中(hallo3-env, CogVideoX基) + 权重待下载 |
+| LongCat-Video-Avatar | [~] 环境安装中(longcat-env, torch==2.6.0+cu124) + 权重待下载 |
+| Wan2.2-S2V | [~] 环境安装中(wan2.2-env) + 权重共享LiveAvatar的Wan2.2-S2V-14B |
 
 #### 第三优先：音视频联合生成
 | 模型 | 状态 |
@@ -110,7 +110,7 @@
 #### 第四优先：通用视频生成
 | 模型 | 状态 |
 |------|------|
-| Wan2.2 | [ ] 待配置 |
+| Wan2.2 | [~] 代码已克隆(Wan-Video/Wan2.2)，环境安装中(wan2.2-env)，权重待下载 |
 | HunyuanVideo-1.5 | [ ] 待配置 |
 | Self-Forcing | [ ] 待配置 |
 | LongLive | [ ] 待配置 |
@@ -118,7 +118,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[x] 完成（Priority A 3个模型）；其余模型持续推进中
+**任务状态**：[~] 进行中（P1/P2模型全部启动配置，环境+权重下载并行）；P3/P4待续
 
 ---
 
@@ -289,3 +289,25 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 2 | 环境配置与权重下载 | [x] 优先级A完成；其余持续推进 | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [ ] 与 Phase 2 并行 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
+
+---
+
+## P3/P4 配置进度（2026-03-06 更新）
+
+### P3 音视频联合生成（进行中）
+
+| 模型 | 状态 |
+|------|------|
+| LTX-2 | [~] 代码已克隆(Lightricks/LTX-2)，环境安装中(ltx2-hunyuan15-env,torch 2.7.1+cu126)，权重下载中(Lightricks/LTX-2) |
+| OVI | [~] 代码已克隆(character-ai/Ovi)，环境安装中(ovi-env,torch 2.5.1+cu121)，权重下载中(chetwinlow1/Ovi) |
+| MOVA | [~] 代码已克隆(OpenMOSS/MOVA)，环境安装中(mova-env,Python 3.12)，权重下载中(OpenMOSS-Team/MOVA-360p) |
+
+### P4 通用视频生成（进行中）
+
+| 模型 | 状态 |
+|------|------|
+| Wan2.2 | [~] 代码已克隆(Wan-Video/Wan2.2)，环境完成(wan2.2-env，flash_attn待JupyterLab)，权重待下载 |
+| HunyuanVideo-1.5 | [~] 代码已克隆(Tencent-Hunyuan/HunyuanVideo-1.5)，环境安装中(ltx2-hunyuan15-env)，权重下载中 |
+| Self-Forcing | [~] 代码已克隆(guandeh17/Self-Forcing)，环境安装中(sf-longlive-env)，权重下载中 |
+| LongLive | [~] 代码已克隆(NVlabs/LongLive)，环境安装中(sf-longlive-env)，权重下载中 |
+| SkyReels-V3 | [~] 代码已克隆(SkyworkAI/SkyReels-V3)，环境安装中(skyreels-env,torch 2.8.0)，权重下载中 |
