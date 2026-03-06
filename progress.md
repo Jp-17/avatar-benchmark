@@ -356,3 +356,31 @@ Phase 3 素材清理与 input.md 重写（用户人工筛选后）：
 - StableAvatar：2/12 done + 10 个条件后台排队中
 - 两个批处理均在后台独立运行，退出 SSH 不影响进度
 - 后续：等待两批完成后更新 model.md/results.md，再继续 EchoMimic v2 和 Hallo3
+
+---
+
+## 2026-03-06 会话 4（22:00-当前）
+
+### 任务内容
+Phase 4 推理继续：EchoMimic v2 权重修复与推理启动，Hallo3 依赖安装，各模型批推理推进
+
+### 执行过程
+1. 修复 EchoMimic v2 环境问题：降级 transformers 5.3.0 → 4.44.2（FLAX_WEIGHTS_NAME 兼容性）
+2. 修复 wav2vec2 符号链接（指向 StableAvatar 已有权重）
+3. 验证 EchoMimic v2 C_zh_5s 推理成功（768×768，6步，90s）
+4. 启动 EchoMimic v2 全批推理 em2_batch.sh（C_zh_5s/10s done，C_zh_30s running）
+5. 安装 Hallo3 依赖（167个包），排除 pyav==14.0.1（需Python>=3.11），改用 av==12.1.0
+6. 创建 hallo3_batch.sh 批推理脚本，设置等待 EchoMimic v2 完成后自动启动
+7. StableAvatar batch2 继续：7/12 done，C_en_1m running
+8. LiveTalk C_en_5m retry：等待 StableAvatar 完成后自动重试（livetalk_wait_retry.sh）
+
+### 遇到的问题与解决方法
+1. **EchoMimic v2 FLAX_WEIGHTS_NAME 报错**：transformers 5.3.0 删除了该名称，diffusers 0.31.0 依赖它。降级 transformers → 4.44.2 解决。
+2. **wav2vec2 符号链接目标不存在**：/root/autodl-tmp/weights_shared/ 目录不存在。改指向 StableAvatar 的同名权重路径。
+3. **Hallo3 pyav==14.0.1 不支持 Python 3.10**：从 requirements.txt 排除 pyav 14.x，改用 av==12.1.0。
+
+### 当前状态（2026-03-06 22:30）
+- **LiveTalk**：11/12 done（C_en_5m 等待 SA 完成后重试）
+- **StableAvatar**：7/12 done，C_en_1m running
+- **EchoMimic v2**：2/12 done（C_zh_5s/10s），C_zh_30s running（共 ~44min 剩余）
+- **Hallo3**：deps installed，等待 EchoMimic v2 完成后自动启动推理
