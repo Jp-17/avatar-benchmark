@@ -305,3 +305,54 @@ Phase 3 素材清理与 input.md 重写（用户人工筛选后）：
 ### 扩容建议
 
 数据盘从 500G 扩到 800G（+300G），可覆盖所有模型权重和环境安装
+
+
+---
+
+## 2026-03-06 会话3：Phase 4 推理执行启动
+
+### 完成的任务
+
+#### GPU 访问确认
+- 通过 SSH 确认 GPU 可直接访问（nvidia-smi 正常），之前记录的"需 JupyterLab"信息有误
+
+#### 音频素材准备（Step 0）
+- 安装 ffmpeg 符号链接：`ln -sf <imageio_ffmpeg_binary> /usr/local/bin/ffmpeg`
+- 创建 output/{livetalk,stableavatar,echomimic_v2,hallo3} 输出目录
+- 裁剪音频到 input/audio/trimmed/：A001_5s/10s/30s/1m.wav，A007_5s/10s/30s/1m/3m/5m.wav
+
+#### LiveTalk 推理（Step 1）
+解决的问题：
+1. transformers 5.3.0 与 diffusers 0.31.0 不兼容 → 降级 transformers==4.51.3
+2. flash_attn ABI 不兼容 torch 2.10.0+cu128 → pip uninstall flash-attn
+3. demo_utils 找不到 → 添加 PYTHONPATH=$PROJ:$PROJ/OmniAvatar
+4. video_duration 断言失败 → duration 必须满足 3n+2 格式（4*duration+1 能被3整除）
+5. C_en_5m (299s) 超出 frame_seq_length=1024 限制 → 改用 duration=254（最大支持）
+6. 唱歌文件路径错误 → 实际文件名：S001_jaychou.wav、S002_adele.wav
+
+执行情况：
+- 批处理脚本：/root/autodl-tmp/livetalk_batch2.sh（后台运行）
+- 已完成（9/12）：C_zh_5s/10s/30s/1m，C_en_5s/10s/30s/1m/3m
+- retry2 运行中：C_en_5m（duration=254）、C_sing_zh、C_sing_en
+
+#### StableAvatar 推理（Step 2）
+- 测试验证 C_zh_5s 成功（512x512 25fps，约5s，475KB）
+- 批处理脚本：/root/autodl-tmp/stableavatar_batch2.sh（后台运行）
+- 已完成（2/12）：C_zh_5s、C_zh_10s
+- 运行中：C_zh_30s（及后续）
+- 注意：StableAvatar 输出 video_without_audio.mp4，需 ffmpeg 后处理合并音频
+
+#### results.md 文档
+- 创建 output/livetalk/results.md：记录所有问题、命令、参数、结果
+- 创建 output/stableavatar/results.md：记录命令格式、参数、进度
+
+#### plan.md 更新
+- Phase 4.2 新增 results.md 记录要求
+- Phase 4.2 修正 GPU 访问说明（SSH 可用）
+- 进度总览更新：Phase 4 [~] 进行中
+
+### 当前状态（截止提交时）
+- LiveTalk：9/12 done + retry2 运行中（预计完成 3 个条件）
+- StableAvatar：2/12 done + 10 个条件后台排队中
+- 两个批处理均在后台独立运行，退出 SSH 不影响进度
+- 后续：等待两批完成后更新 model.md/results.md，再继续 EchoMimic v2 和 Hallo3

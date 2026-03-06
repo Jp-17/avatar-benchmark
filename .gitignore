@@ -20,3 +20,12 @@ venv/
 
 # macOS
 .DS_Store
+
+# 保留推理结果文档（排除视频和临时帧）
+!output/
+!output/*/
+output/*/*.mp4
+output/*/*_tmp/
+output/*/animated_images/
+!output/*/results.md
+!output/*/config.json

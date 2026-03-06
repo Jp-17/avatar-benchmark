@@ -76,7 +76,7 @@
 1. 克隆项目到 `models/{model_name}`
 2. 按 README 配置 conda 环境（优先复用已有环境）
 3. 下载权重（HuggingFace 新格式仓库下载时**不启用** network_turbo 代理）
-4. 运行官方 demo 或最小推理脚本验证可用性（需在 JupyterLab 终端执行，SSH 中无 GPU）
+4. 运行官方 demo 或最小推理脚本验证可用性（可直接通过 SSH 执行（已确认 GPU 可用））
 5. 在 model.md 中标注"已验证可运行"
 
 #### 第一优先：自回归音频驱动 Avatar
@@ -265,6 +265,7 @@ autodl-tmp/avatar-benchmark/output/
 - 时长测试范围根据模型支持能力确定（参照 Phase 3 § 3.3 的档位规则）
 - 同类型模型尽量使用完全相同的 Condition 组合，便于横向对比
 - 记录每次推理的参数配置（steps、resolution、seed 等）到 `output/{model_name}/config.json`
+- 在 `output/{model_name}/results.md` 中持续记录：①每个 Condition 实际运行的完整脚本命令；②使用的素材路径和 config 参数；③产出结果路径；④失败经验与解决方法（含报错信息和修复步骤）
 
 ### 4.3 评估维度（人工评估）
 
@@ -288,7 +289,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] P1/P2大部分torch已装,6个模型权重完成,其余下载中/待重启 | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [x] 用户已完成人工筛选 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
+| Phase 4 | 推理生成 | [~] 进行中（LiveTalk 9/12，StableAvatar 2/12） | output/ 目录 |
 
 ---
 
