@@ -238,7 +238,7 @@ autodl-tmp/avatar-benchmark/input/
 - 不支持 audio driven -> 使用 text+image（C004 系列）或 text（C006 系列）
 - 每个模型只测其支持时长范围内的 Condition
 
-**任务状态**：[ ] 与 Phase 2 并行执行，完成后需用户检查素材质量
+**任务状态**：[x] 素材收集完成，用户已完成人工筛选，input.md 已更新
 
 ---
 
@@ -287,7 +287,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [x] 优先级A完成；其余持续推进 | model.md 补充状态列 |
-| Phase 3 | 素材收集与 input.md | [ ] 与 Phase 2 并行 | input.md, input/ 目录 |
+| Phase 3 | 素材收集与 input.md | [x] 用户已完成人工筛选 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
 
 ---

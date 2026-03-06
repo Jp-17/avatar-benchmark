@@ -1,0 +1,22 @@
+# 大文件排除（模型权重和推理输出）
+output/
+models/*/weights/
+models/*/ckpt/
+models/*/checkpoints/
+*.ckpt
+*.safetensors
+*.bin
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+
+# Temp
+*.tmp
+
+# macOS
+.DS_Store
