@@ -214,3 +214,47 @@ Phase 3 素材清理与 input.md 重写（用户人工筛选后）：
 ### 遇到的问题与解决方法
 - **中文长时音频缺口加大**：A008 已被用户删除，最长中文音频变为 A001(100s=1.7min)，中文 3min/5min 档位完全无法覆盖，需用户补充
 - **无其他问题**：用户筛选结果清晰，直接基于实际文件状态重写即可
+
+## 2026-03-06 11:00
+
+### 任务内容
+从 GitHub 远程仓库 fetch phase-3 分支，分析 Phase 3 完成情况，合并至 master 分支并更新进度记录。
+
+### 结果与效果
+**Phase 3 完成情况（来自 phase-3 分支，4 个提交）：**
+- 音频：23 条语音（含英文长时 A007=5.9min 覆盖全部档位、中文 A001=100s 覆盖至 1min）+ 3 条唱歌（9-13s）
+- 半身像：13 张（真实照片 × 8、AI生成 × 3、名画/油画 × 2）
+- 全身像：5 张（真实照片 × 4、油画坐姿 × 1）
+- Prompt：15 个（P001-P015，含情景/动作/表情三类）
+- Condition 组合：31 个（i+a2v 12 + t+i2v 14 + t2v 5）
+- 用户已完成人工筛选，input.md 已完整更新
+
+**Merge 操作：**
+- fetch 方式：HTTPS + network_turbo 代理（SSH pack-objects 被网络阻断，改用 HTTPS+http_proxy 绕过）
+- 冲突文件：plan.md（进度总览表）、progress.md（多个会话记录）
+- 冲突解决：plan.md 取 Phase 1/2 状态来自 master，Phase 3 状态来自 phase-3；progress.md 按时间顺序合并两分支全部记录
+
+### 遇到的问题与解决方法
+- **git fetch SSH 协议 hang**：SSH 连接 GitHub 时 pack-objects 下行数据传输被阻断（ls-remote 可行，push 可行，但 fetch 的接收阶段 hang），使用 HTTPS + （network_turbo 代理地址）成功解决
+
+## 2026-03-06 11:00
+
+### 任务内容
+从 GitHub 远程仓库 fetch phase-3 分支，分析 Phase 3 完成情况，合并至 master 分支并更新进度记录。
+
+### 结果与效果
+**Phase 3 完成情况（来自 phase-3 分支，4 个提交）：**
+- 音频：23 条语音（含英文长时 A007=5.9min 覆盖全部档位、中文 A001=100s 覆盖至 1min）+ 3 条唱歌（9-13s）
+- 半身像：13 张（真实照片 × 8、AI生成 × 3、名画/油画 × 2）
+- 全身像：5 张（真实照片 × 4、油画坐姿 × 1）
+- Prompt：15 个（P001-P015，含情景/动作/表情三类）
+- Condition 组合：31 个（i+a2v 12 + t+i2v 14 + t2v 5）
+- 用户已完成人工筛选，input.md 已完整更新
+
+**Merge 操作：**
+- fetch 方式：HTTPS + network_turbo 代理（SSH pack-objects 被网络阻断，改用 HTTPS+http_proxy 绕过）
+- 冲突文件：plan.md（进度总览表）、progress.md（多个会话记录）
+- 冲突解决：plan.md 取 Phase 1/2 状态来自 master，Phase 3 状态取自 phase-3；progress.md 按时间顺序合并两分支全部记录
+
+### 遇到的问题与解决方法
+- **git fetch SSH 协议 hang**：SSH 连接 GitHub 时 pack-objects 下行数据传输被阻断（ls-remote 可行、push 可行，但 fetch 的接收阶段持续 hang），解决方案：使用 HTTPS 协议 + network_turbo 的 http 代理地址成功绕过
