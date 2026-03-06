@@ -286,13 +286,13 @@ autodl-tmp/avatar-benchmark/output/
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
-| Phase 2 | 环境配置与权重下载 | [x] 优先级A完成；其余持续推进 | model.md 补充状态列 |
+| Phase 2 | 环境配置与权重下载 | [~] P1/P2大部分torch已装,6个模型权重完成,其余下载中/待重启 | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [x] 用户已完成人工筛选 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 待用户确认素材 | output/ 目录 |
 
 ---
 
-## P3/P4 配置进度（2026-03-06 更新）
+## P3/P4 配置进度（2026-03-06 17:30 更新）
 
 ### P3 音视频联合生成（进行中）
 

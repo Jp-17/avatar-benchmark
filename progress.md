@@ -258,3 +258,50 @@ Phase 3 素材清理与 input.md 重写（用户人工筛选后）：
 
 ### 遇到的问题与解决方法
 - **git fetch SSH 协议 hang**：SSH 连接 GitHub 时 pack-objects 下行数据传输被阻断（ls-remote 可行、push 可行，但 fetch 的接收阶段持续 hang），解决方案：使用 HTTPS 协议 + network_turbo 的 http 代理地址成功绕过
+
+
+---
+
+## 2026-03-06 会话 2（11:00-17:30）
+
+### 完成的工作
+
+#### 环境 Torch 安装
+- **hunyuan-avatar-env**: torch 2.5.1+cu121 ✅（nohup 方式安装，避免 SSH 超时）
+- **longcat-env**: torch 2.6.0+cu124 ✅
+- **mova-env**: torch 2.5.1+cu121 ✅（venv 方式，pip 升级到 26.0.1 后重试成功）
+
+#### 模型依赖安装
+- **FantasyTalking** (fantasy-talking-env): transformers==4.46.2 + 全部依赖 ✅
+- **LiveAvatar** (liveavatar-env): transformers==4.51.3, diffusers==0.37.0 + 全部依赖 ✅
+- **OmniAvatar** (omniavatar-env): ⚠️ 安装被中断（xfuser 拉了错误的 torch 2.10.0），需重装
+
+#### 权重下载
+- **hallo3**: 49G ✅ 完成（fudan-generative-ai/hallo3）
+- **SoulX-FlashTalk**: 35G，接近完成（仍在下载）
+- 重启了死掉的下载进程：SoulX-FlashTalk、HunyuanVideo-Avatar、LongCat-Video-Avatar、MultiTalk、Wan2.1-I2V-14B-480P
+- 多个下载进程再次死亡，仅 SoulX-FlashTalk 存活
+
+#### 系统维护
+- 系统盘从 16% 维持在 37%，定期清理 /tmp 和 pip cache
+- 数据盘从 65% 增长到 91%（454G/500G），**需扩容**
+
+### 遇到的问题
+
+1. **mova-env pip 下载超时**：venv 的 pip 版本过旧（23.0.1），下载 torch 时超时。升级 pip 到 26.0.1 并加 --timeout 300 解决
+2. **OmniAvatar xfuser 拉错 torch**：xfuser==0.4.1 依赖 torch，pip 从 PyPI 下载了 torch 2.10.0 替代已有的 2.5.1+cu121。需跳过 xfuser 或用 --no-deps
+3. **权重下载进程频繁死亡**：多次重启后仍然死亡，原因可能是内存不足（同时运行多个下载+pip 安装）或网络超时
+4. **XetHub CDN 超时**：MultiTalk、LongCat-Video-Avatar 的 HF 仓库使用 XetHub 存储，代理和直连都不稳定
+5. **git fetch 挂起**：从 GitHub 拉取 phase-3 分支时 git fetch 长时间无响应，可能是大仓库+慢网络
+
+### 当前状态
+
+- **可测试模型**: EchoMimic v2、StableAvatar、LiveTalk（已验证）；FantasyTalking、LiveAvatar（deps 完成，需 JupyterLab 测试）
+- **hallo3**: 权重完成，需安装模型依赖后可测试
+- **OmniAvatar**: 权重完成，需修复 deps 后可测试
+- **数据盘 91%**：等待用户扩容，暂停下载
+- **待扩容后继续**：重启死掉的权重下载、安装剩余模型依赖、ltx2/skyreels torch 安装
+
+### 扩容建议
+
+数据盘从 500G 扩到 800G（+300G），可覆盖所有模型权重和环境安装
