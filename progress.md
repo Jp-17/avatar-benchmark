@@ -98,3 +98,26 @@
 **Wan2.1-Fun 不在 ModelScope 上**
 - 尝试了多个 ID：Wan-AI/Wan2.1-Fun-V1.1-1.3B-InP、iic/... 等均 404
 - 只能从 FrancisRing/StableAvatar HuggingFace 仓库下载
+
+## 2026-03-06 10:00
+
+### 任务内容
+结合 plan.md 和 model.md（最新版 2026-03-06 15:30 更新）盘点 Phase 2 实际完成情况，确认各模型环境与权重的真实状态。
+
+### 结果与效果
+**Phase 2 完全完成的模型（环境+代码+全量权重）共 3 个：**
+- EchoMimic v2：echomimic2-env ✅，权重 11GB（ModelScope）
+- StableAvatar：stableavatar-env ✅，权重 26GB（HF）
+- LiveTalk：livetalk-env ✅，权重 23GB（HF）
+
+**其余模型状态：**
+- FantasyTalking / LiveAvatar / OmniAvatar-14B：仅 adapter/LoRA 已下（3.7G/1.3G/1.2G），基底模型（Wan2.1-I2V-14B-720P / Wan2.2-S2V-14B / Wan2.1-T2V-14B）未完成
+- Hallo3：权重下载中（7/35 文件，20%）
+- InfiniteTalk + Wan2.1-I2V-14B-480P（共享）：下载中（6/24 文件，25%）
+- SoulX-FlashTalk / HunyuanVideo-Avatar / MultiTalk / LongCat-Video-Avatar：下载进程已死，需重启
+- P3（LTX-2/OVI/MOVA）/ P4（Wan2.2/HunyuanVideo-1.5/Self-Forcing/LongLive/SkyReels-V3）：多数 torch 环境未完成安装，权重待下载
+- 4 个环境尚未安装 torch：longcat-env / mova-env / ltx2-hunyuan15-env / skyreels-env
+- flash_attn 待 JupyterLab 安装：wan2.2-env / longcat-env / liveavatar-env / unified-env(InfiniteTalk) / skyreels-env
+
+### 遇到的问题与解决方法
+无新问题，本次为状态盘点，未执行新操作。
