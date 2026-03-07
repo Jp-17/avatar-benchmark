@@ -611,3 +611,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 **磁盘状态**：942G/1000G (94%)
 
 *时间: 14:00 CST*
+
+---
+
+## 2026-03-07 11:49
+
+### 任务内容
+清理远程服务器的安全缓存与临时文件，复查系统盘/数据盘占用，并继续排查 models 目录中的重复权重与额外瘦身机会。
+
+### 结果与效果
+1. 清理缓存完成：删除 /root/.cache/pip、/root/.cache/uv、/root/miniconda3/pkgs、/root/autodl-tmp/conda-pkgs、/root/autodl-tmp/hallo3_t5_tmp，以及 /tmp 下 pip/flash-attn/tmp 构建残留。
+2. 清理后磁盘状态：系统盘 / 从 26G 已用降到 529M，使用率从 86% 降到 2%；数据盘 /root/autodl-tmp 从 942G 已用降到 933G，释放约 9G，可用空间从 59G 增至 68G。
+3. 确认可进一步瘦身的重复权重：Hallo3 的 t5-v1_1-xxl 在 pretrained_models 和 weights 下各有一份（完全相同）；LiveAvatar、OmniAvatar 各有一份重复权重；Wan 系列模型中 7 份 models_t5_umt5-xxl-enc-bf16.pth 完全一致；StableAvatar / SoulX-FlashTalk / FantasyTalking 的 3 份 CLIP 权重完全一致。
+4. 风险评估：MOVA 的 video_dit 和 video_dit_2 虽然文件完全一致，但代码显式引用两套模块，当前不判定为可直接删除对象。
+
+### 遇到的问题与解决方法
+1. 数据盘的大头不是缓存而是模型与环境本体（avatar-benchmark 约 822G，envs 约 111G），因此单靠缓存清理只能有限缓解空间压力。
+2. 为避免误删功能文件，对大体积重复项先做 cmp 逐项比对；仅将缓存实际删除，重复权重暂只记录为后续可做软链接/去重优化项。
