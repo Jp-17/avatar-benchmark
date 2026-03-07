@@ -645,3 +645,19 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. Hallo3 的 weights/hallo3/t5-v1_1-xxl 与共享目录下的同名大文件经 md5 对比并不一致，不能直接判定为重复文件；为避免误删，仅保留 pretrained_models 一侧改为共享链接，weights 侧暂不处理。
 2. MOVA 的 video_dit 和 video_dit_2 虽然当前文件一致，但代码显式依赖双模块结构，仍不纳入本轮去重。
+
+---
+
+## 2026-03-07 14:57
+
+### 任务内容
+在 plan.md 的 Phase 2 中补充模型环境和权重完成后的最小推理验证规范，统一最小测试素材、目录结构和 test.md 记录要求。
+
+### 结果与效果
+1. 在 Phase 2 新增“2.2.1 最小推理验证规范”小节，明确：环境和权重就绪后必须先做一次最小素材推理测试，验证最小链路可运行。
+2. 固定了最小测试素材：图片使用 autodl-tmp/avatar-benchmark/input/avatar_img/half_body/I013.png，音频使用 autodl-tmp/avatar-benchmark/test/echomimic_v2/input/A007_5s.wav，若模型需要 text prompt，则使用 autodl-tmp/avatar-benchmark/input/prompt/P011.txt。
+3. 统一了最小测试目录：素材 copy 到 autodl-tmp/avatar-benchmark/test/{model_name}/input/，输出放到 autodl-tmp/avatar-benchmark/test/{model_name}/output/。
+4. 统一了 test.md 记录规范：格式参考 test/echomimic_v2/test.md，至少记录环境名称、资源与运行时间、命令和脚本、config、素材要求、问题与解决方案。
+
+### 遇到的问题与解决方法
+1. 远程 shell 会对 Markdown 中的反引号路径做命令替换，首次直接写入失败；改为在 Python 中用 chr(96) 构造反引号后再写入，避免 zsh 解析。

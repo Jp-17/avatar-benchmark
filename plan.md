@@ -71,6 +71,15 @@
   1. 优先尝试 `huggingface-cli download`、`modelscope download`、`wget/curl` 直接下载
   2. 下载缓慢或失败时，整理问题信息（URL、错误日志）后寻求帮助
 
+### 2.2.1 最小推理验证规范
+
+- **触发条件**：当某模型的环境和权重都已就绪后，需立即进行一次最小素材推理测试，目标仅为验证该模型可以正常跑通推理链路，不追求完整 benchmark 覆盖。
+- **最小测试素材**：默认仅使用 1 组固定素材，图片使用 `autodl-tmp/avatar-benchmark/input/avatar_img/half_body/I013.png`，音频使用 `autodl-tmp/avatar-benchmark/test/echomimic_v2/input/A007_5s.wav`，若模型需要 text prompt，则使用 `autodl-tmp/avatar-benchmark/input/prompt/P011.txt`。
+- **测试目录规范**：将上述素材 copy 到 `autodl-tmp/avatar-benchmark/test/{model_name}/input/`；测试结果统一输出到 `autodl-tmp/avatar-benchmark/test/{model_name}/output/`。
+- **测试记录规范**：在 `autodl-tmp/avatar-benchmark/test/{model_name}/test.md` 中补充该模型的最小推理信息，格式参考 `autodl-tmp/avatar-benchmark/test/echomimic_v2/test.md`。
+- **test.md 必填内容**：至少包含模型环境名称、所需资源与运行时间、实际运行命令和脚本路径、运行 config、输入素材要求（如分辨率/时长/采样率等）、遇到的问题及解决方案。
+- **执行目的**：优先确认环境、权重、依赖、推理脚本、素材预处理链路均可用；若最小测试失败，先修复该模型的最小推理链路，再继续后续批量测试。
+
 ### 2.3 执行顺序与目标范围
 
 **目标**：尽可能完成以下所有模型的配置，按优先级顺序推进。每个模型执行步骤：
