@@ -628,3 +628,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 数据盘的大头不是缓存而是模型与环境本体（avatar-benchmark 约 822G，envs 约 111G），因此单靠缓存清理只能有限缓解空间压力。
 2. 为避免误删功能文件，对大体积重复项先做 cmp 逐项比对；仅将缓存实际删除，重复权重暂只记录为后续可做软链接/去重优化项。
+
+---
+
+## 2026-03-07 14:17
+
+### 任务内容
+继续将已确认完全一致且低风险的重复权重迁移到 weights_shared/ 并改为软链接，同时更新 plan.md 的 Phase 2 权重共享规范，复查系统盘和数据盘占用。
+
+### 结果与效果
+1. 完成共享去重：将 Wan 系列公用的 models_t5_umt5-xxl-enc-bf16.pth、livetalk 的 diffusion_pytorch_model.safetensors、StableAvatar/SoulX-FlashTalk/FantasyTalking 共用的 CLIP 权重，统一收口到 weights_shared/ 并在模型目录中改为软链接引用。
+2. 继续完成低风险去重：将 LiveAvatar 的 liveavatar.safetensors、OmniAvatar 的 pytorch_model.pt 迁移到 weights_shared/ 后改为双端软链接；Hallo3 仅将 pretrained_models/t5-v1_1-xxl 切到共享目录。
+3. 更新 plan.md：在 Phase 2 的权重管理中新增共享权重规则，要求遇到模型公用/重复文件时优先放入 weights_shared/ 并通过软链接复用。
+4. 当前磁盘状态：系统盘 / 维持 529M/30G（2%）；数据盘 /root/autodl-tmp 降到 853G/1000G（86%），可用空间提升到 148G。
+
+### 遇到的问题与解决方法
+1. Hallo3 的 weights/hallo3/t5-v1_1-xxl 与共享目录下的同名大文件经 md5 对比并不一致，不能直接判定为重复文件；为避免误删，仅保留 pretrained_models 一侧改为共享链接，weights 侧暂不处理。
+2. MOVA 的 video_dit 和 video_dit_2 虽然当前文件一致，但代码显式依赖双模块结构，仍不纳入本轮去重。

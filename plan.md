@@ -66,6 +66,7 @@
 
 - 代码克隆路径：`autodl-tmp/avatar-benchmark/models/{model_name}/`
 - 权重存放路径：`autodl-tmp/avatar-benchmark/models/{model_name}/weights/`（或按项目 README 指定位置）
+- 共享权重去重：若多个模型依赖完全相同的权重文件，优先将其统一放入 `autodl-tmp/avatar-benchmark/weights_shared/`，再在各模型目录中通过软链接引用；下载新权重前先检查 `weights_shared/` 是否已有可复用文件，避免重复占用磁盘空间。
 - 权重下载策略：
   1. 优先尝试 `huggingface-cli download`、`modelscope download`、`wget/curl` 直接下载
   2. 下载缓慢或失败时，整理问题信息（URL、错误日志）后寻求帮助
