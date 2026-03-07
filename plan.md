@@ -289,7 +289,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] P1/P2大部分torch已装,6个模型权重完成,其余下载中/待重启 | model.md 补充状态列 |
 | Phase 3 | 素材收集与 input.md | [x] 用户已完成人工筛选 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [~] 进行中（LiveTalk 9/12，StableAvatar 2/12） | output/ 目录 |
+| Phase 4 | 推理生成 | [~] 进行中（EchoMimic v2 12/12✅, LiveTalk 11/12, SA 8/12, Hallo3 3/10） | output/ 目录 |
 
 ---
 
