@@ -661,3 +661,22 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 
 ### 遇到的问题与解决方法
 1. 远程 shell 会对 Markdown 中的反引号路径做命令替换，首次直接写入失败；改为在 Python 中用 chr(96) 构造反引号后再写入，避免 zsh 解析。
+
+---
+
+## 2026-03-07 16:50
+
+### 任务内容
+1. 将本地人工筛选后的 Phase 4 测试素材同步到远程 `input/audio/filtered/` 与 `input/avatar_img/filtered/` 目录。
+2. 更新 `plan.md` 的 Phase 4 执行规范，收敛正式测试条件为最多 4 组固定素材组合。
+3. 更新 `input.md` 中的 Condition 定义，改为使用 `filtered` 目录中的人工筛选素材作为统一基线。
+
+### 结果与效果
+1. 已同步远程音频素材：`input/audio/filtered/long/` 下 3 条、`input/audio/filtered/short/` 下 5 条。
+2. 已同步远程图片素材：`input/avatar_img/filtered/full_body/` 下 5 张、`input/avatar_img/filtered/half_body/` 下 5 张。
+3. Phase 4 正式测试条件已统一为 4 组：`C_half_short`、`C_half_long`、`C_full_short`、`C_full_long`。
+4. `plan.md` 与 `input.md` 已对齐，后续各模型横评默认以这 4 组素材组合作为标准输入。
+
+### 遇到的问题与解决方法
+1. 首次 `rsync` 复用了旧的 SSH 控制连接，导致同步过程出现卡顿；改用 `ssh -S none` 禁用控制连接复用后，素材同步完成。
+

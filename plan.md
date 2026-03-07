@@ -254,28 +254,35 @@ autodl-tmp/avatar-benchmark/input/
 
 ## Phase 4：推理生成与输出管理
 
-**前置条件**：用户已检查并确认 Phase 3 的素材收集质量
+**前置条件**：用户已完成人工筛选，`input/audio/filtered/` 与 `input/avatar_img/filtered/` 已同步到远程服务器
 
-**目标**：对每个已验证可运行的模型，使用 input.md 中的标准 Condition 进行推理，输出视频统一存放。
+**目标**：对每个已验证可运行的模型，按 input.md 中定义的 4 组标准 Condition 进行正式推理；每个模型最多输出 4 组结果，分别覆盖半身/全身与短时/长时。
 
 ### 4.1 输出目录结构
 
 ```
 autodl-tmp/avatar-benchmark/output/
 └── {model_name}/
-    ├── C001_5s.mp4
-    ├── C001_30s.mp4
-    ├── C001_3m.mp4
-    └── config.json      # 推理参数配置（steps、resolution、seed 等）
+    ├── C_half_short.mp4
+    ├── C_half_long.mp4
+    ├── C_full_short.mp4
+    ├── C_full_long.mp4
+    ├── config.json      # 推理参数配置（steps、resolution、seed 等）
+    └── results.md       # 每个 Condition 的命令、素材、结果与报错记录
 ```
 
 ### 4.2 推理规范
 
-- 每个模型使用与其能力匹配的 Condition（image+audio->video / text+image->video / text->video）
-- 时长测试范围根据模型支持能力确定（参照 Phase 3 § 3.3 的档位规则）
-- 同类型模型尽量使用完全相同的 Condition 组合，便于横向对比
-- 记录每次推理的参数配置（steps、resolution、seed 等）到 `output/{model_name}/config.json`
-- 在 `output/{model_name}/results.md` 中持续记录：①每个 Condition 实际运行的完整脚本命令；②使用的素材路径和 config 参数；③产出结果路径；④失败经验与解决方法（含报错信息和修复步骤）
+- 本轮 Phase 4 统一只使用 `filtered` 目录中的人工筛选素材，路径以 `input/audio/filtered/` 和 `input/avatar_img/filtered/` 为准。
+- 标准 Condition 固定为 4 组：
+  - `C_half_short`：`input/audio/filtered/short/EM2_no_smoking.wav` + `input/avatar_img/filtered/half_body/13.png`
+  - `C_half_long`：`input/audio/filtered/long/A001.wav` + `input/avatar_img/filtered/half_body/2.png`
+  - `C_full_short`：`input/audio/filtered/short/S002_adele.wav` + `input/avatar_img/filtered/full_body/1.png`
+  - `C_full_long`：`input/audio/filtered/long/MT_eng.wav` + `input/avatar_img/filtered/full_body/3.png`
+- 每个模型最多测试上述 4 组组合，不再按 Phase 3 的 5s/10s/30s/1min/3min/5min 全档位铺开。
+- 若模型不支持长时、全身或 audio-driven，只执行能力范围内可运行的子集，并在 `output/{model_name}/results.md` 中明确记录跳过原因。
+- 同类型模型优先保持完全一致的 Condition 组合，便于横向对比。
+- 每次推理都要将实际命令、素材路径、config 参数、输出路径、失败经验与解决方法同步记录到 `output/{model_name}/results.md`。
 
 ### 4.3 评估维度（人工评估）
 
@@ -287,7 +294,7 @@ autodl-tmp/avatar-benchmark/output/
 | 面部神态丰富度 | 表情变化是否自然、多样 |
 | 全身动作丰富度 | 身体动作是否自然、与内容匹配 |
 
-**任务状态**：[ ] 待用户确认素材后执行
+**任务状态**：[ ] 标准 4 组筛选素材已确认，待按新 Condition 执行
 
 ---
 
@@ -298,8 +305,8 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] 12/21模型环境+权重完成,可推理测试;9个权重不完整 | model.md 第五节 |
-| Phase 3 | 素材收集与 input.md | [x] 用户已完成人工筛选 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [~] 进行中（EM2 12/12✅, LT 11/12, SA 8/12, H3 3/10, Ovi 1/1✅） | output/ 目录 |
+| Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
+| Phase 4 | 推理生成 | [ ] 标准 4 组 Condition 已确定，待按新组合执行 | output/ 目录 |
 
 ---
 
