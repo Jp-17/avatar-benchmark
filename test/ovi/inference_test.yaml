@@ -1,0 +1,20 @@
+ckpt_dir: /root/autodl-tmp/avatar-benchmark/models/Ovi/ckpts
+output_dir: /root/autodl-tmp/avatar-benchmark/test/ovi/output
+sample_steps: 30
+solver_name: unipc
+model_name: "960x960_10s"
+shift: 5.0
+sp_size: 1
+audio_guidance_scale: 3.0
+video_guidance_scale: 4.0
+mode: "i2v"
+fp8: False
+cpu_offload: True
+qint8: True
+seed: 42
+video_negative_prompt: "jitter, bad hands, blur, distortion"
+audio_negative_prompt: "robotic, muffled, echo, distorted"
+video_frame_height_width: [960, 960]
+text_prompt: /root/autodl-tmp/avatar-benchmark/test/ovi/test_prompt.csv
+slg_layer: 11
+each_example_n_times: 1
