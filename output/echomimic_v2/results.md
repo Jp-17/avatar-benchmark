@@ -99,3 +99,24 @@ Pose 序列统一使用：（336 帧 npy 文件）
 | C_sing_en | pending | — | — |
 
 *最后更新：2026-03-06*
+
+## Phase 4 产出结果（更新：2026-03-07）
+
+| Condition | 状态 | 输出路径 | 文件大小 | 完成时间 | 备注 |
+|-----------|------|---------|---------|---------|------|
+| C_zh_5s   | ✅ done | output/echomimic_v2/C_zh_5s.mp4   | 745 KB | 2026-03-06 22:16 | 5s |
+| C_zh_10s  | ✅ done | output/echomimic_v2/C_zh_10s.mp4  | 1.5 MB | 2026-03-06 22:22 | 10s |
+| C_zh_30s  | ✅ done | output/echomimic_v2/C_zh_30s.mp4  | 2.1 MB | 2026-03-06 22:28 | 14s（pose上限） |
+| C_zh_1m   | ✅ done | output/echomimic_v2/C_zh_1m.mp4   | 2.1 MB | 2026-03-06 22:34 | 14s（pose上限） |
+| C_en_5s   | ✅ done | output/echomimic_v2/C_en_5s.mp4   | 746 KB | 2026-03-06 22:36 | 5s |
+| C_en_10s  | ✅ done | output/echomimic_v2/C_en_10s.mp4  | 1.5 MB | 2026-03-06 22:41 | 10s |
+| C_en_30s  | ✅ done | output/echomimic_v2/C_en_30s.mp4  | 2.1 MB | 2026-03-06 22:48 | 14s（pose上限） |
+| C_en_1m   | ✅ done | output/echomimic_v2/C_en_1m.mp4   | 2.1 MB | 2026-03-06 22:54 | 14s（pose上限） |
+| C_en_3m   | ✅ done | output/echomimic_v2/C_en_3m.mp4   | 2.1 MB | 2026-03-06 23:01 | 14s（pose上限） |
+| C_en_5m   | ✅ done | output/echomimic_v2/C_en_5m.mp4   | 2.1 MB | 2026-03-06 23:07 | 14s（pose上限） |
+| C_sing_zh | ✅ done | output/echomimic_v2/C_sing_zh.mp4 | 1.5 MB | 2026-03-06 23:12 | 10s |
+| C_sing_en | ✅ done | output/echomimic_v2/C_sing_en.mp4 | 1.3 MB | 2026-03-06 23:16 | 8.6s |
+
+**当前完成度：12/12 ✅ 全部完成**
+
+注：受 pose 序列长度限制（336帧@24fps=14s），所有超过14s的条件均输出14s视频。

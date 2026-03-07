@@ -117,3 +117,22 @@ conda run --no-capture-output -p /root/autodl-tmp/envs/livetalk-env \
 | C_sing_en | retry   | output/livetalk/C_sing_en.mp4 | ~8s  | — |
 
 *最后更新：2026-03-06*
+
+## Phase 4 产出结果（更新：2026-03-07）
+
+| Condition | 状态 | 输出路径 | 文件大小 | 完成时间 |
+|-----------|------|---------|---------|---------|
+| C_zh_5s   | ✅ done  | output/livetalk/C_zh_5s.mp4   | 711 KB | 2026-03-06 18:20 |
+| C_zh_10s  | ✅ done  | output/livetalk/C_zh_10s.mp4  | 1.5 MB | 2026-03-06 18:29 |
+| C_zh_30s  | ✅ done  | output/livetalk/C_zh_30s.mp4  | 4.6 MB | 2026-03-06 18:31 |
+| C_zh_1m   | ✅ done  | output/livetalk/C_zh_1m.mp4   | 9.4 MB | 2026-03-06 18:33 |
+| C_en_5s   | ✅ done  | output/livetalk/C_en_5s.mp4   | 745 KB | 2026-03-06 18:35 |
+| C_en_10s  | ✅ done  | output/livetalk/C_en_10s.mp4  | 1.5 MB | 2026-03-06 18:37 |
+| C_en_30s  | ✅ done  | output/livetalk/C_en_30s.mp4  | 4.3 MB | 2026-03-06 18:40 |
+| C_en_1m   | ✅ done  | output/livetalk/C_en_1m.mp4   | 9.0 MB | 2026-03-06 18:44 |
+| C_en_3m   | ✅ done  | output/livetalk/C_en_3m.mp4   | 31 MB  | 2026-03-06 18:51 |
+| C_en_5m   | ⏸ 未完成 | — | — | 多次因其他模型占 GPU 中断，待单独重试 |
+| C_sing_zh | ✅ done  | output/livetalk/C_sing_zh.mp4 | 1.4 MB | 2026-03-06 19:30 |
+| C_sing_en | ✅ done  | output/livetalk/C_sing_en.mp4 | 1.1 MB | 2026-03-06 19:32 |
+
+**当前完成度：11/12（缺 C_en_5m）**

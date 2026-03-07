@@ -104,3 +104,22 @@ singing prompt: "A person singing naturally with expressive facial animations an
 | C_sing_en | pending | — | — | — |
 
 *最后更新：2026-03-06*
+
+## Phase 4 产出结果（更新：2026-03-07）
+
+| Condition | 状态 | 输出路径 | 文件大小 | 完成时间 |
+|-----------|------|---------|---------|---------|
+| C_zh_5s   | ✅ done  | output/stableavatar/C_zh_5s.mp4   | 475 KB | 2026-03-06 18:47 |
+| C_zh_10s  | ✅ done  | output/stableavatar/C_zh_10s.mp4  | 969 KB | 2026-03-06 19:04 |
+| C_zh_30s  | ✅ done  | output/stableavatar/C_zh_30s.mp4  | 3.3 MB | 2026-03-06 19:41 |
+| C_zh_1m   | ✅ done  | output/stableavatar/C_zh_1m.mp4   | 6.7 MB | 2026-03-06 20:41 |
+| C_en_5s   | ✅ done  | output/stableavatar/C_en_5s.mp4   | 427 KB | 2026-03-06 20:46 |
+| C_en_10s  | ✅ done  | output/stableavatar/C_en_10s.mp4  | 929 KB | 2026-03-06 20:57 |
+| C_en_30s  | ✅ done  | output/stableavatar/C_en_30s.mp4  | 3.0 MB | 2026-03-06 21:27 |
+| C_en_1m   | ✅ done  | output/stableavatar/C_en_1m.mp4   | 6.3 MB | 2026-03-06 22:33 |
+| C_en_3m   | ❌ OOM  | — | — | Hallo3(54.6GB)+SA 加载超出 80GB |
+| C_en_5m   | ⏸ 中止  | — | — | 运行至 step 30/50 时中止 |
+| C_sing_zh | ⏸ 未运行 | — | — | — |
+| C_sing_en | ⏸ 未运行 | — | — | — |
+
+**当前完成度：8/12**
