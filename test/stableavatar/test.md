@@ -69,3 +69,45 @@ conda run --no-capture-output -p /root/autodl-tmp/envs/stableavatar-env \
 - 3分钟音频正在测试中（GPU 上当前运行进程）
 
 *最后更新：2026-03-06*
+
+---
+
+## Phase 2 最小推理验证（2026-03-07）
+
+### 基本信息
+- 模型名称：StableAvatar
+- 当前状态：✅ 已通过
+- 环境：stableavatar-env
+- 脚本路径：/root/autodl-tmp/avatar-benchmark/test/stableavatar/test_stableavatar.sh
+- 日志路径：/root/autodl-tmp/avatar-benchmark/test/stableavatar/output/stableavatar_minimal.log
+- 是否完成 Phase 4：无
+
+### 固定输入素材
+- 图片：test/stableavatar/input/I013.png
+- 音频：test/stableavatar/input/A007_5s.wav
+- 文本：test/stableavatar/input/P011.txt
+- 输出目录：test/stableavatar/output/
+
+### 运行资源与时间
+- 运行时间：344 秒
+- 说明：本节仅记录 Phase 2 的最小素材推理验证，不代表 Phase 4 正式横评已启动。
+
+### 实际运行命令
+- 启动命令：bash /root/autodl-tmp/avatar-benchmark/test/stableavatar/test_stableavatar.sh
+- 核心推理命令：
+
+    /root/miniconda3/bin/conda run --no-capture-output -p "$ENV" env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 python inference.py --config_path=deepspeed_config/wan2.1/wan_civitai.yaml --pretrained_model_name_or_path=weights/StableAvatar/Wan2.1-Fun-V1.1-1.3B-InP --transformer_path=weights/StableAvatar/StableAvatar-1.3B/transformer3d-square.pt --pretrained_wav2vec_path=weights/StableAvatar/wav2vec2-base-960h --validation_reference_path="$IMG" --validation_driven_audio_path="$AUDIO" --output_dir="$TMP_DIR" --validation_prompts "$PROMPT" --seed=42 --motion_frame=25 --sample_steps=50 --width=512 --height=512 --overlap_window_length=5 --clip_sample_n_frames=81 --GPU_memory_mode=model_full_load --sample_text_guide_scale=3.0 --sample_audio_guide_scale=5.0 >> "$LOG" 2>&1
+
+### 运行配置与素材要求
+- 固定素材来自 test/stableavatar/input/，图片统一为 half_body/I013.png，音频统一为 A007_5s.wav。
+- 若脚本读取文本 prompt，则统一使用 P011.txt。
+- 关键参数、config 路径、分辨率、帧数、step 等配置以脚本中的核心推理命令为准。
+
+### 当前输出
+- /root/autodl-tmp/avatar-benchmark/test/stableavatar/output/stableavatar_minimal.mp4
+
+### 遇到的问题
+- 最小推理已通过；历史长时长 Phase 4 批测曾出现 C_en_3m OOM，但不影响最小链路。
+
+### 解决方案
+- 本轮仅保留固定 1 组最小素材验证，避免混淆 Phase 2 与 Phase 4 状态。

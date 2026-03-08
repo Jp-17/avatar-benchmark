@@ -1,64 +1,0 @@
-[2026-03-07 10:37:43,880] INFO: Using SP: False, SP_SIZE: 1
-[2026-03-07 10:37:43,881] INFO: Loading OVI Fusion Engine...
-[2026-03-07 10:37:43,882] INFO: CPU offloading is enabled. Initializing all models aside from VAEs on CPU
-Score model (Fusion) all parameters:11660753108
-[2026-03-07 10:37:44,354] INFO: loading /root/autodl-tmp/avatar-benchmark/models/Ovi/ckpts/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
-[2026-03-07 10:37:44,354] WARNING: /root/autodl-tmp/avatar-benchmark/models/Ovi/ovi/modules/vae2_2.py:883: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
-  torch.load(pretrained_path, map_location=device), assign=True)
-
-Removing weight norm...
-[2026-03-07 10:38:53,266] INFO: loading /root/autodl-tmp/avatar-benchmark/models/Ovi/ckpts/Wan2.2-TI2V-5B/models_t5_umt5-xxl-enc-bf16.pth
-[2026-03-07 10:38:53,267] WARNING: /root/autodl-tmp/avatar-benchmark/models/Ovi/ovi/modules/t5.py:497: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
-  model.load_state_dict(torch.load(checkpoint_path, map_location='cpu'))
-
-Successfully loaded fusion checkpoint from /root/autodl-tmp/avatar-benchmark/models/Ovi/ckpts/Ovi/model_960x960_10s.safetensors
-[2026-03-07 10:39:48,455] INFO: OVI Fusion Engine initialized, cpu_offload=True. GPU VRAM allocated: 1.99 GB, reserved: 2.28 GB
-[2026-03-07 10:39:48,455] INFO: OVI Fusion Engine loaded!
-0it [00:00, ?it/s][2026-03-07 10:39:48,457] INFO: 
-========== Generation Parameters ==========
-             Text Prompt: A woman is speaking to the camera with a warm smile. She says <S>Hello everyone, welcome to our channel. Today I want to share something amazing with you.<E> Audio: Clear, friendly female voice speaking with enthusiasm, slight room ambience.
-              Image Path: /root/autodl-tmp/avatar-benchmark/test/ovi/input/I001.png
-      Frame Height Width: [960, 960]
-                    Seed: 42
-                  Solver: unipc
-            Sample Steps: 30
-                   Shift: 5.0
-    Video Guidance Scale: 4.0
-    Audio Guidance Scale: 3.0
-               SLG Layer: 11
-   Video Negative Prompt: jitter, bad hands, blur, distortion
-   Audio Negative Prompt: robotic, muffled, echo, distorted
-==========================================
-
-0it [00:00, ?it/s][A
-1it [00:20, 20.21s/it][A
-2it [00:40, 20.19s/it][A
-3it [01:00, 20.24s/it][A
-4it [01:21, 20.30s/it][A
-5it [01:41, 20.34s/it][A
-6it [02:01, 20.37s/it][A
-7it [02:22, 20.39s/it][A
-8it [02:42, 20.43s/it][A
-9it [03:03, 20.47s/it][A
-10it [03:23, 20.48s/it][A
-11it [03:44, 20.49s/it][A
-12it [04:04, 20.50s/it][A
-13it [04:25, 20.51s/it][A
-14it [04:45, 20.50s/it][A
-15it [05:06, 20.50s/it][A
-16it [05:26, 20.50s/it][A
-17it [05:47, 20.49s/it][A
-18it [06:07, 20.50s/it][A
-19it [06:28, 20.50s/it][A
-20it [06:48, 20.49s/it][A
-21it [07:09, 20.49s/it][A
-22it [07:29, 20.50s/it][A
-23it [07:50, 20.50s/it][A
-24it [08:10, 20.49s/it][A
-25it [08:31, 20.49s/it][A
-26it [08:51, 20.49s/it][A
-27it [09:12, 20.48s/it][A
-28it [09:32, 20.48s/it][A
-29it [09:53, 20.47s/it][A
-30it [10:13, 20.46s/it][A30it [10:13, 20.46s/it]
-1it [12:11, 731.06s/it]1it [12:11, 731.06s/it]

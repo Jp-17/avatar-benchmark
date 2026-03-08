@@ -29,3 +29,13 @@ output/*/*_tmp/
 output/*/animated_images/
 !output/*/results.md
 !output/*/config.json
+
+# 生成产物与测试临时文件
+output/*/*.log
+output/*/*.nohup.log
+output/*/logs/
+test/**/output/
+test/**/*.nohup.log
+test/**/*.log
+test/**/*.status
+test/shared_pydeps/

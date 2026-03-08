@@ -101,3 +101,45 @@ Pose 序列统一使用：（336 帧 npy 文件）
 **12/12 全部完成** - 注意超过14s的条件因pose帧上限被截断为14s。
 
 *最后更新：2026-03-07*
+
+---
+
+## Phase 2 最小推理验证（2026-03-07）
+
+### 基本信息
+- 模型名称：EchoMimic v2
+- 当前状态：✅ 已通过
+- 环境：echomimic2-env
+- 脚本路径：/root/autodl-tmp/avatar-benchmark/test/echomimic_v2/test_echomimic_v2.sh
+- 日志路径：/root/autodl-tmp/avatar-benchmark/test/echomimic_v2/output/echomimic_v2_minimal.log
+- 是否完成 Phase 4：无
+
+### 固定输入素材
+- 图片：test/echomimic_v2/input/I013.png
+- 音频：test/echomimic_v2/input/A007_5s.wav
+- 文本：无
+- 输出目录：test/echomimic_v2/output/
+
+### 运行资源与时间
+- 运行时间：93 秒
+- 说明：本节仅记录 Phase 2 的最小素材推理验证，不代表 Phase 4 正式横评已启动。
+
+### 实际运行命令
+- 启动命令：bash /root/autodl-tmp/avatar-benchmark/test/echomimic_v2/test_echomimic_v2.sh
+- 核心推理命令：
+
+    /root/miniconda3/bin/conda run --no-capture-output -p "$ENV" python infer_acc.py --config "$CONFIG" -W 768 -H 768 -L 120 --seed 420 --steps 6 --fps 24 >> "$LOG" 2>&1
+
+### 运行配置与素材要求
+- 固定素材来自 test/echomimic_v2/input/，图片统一为 half_body/I013.png，音频统一为 A007_5s.wav。
+- 若脚本读取文本 prompt，则统一使用 P011.txt。
+- 关键参数、config 路径、分辨率、帧数、step 等配置以脚本中的核心推理命令为准。
+
+### 当前输出
+- /root/autodl-tmp/avatar-benchmark/test/echomimic_v2/output/echomimic_v2_minimal.mp4
+
+### 遇到的问题
+- 已按最小素材规范单独生成一轮验证输出。
+
+### 解决方案
+- 当前最小链路可直接复用 test/echomimic_v2/test_echomimic_v2.sh。

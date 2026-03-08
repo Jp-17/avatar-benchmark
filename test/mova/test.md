@@ -50,3 +50,45 @@ torchrun --nproc_per_node=1 scripts/inference_single.py \
 - 预计单次推理总时间：~35-45分钟（无竞争时）
 
 *最后更新: 2026-03-07*
+
+---
+
+## Phase 2 最小推理验证（2026-03-07）
+
+### 基本信息
+- 模型名称：MOVA
+- 当前状态：✅ 已通过
+- 环境：mova-env (venv)
+- 脚本路径：/root/autodl-tmp/avatar-benchmark/test/mova/test_mova.sh
+- 日志路径：/root/autodl-tmp/avatar-benchmark/test/mova/output/mova_minimal.log
+- 是否完成 Phase 4：无
+
+### 固定输入素材
+- 图片：test/mova/input/I013.png
+- 音频：test/mova/input/A007_5s.wav
+- 文本：test/mova/input/P011.txt
+- 输出目录：test/mova/output/
+
+### 运行资源与时间
+- 运行时间：413 秒
+- 说明：本节仅记录 Phase 2 的最小素材推理验证，不代表 Phase 4 正式横评已启动。
+
+### 实际运行命令
+- 启动命令：bash /root/autodl-tmp/avatar-benchmark/test/mova/test_mova.sh
+- 核心推理命令：
+
+    torchrun --nproc_per_node=1 scripts/inference_single.py --ckpt_path "$CKPT" --cp_size 1 --height 352 --width 640 --num_frames 97 --num_inference_steps 30 --prompt "$PROMPT" --ref_path "$IMG" --output_path "$OUT_MP4" --offload cpu --remove_video_dit --seed 42 >> "$LOG" 2>&1
+
+### 运行配置与素材要求
+- 固定素材来自 test/mova/input/，图片统一为 half_body/I013.png，音频统一为 A007_5s.wav。
+- 若脚本读取文本 prompt，则统一使用 P011.txt。
+- 关键参数、config 路径、分辨率、帧数、step 等配置以脚本中的核心推理命令为准。
+
+### 当前输出
+- /root/autodl-tmp/avatar-benchmark/test/mova/output/mova_minimal.mp4
+
+### 遇到的问题
+- 当前脚本固定输出 640x352，且代码会先 center crop 再 resize，因此正方形输入会被裁成横屏比例。
+
+### 解决方案
+- 后续需改成更合适的输出尺寸，再重跑一轮最小素材验证，避免只保留画面下半部分。

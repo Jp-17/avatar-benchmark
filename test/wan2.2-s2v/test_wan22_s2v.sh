@@ -1,14 +1,21 @@
 #!/bin/bash
-set -e
-echo "[$(date)] Starting Wan2.2-S2V inference test"
-cd /root/autodl-tmp/avatar-benchmark/models/Wan2.2
-
+set -euo pipefail
+TEST_DIR=/root/autodl-tmp/avatar-benchmark/test/wan2.2-s2v
+MODEL_DIR=/root/autodl-tmp/avatar-benchmark/models/Wan2.2
+ENV=/root/autodl-tmp/envs/wan2.2-env
+OUTPUT_DIR=$TEST_DIR/output
+LOG=$OUTPUT_DIR/wan2.2_s2v_minimal.log
+OUT_MP4=$OUTPUT_DIR/wan2.2_s2v_minimal.mp4
 CKPT=/root/autodl-tmp/avatar-benchmark/models/Wan2.2/weights/Wan2.2-S2V-14B
-IMG=/root/autodl-tmp/avatar-benchmark/input/avatar_img/half_body/I001.png
-AUDIO=/root/autodl-tmp/avatar-benchmark/input/audio/trimmed/A007_5s.wav
-OUTPUT=/root/autodl-tmp/avatar-benchmark/test/wan2.2-s2v/output/test_output.mp4
-
-conda run --no-capture-output -p /root/autodl-tmp/envs/wan2.2-env     env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0     python generate.py     --task s2v-14B     --size 704*384     --ckpt_dir $CKPT     --offload_model True     --convert_model_dtype     --prompt "A person speaking directly to the camera with natural facial expressions and synchronized lip movements."     --image $IMG     --audio $AUDIO     --save_file $OUTPUT     --num_clip 1
-
-echo "[$(date)] Wan2.2-S2V inference done"
-ls -lh $OUTPUT
+IMG=$TEST_DIR/input/I013.png
+AUDIO=$TEST_DIR/input/A007_5s.wav
+PROMPT_FILE=$TEST_DIR/input/P011.txt
+PROMPT=$(/root/miniconda3/bin/python -c "from pathlib import Path; print(Path('$PROMPT_FILE').read_text(encoding='utf-8').strip())")
+mkdir -p "$OUTPUT_DIR"
+rm -f "$OUT_MP4" "$LOG"
+cd "$MODEL_DIR"
+START_TS=$(date +%s)
+/root/miniconda3/bin/conda run --no-capture-output -p "$ENV" env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 python generate.py --task s2v-14B --size 832*480 --ckpt_dir "$CKPT" --offload_model True --convert_model_dtype --prompt "$PROMPT" --image "$IMG" --audio "$AUDIO" --save_file "$OUT_MP4" --num_clip 1 >> "$LOG" 2>&1
+END_TS=$(date +%s)
+echo "runtime_seconds=$((END_TS-START_TS))" >> "$LOG"
+ls -lh "$OUT_MP4"

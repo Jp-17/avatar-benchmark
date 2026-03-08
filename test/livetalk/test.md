@@ -117,3 +117,45 @@ conda run --no-capture-output -p /root/autodl-tmp/envs/livetalk-env \
 | C_sing_en | done    | output/livetalk/C_sing_en.mp4 | ~8s   | 1.1MB |
 
 *最后更新：2026-03-06*
+
+---
+
+## Phase 2 最小推理验证（2026-03-07）
+
+### 基本信息
+- 模型名称：LiveTalk
+- 当前状态：✅ 已通过
+- 环境：livetalk-env
+- 脚本路径：/root/autodl-tmp/avatar-benchmark/test/livetalk/test_livetalk.sh
+- 日志路径：/root/autodl-tmp/avatar-benchmark/test/livetalk/output/livetalk_minimal.log
+- 是否完成 Phase 4：无
+
+### 固定输入素材
+- 图片：test/livetalk/input/I013.png
+- 音频：test/livetalk/input/A007_5s.wav
+- 文本：test/livetalk/input/P011.txt
+- 输出目录：test/livetalk/output/
+
+### 运行资源与时间
+- 运行时间：101 秒
+- 说明：本节仅记录 Phase 2 的最小素材推理验证，不代表 Phase 4 正式横评已启动。
+
+### 实际运行命令
+- 启动命令：bash /root/autodl-tmp/avatar-benchmark/test/livetalk/test_livetalk.sh
+- 核心推理命令：
+
+    /root/miniconda3/bin/conda run --no-capture-output -p "$ENV" env PYTHONPATH=$MODEL_DIR:$MODEL_DIR/OmniAvatar CUDA_VISIBLE_DEVICES=0 python scripts/inference_example.py --config "$CONFIG" >> "$LOG" 2>&1
+
+### 运行配置与素材要求
+- 固定素材来自 test/livetalk/input/，图片统一为 half_body/I013.png，音频统一为 A007_5s.wav。
+- 若脚本读取文本 prompt，则统一使用 P011.txt。
+- 关键参数、config 路径、分辨率、帧数、step 等配置以脚本中的核心推理命令为准。
+
+### 当前输出
+- /root/autodl-tmp/avatar-benchmark/test/livetalk/output/livetalk_minimal.mp4
+
+### 遇到的问题
+- 最小推理已通过；历史长时长测试受 frame_seq_length 限制。
+
+### 解决方案
+- 最小验证使用固定 5 秒音频，不触发长时长限制。

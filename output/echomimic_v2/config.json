@@ -1,0 +1,30 @@
+{
+  "model": "echomimic_v2",
+  "phase": "Phase 4",
+  "resolution": {
+    "width": 768,
+    "height": 768
+  },
+  "fps": 24,
+  "steps": 6,
+  "seed": 420,
+  "pose_dir": "./assets/halfbody_demo/pose/01/",
+  "conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav"
+    },
+    "C_half_long": {
+      "image": "input/avatar_img/filtered/half_body/2.png",
+      "audio": "input/audio/filtered/long/A001.wav"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav"
+    },
+    "C_full_long": {
+      "image": "input/avatar_img/filtered/full_body/3.png",
+      "audio": "input/audio/filtered/long/MT_eng.wav"
+    }
+  }
+}

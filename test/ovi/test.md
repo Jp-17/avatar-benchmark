@@ -61,3 +61,45 @@ seed: 42
 - 可尝试 fp8: True 替代 qint8 看是否兼容
 
 *最后更新: 2026-03-07*
+
+---
+
+## Phase 2 最小推理验证（2026-03-07）
+
+### 基本信息
+- 模型名称：Ovi
+- 当前状态：✅ 已通过
+- 环境：ovi-env
+- 脚本路径：/root/autodl-tmp/avatar-benchmark/test/ovi/test_ovi.sh
+- 日志路径：/root/autodl-tmp/avatar-benchmark/test/ovi/output/ovi_minimal.log
+- 是否完成 Phase 4：无
+
+### 固定输入素材
+- 图片：test/ovi/input/I013.png
+- 音频：test/ovi/input/A007_5s.wav
+- 文本：test/ovi/input/P011.txt
+- 输出目录：test/ovi/output/
+
+### 运行资源与时间
+- 运行时间：846 秒
+- 说明：本节仅记录 Phase 2 的最小素材推理验证，不代表 Phase 4 正式横评已启动。
+
+### 实际运行命令
+- 启动命令：bash /root/autodl-tmp/avatar-benchmark/test/ovi/test_ovi.sh
+- 核心推理命令：
+
+    python inference.py --config-file "$CONFIG" >> "$LOG" 2>&1
+
+### 运行配置与素材要求
+- 固定素材来自 test/ovi/input/，图片统一为 half_body/I013.png，音频统一为 A007_5s.wav。
+- 若脚本读取文本 prompt，则统一使用 P011.txt。
+- 关键参数、config 路径、分辨率、帧数、step 等配置以脚本中的核心推理命令为准。
+
+### 当前输出
+- /root/autodl-tmp/avatar-benchmark/test/ovi/output/ovi_minimal.mp4
+
+### 遇到的问题
+- 最小推理采用 qint8 + cpu_offload 路径，以降低显存占用。
+
+### 解决方案
+- 保留最小素材和固定配置，验证单卡 A800 上的基础推理链路。
