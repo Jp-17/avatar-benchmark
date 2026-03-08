@@ -283,7 +283,7 @@ autodl-tmp/avatar-benchmark/output/
 - 模型执行 Phase 4 正式推理时，可优先参考该模型在 Phase 2 最小素材测试阶段沉淀的可运行命令、环境变量、依赖补丁与避坑经验，相关记录统一查看 test/{model_name}/ 下的脚本与说明文件。
 - 若模型不支持长时、全身或 audio-driven，只执行能力范围内可运行的子集，并在 `output/{model_name}/results.md` 中明确记录跳过原因。
 - 同类型模型优先保持完全一致的 Condition 组合，便于横向对比。
-- 每次推理都要将实际命令、素材路径、config 参数、输出路径、失败经验与解决方法同步记录到 `output/{model_name}/results.md`。
+- 每次推理都要将实际命令、素材路径、config 参数、输出路径、每个 Condition 组合测试时的显存占用、推理生成时间，以及失败经验与解决方法同步记录到 `output/{model_name}/results.md`。
 
 ### 4.3 评估维度（人工评估）
 
