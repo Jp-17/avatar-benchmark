@@ -1,0 +1,25 @@
+{
+  "model": "ovi",
+  "phase": "Phase 4",
+  "resolution": {"width": 960, "height": 960},
+  "sample_steps": 30,
+  "solver_name": "unipc",
+  "model_name": "960x960_10s",
+  "cpu_offload": true,
+  "qint8": true,
+  "seed": 42,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "Ovi 当前稳定路径为 960x960_10s 固定短视频配置，不支持按 filtered 长音频扩展。",
+    "C_full_long": "Ovi 当前稳定路径为 960x960_10s 固定短视频配置，不支持按 filtered 长音频扩展。"
+  }
+}
