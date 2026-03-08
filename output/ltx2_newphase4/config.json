@@ -1,0 +1,25 @@
+{
+  "model": "ltx2",
+  "phase": "Phase 4",
+  "resolution": {"width": 512, "height": 512},
+  "num_frames": 121,
+  "frame_rate": 24,
+  "seed": 42,
+  "lora_strength": 0.0,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。",
+    "C_full_long": "LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。"
+  }
+}

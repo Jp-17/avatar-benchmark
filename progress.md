@@ -1143,3 +1143,18 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 
 ### 遇到的问题与解决方法
 1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
+
+## 2026-03-08 16:52
+
+### 任务内容
+1. 按 plan.md Phase 4 的 filtered 条件完成 LTX-2 的正式推理。
+2. 参考 test/ltx2/run_phase4_filtered.sh 与对应 test.md 中的最小素材测试经验，沿用已验证命令、环境变量、依赖补丁与避坑方案。
+3. 按最新 4.2 规范补充 output/ltx2_newphase4/results.md，记录每个 Condition 的命令、素材、显存峰值、推理生成时间与输出路径。
+
+### 结果与效果
+1. LTX-2 已完成支持子集的 Phase 4 条件，完成项：C_half_short、C_full_short；跳过项：C_half_long、C_full_long。
+2. 结果明细：C_half_long 跳过（LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。）；C_full_long 跳过（LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。）；C_half_short 72809 MB / 85 秒 / /root/autodl-tmp/avatar-benchmark/output/ltx2_newphase4/C_half_short.mp4；C_full_short 72807 MB / 66 秒 / /root/autodl-tmp/avatar-benchmark/output/ltx2_newphase4/C_full_short.mp4。
+3. model.md 已同步更新当前模型的 Phase 4 状态，后续可直接按同一记录格式推进下一个模型。
+
+### 遇到的问题与解决方法
+1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
