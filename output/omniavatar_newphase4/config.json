@@ -1,0 +1,24 @@
+{
+  "model": "omniavatar",
+  "phase": "Phase 4",
+  "config": "configs/inference.yaml",
+  "dtype": "bf16(default from config)",
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_text": "A person speaking directly to the camera with natural facial expressions, synchronized lip movements, and gentle upper-body motion.",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_text": "A person singing naturally to the camera with expressive facial animation, rhythmic motion, and strong performance energy.",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "参考 test/omniavatar/test.md，当前稳定路径只验证到短时单条输入；长音频链路单 case 耗时已接近 1 小时，暂不扩展。",
+    "C_full_long": "参考 test/omniavatar/test.md，当前稳定路径只验证到短时单条输入；长音频链路单 case 耗时已接近 1 小时，暂不扩展。"
+  }
+}

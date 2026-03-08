@@ -5,17 +5,17 @@
 - 执行脚本：test/ltx2/run_phase4_filtered.sh
 - 配置文件：output/ltx2_newphase4/config.json
 - 输出目录：output/ltx2_newphase4/
-- 说明：参考 test/ltx2/test.md 的最小素材测试经验，沿用去掉 fp8-cast、LoRA 强度 0.0 的固定短帧稳定路径，只执行短时子集。
+- 说明：参考 test/ltx2/test.md 的最小素材测试经验，沿用去掉 fp8-cast、LoRA 强度 0.0 的固定 121 帧稳定路径，只执行短时子集；理论上可继续尝试更长序列，但当前稳定脚本未做长时验证。
 
 ## Condition 明细
 
 ### C_half_long
 - 状态：⏭️ skipped
-- 跳过原因：LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。
+- 跳过原因：当前稳定脚本固定为 121 帧短视频；理论上可继续调长，但尚未完成与最小测试一致的长时验证。
 
 ### C_full_long
 - 状态：⏭️ skipped
-- 跳过原因：LTX-2 当前稳定路径是固定 121 帧短视频，不扩展到长时。
+- 跳过原因：当前稳定脚本固定为 121 帧短视频；理论上可继续调长，但尚未完成与最小测试一致的长时验证。
 
 ### C_half_short
 - 状态：✅ done

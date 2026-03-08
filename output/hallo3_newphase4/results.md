@@ -5,7 +5,7 @@
 - 执行脚本：test/hallo3/run_phase4_filtered.sh
 - 配置文件：output/hallo3_newphase4/config.json
 - 输出目录：output/hallo3_newphase4/
-- 说明：参考 test/hallo3/test.md 的最小素材测试经验，本轮先执行稳定的短时子集，并按 plan.md 4.2 记录每个 Condition 的命令、素材、显存峰值、耗时与日志。
+- 说明：参考 test/hallo3/test.md 的最小素材测试经验，本轮沿用已验证的短时稳定路径先完成支持子集；从历史记录看长时链路理论上可继续外推，但耗时极长，暂不纳入本轮横评。
 
 ## 条件范围
 - 已执行：C_half_short, C_full_short
@@ -15,11 +15,11 @@
 
 ### C_half_long
 - 状态：⏭️ skipped
-- 跳过原因：当前稳定路径未覆盖 100s 长音频；历史记录显示 Hallo3 长时推理耗时极长。
+- 跳过原因：并非确认模型绝对不支持长音频，而是当前稳定路径未覆盖 100s 长音频；历史记录显示单 case 长时推理耗时极长，本轮按策略跳过。
 
 ### C_full_long
 - 状态：⏭️ skipped
-- 跳过原因：当前稳定路径未覆盖 60s 长音频；本轮先完成短时横评。
+- 跳过原因：并非确认模型绝对不支持长音频，而是当前稳定路径未覆盖 60s 长音频；本轮先完成短时横评。
 
 ### C_half_short
 - 状态：✅ done

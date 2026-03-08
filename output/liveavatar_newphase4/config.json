@@ -1,0 +1,25 @@
+{
+  "model": "liveavatar",
+  "phase": "Phase 4",
+  "resolution": {"width": 704, "height": 384},
+  "task": "s2v-14B",
+  "infer_frames": 80,
+  "sample_steps": 4,
+  "seed": 42,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "参考 test/liveavatar/test.md，目前稳定链路只验证到短时；长时 infer_frames 路径未完成验证。",
+    "C_full_long": "参考 test/liveavatar/test.md，目前稳定链路只验证到短时；长时 infer_frames 路径未完成验证。"
+  }
+}

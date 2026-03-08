@@ -1,0 +1,23 @@
+{
+  "model": "soulx-flashtalk",
+  "phase": "Phase 4",
+  "mode": "audio_encode_mode=stream",
+  "cpu_offload": true,
+  "seed": "default",
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "参考 test/soulx-flashtalk/test.md 的最小稳定路径，本轮先完成短时子集。",
+    "C_full_long": "参考 test/soulx-flashtalk/test.md 的最小稳定路径，本轮先完成短时子集。"
+  }
+}

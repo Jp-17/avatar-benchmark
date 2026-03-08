@@ -1255,3 +1255,73 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. OmniAvatar 本轮并非主体推理失败，而是在输出回收阶段未识别 `demo_out/OmniAvatar-14B/...` 的嵌套目录，导致 `C_half_short` 结果未被脚本拷回；本次已手动回收该输出并在 results.md 中记录根因。
 2. 用户原要求在 OmniAvatar 后结束任务，但 follow-up 队列在 OmniAvatar 中断后继续自动执行了 LongLive / Self-Forcing；现已停止后续推进，并以最终快照方式收尾。
+## 2026-03-08 19:35
+
+### 任务内容
+1. 按用户要求重做 Phase 4 审计，统一 plan.md / model.md / output/ 的真实状态。
+2. 清理 Wan2.2-S2V 首轮 OOM 后遗留的可疑产物，并将 EchoMimic v2 的新 Phase 4 结果拆分到独立目录。
+3. 将 LiveAvatar 的 Phase 4 脚本回调到与 Phase 2 最小素材测试一致的稳定参数后，重新串行启动正式复跑。
+
+### 结果与效果
+1. plan.md 已新增 Phase 4 审计清单，明确区分已完成、部分完成、待复跑和暂缓模型；model.md 也同步回填了 EchoMimic v2、LiveAvatar、OmniAvatar、InfiniteTalk、LongLive、Self-Forcing 的最新说明。
+2. output/wan22_s2v_newphase4/ 中的可疑 `C_half_short.mp4` 已删除，并在 results.md 中明确标记为失败待复跑；EchoMimic v2 的 4 个新 Phase 4 条件结果、config、logs、results 已整理到 `output/echomimic_v2_newphase4/`。
+3. 各模型 results.md 已补充“长音频真不支持 / 当前稳定脚本仅验证短时 / text-only 不适用”的区分说明；LiveAvatar 已按最小测试稳定参数重新启动，当前占用约 32G 显存运行中。
+
+### 遇到的问题与解决方法
+1. OmniAvatar 的根因已进一步确认：主体输出成功，但旧脚本只在 `demo_out` 第一层找结果；现已改为递归查找，后续可直接补跑 `C_full_short`。
+2. 磁盘仍处于 98% 使用率，仅约 39G 可用，因此本轮继续坚持 GPU 串行执行，LongCat-Video-Avatar 暂不进入 Phase 4。
+
+
+## 2026-03-08 20:12
+
+### 任务内容
+1. 继续优先排查 LiveAvatar，并校验其 Phase 2 最小测试记录是否真实可靠。
+2. 对比 test.md、历史日志与实际输出目录，重新判断当前基线状态。
+3. 启动改良后的 80 帧单卡最小验证，验证是否能建立可信基线。
+
+### 结果与效果
+1. 已确认 test/liveavatar/test.md 中 已通过 / 202 秒 / liveavatar_minimal.mp4 这组表述与当前仓库实际不一致：输出目录中不存在可信成功 mp4。
+2. 历史日志显示：124 帧版本在 Generating video ... 后被外部 SIGTERM；80 帧版本在并行占用场景下会在初始化 KV cache 时 OOM，因此 LiveAvatar 目前不能再视为已稳定模型。
+3. 已把 80 帧最小验证脚本补齐 offload_kv_cache、PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True、TORCH_COMPILE_DISABLE=1、TORCHDYNAMO_DISABLE=1 与可覆写 master_port，并重新单独起跑。
+
+### 遇到的问题与解决方法
+1. LiveAvatar 当前真正的问题不是单纯 Phase 4 参数和 Phase 2 不一致，而是历史 Phase 2 记录本身存在误标；因此先纠正文档，再重新建立可信基线。
+2. 即便显式关闭 compile，运行期仍会拉起 torch._inductor.compile_worker；现阶段先保留观测，并以 80 帧单跑结果判断该模型是否具备继续进入正式 Phase 4 的条件。
+
+
+## 2026-03-08 20:19
+
+### 任务内容
+1. 继续验证 LiveAvatar，并确认是否能建立真实可复现的最小成功基线。
+2. 在成功后，将该基线回写到 test.md / model.md / plan.md。
+3. 将 Phase 4 脚本切换到同一条 80 帧稳定路径，准备继续正式复跑。
+
+### 结果与效果
+1. `test/liveavatar/test_liveavatar_80gpu.sh` 已在单卡独占条件下成功产出 `test/liveavatar/output/liveavatar_minimal_80gpu.mp4`，总耗时 599 秒。
+2. LiveAvatar 现已建立可信的最小成功基线：80 帧 + offload_kv_cache + expandable_segments + compile-disable；旧的 124 帧“已通过”记录已不再作为基线使用。
+3. `test/liveavatar/run_phase4_filtered.sh` 已切换到同一 80 帧稳定路径，接下来可继续按该基线重跑 Phase 4 支持子集。
+
+### 遇到的问题与解决方法
+1. 运行过程中仍会出现 `torch._inductor.compile_worker`，但本次已证实这不再阻塞最终出片；关键是独占 GPU 并沿用 80 帧稳定配置。
+2. 旧文档曾把不可信的 124 帧记录写成已通过，本次已纠正为以真实成功产物为准。
+
+
+## 2026-03-08 20:42
+
+### 任务内容
+1. 继续按新建立的 80 帧稳定基线重跑 LiveAvatar 的 Phase 4 支持子集。
+2. 验证 `C_half_short` 与 `C_full_short` 是否都能在同一路径下完成。
+3. 完成后将总表状态从基线校正更新为支持子集完成。
+
+### 结果与效果
+1. LiveAvatar 已完成 Phase 4 的支持子集：`C_half_short` 与 `C_full_short` 均成功生成，输出位于 `output/liveavatar_newphase4/`。
+2. 其中 `C_half_short` 日志记录显存峰值约 52153 MB、耗时 572 秒；`C_full_short` 也已成功落盘到 `output/liveavatar_newphase4/C_full_short.mp4`。
+3. `model.md` 与 `plan.md` 已同步改为“LiveAvatar 支持子集完成”，后续只需保留长时条件跳过说明即可。
+
+### 遇到的问题与解决方法
+1. 关键转折点不是继续坚持旧 124 帧记录，而是先建立可信的 80 帧最小成功基线，再把 Phase 4 回切到同一路径。
+2. 运行期间仍会出现 `torch._inductor.compile_worker`，但在单卡独占 + 80 帧稳定路径下已不再阻塞最终出片。
+
+- 2026-03-08 22:03 SoulX-FlashTalk 修复输出临时文件与最终文件同名导致成片被删的问题，已完成 Phase 4 短时子集（C_half_short/C_full_short）；随后已后台启动 Wan2.2-S2V 复跑（PID 450909）。
+
+- 2026-03-08 22:27 Wan2.2-S2V 已完成 Phase 4 短时子集（C_half_short/C_full_short），显存峰值 43523 MB，单 case 约 776-778 秒；至此失败待复跑项已清空，剩余为 OmniAvatar / InfiniteTalk 的部分完成补齐。

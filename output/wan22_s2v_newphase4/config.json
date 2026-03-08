@@ -1,0 +1,24 @@
+{
+  "model": "wan2.2-s2v",
+  "phase": "Phase 4",
+  "resolution": {"width": 832, "height": 480},
+  "task": "s2v-14B",
+  "offload_model": true,
+  "seed": 42,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "参考 test/wan2.2-s2v/test.md 的最小稳定路径，本轮先完成短时 filtered 横评。",
+    "C_full_long": "参考 test/wan2.2-s2v/test.md 的最小稳定路径，本轮先完成短时 filtered 横评。"
+  }
+}

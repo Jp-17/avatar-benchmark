@@ -11,11 +11,11 @@
 
 ### C_half_long
 - 状态：⏭️ skipped
-- 跳过原因：参考 test/longlive/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。
+- 跳过原因：LongLive 为 text-only 模型，不支持 audio-driven；本轮 benchmark 中的长音频条件本身不适用，且当前稳定路径仅验证到 21 帧短视频。
 
 ### C_full_long
 - 状态：⏭️ skipped
-- 跳过原因：参考 test/longlive/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。
+- 跳过原因：LongLive 为 text-only 模型，不支持 audio-driven；本轮 benchmark 中的长音频条件本身不适用，且当前稳定路径仅验证到 21 帧短视频。
 
 ### C_half_short
 - 状态：✅ done
@@ -26,7 +26,7 @@
 - 显存峰值：24803 MB
 - 推理生成时间：119 秒
 - 日志：/root/autodl-tmp/avatar-benchmark/output/longlive_newphase4/logs/C_half_short.log
-- 失败经验与解决方法：沿用 test/longlive/test.md 中已验证的 sf-longlive-env + shared Wan2.1-T2V-1.3B 稳定路径，并保留已补装的  依赖。
+- 失败经验与解决方法：沿用 test/longlive/test.md 中已验证的 sf-longlive-env + shared Wan2.1-T2V-1.3B 稳定路径，未新增异常。
 
 ### C_full_short
 - 状态：✅ done
@@ -37,4 +37,4 @@
 - 显存峰值：24803 MB
 - 推理生成时间：109 秒
 - 日志：/root/autodl-tmp/avatar-benchmark/output/longlive_newphase4/logs/C_full_short.log
-- 失败经验与解决方法：沿用 test/longlive/test.md 中已验证的 sf-longlive-env + shared Wan2.1-T2V-1.3B 稳定路径，并保留已补装的  依赖。
+- 失败经验与解决方法：沿用 test/longlive/test.md 中已验证的 sf-longlive-env + shared Wan2.1-T2V-1.3B 稳定路径，未新增异常。

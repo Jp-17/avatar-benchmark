@@ -5,17 +5,17 @@
 - 执行脚本：test/multitalk/run_phase4_filtered.sh
 - 配置文件：output/multitalk_newphase4/config.json
 - 输出目录：output/multitalk_newphase4/
-- 说明：参考 test/multitalk/test.md 的最小素材测试经验，沿用  + 8 步 streaming 稳定路径，只执行短时子集，并记录命令、显存峰值与耗时。
+- 说明：参考 test/multitalk/test.md 的最小素材测试经验，沿用 `multitalk-480` + 8 步 streaming 稳定路径，只执行短时子集，并记录命令、显存峰值与耗时。
 
 ## Condition 明细
 
 ### C_half_long
 - 状态：⏭️ skipped
-- 跳过原因：MultiTalk 当前稳定路径为最小短时链路，长音频 filtered 条件尚未验证。
+- 跳过原因：MultiTalk 代码层支持 streaming 扩展更长帧数，但当前稳定脚本只验证了最小短时链路；filtered 长音频条件尚未完成同路径验证。
 
 ### C_full_long
 - 状态：⏭️ skipped
-- 跳过原因：MultiTalk 当前稳定路径为最小短时链路，长音频 filtered 条件尚未验证。
+- 跳过原因：MultiTalk 代码层支持 streaming 扩展更长帧数，但当前稳定脚本只验证了最小短时链路；filtered 长音频条件尚未完成同路径验证。
 
 ### C_half_short
 - 状态：✅ done

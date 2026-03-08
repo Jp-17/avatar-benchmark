@@ -27,10 +27,10 @@
 - 显存峰值：79043 MB
 - 推理生成时间：3679 秒
 - 日志：/root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/logs/C_half_short.log
-- 失败经验与解决方法：模型主体推理成功并在 `models/OmniAvatar/demo_out/.../result_000_000_wav.mp4` 生成输出，但脚本只在 `demo_out` 的第一层查找 mp4，未识别嵌套目录，导致后处理阶段误报 “output not found”。本轮已回收该输出，后续复跑前需修正脚本的输出回收逻辑。
+- 失败经验与解决方法：模型主体推理成功并在 `models/OmniAvatar/demo_out/.../result_000_000_wav.mp4` 生成输出，但脚本只在 `demo_out` 的第一层查找 mp4，未识别嵌套目录，导致后处理阶段误报 “output not found”。本轮已回收该输出，且脚本的输出回收逻辑已修正为递归查找嵌套结果。
 
 
 ### C_full_short
 - 状态：❌ not_run
 - 素材：/root/autodl-tmp/avatar-benchmark/input/avatar_img/filtered/full_body/1.png + /root/autodl-tmp/avatar-benchmark/input/audio/filtered/short/S002_adele.wav + /root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/prompts/C_full_short.txt
-- 跳过原因：首轮运行在 `C_half_short` 输出回收阶段中断，未进入 `C_full_short`。后续若继续推进 OmniAvatar，需要先修正 `test/omniavatar/run_phase4_filtered.sh` 的输出文件查找逻辑，再复跑剩余条件。
+- 跳过原因：首轮运行在 `C_half_short` 输出回收阶段中断，未进入 `C_full_short`。现已修正 `test/omniavatar/run_phase4_filtered.sh` 为递归查找 `demo_out` 嵌套结果，后续可直接补跑剩余条件。

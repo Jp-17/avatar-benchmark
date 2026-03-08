@@ -2,7 +2,7 @@
 set -euo pipefail
 MODEL_DIR=/root/autodl-tmp/avatar-benchmark/models/echomimic_v2
 ENV=/root/autodl-tmp/envs/echomimic2-env
-OUT_DIR=/root/autodl-tmp/avatar-benchmark/output/echomimic_v2
+OUT_DIR=/root/autodl-tmp/avatar-benchmark/output/echomimic_v2_newphase4
 LOG_DIR=$OUT_DIR/logs
 mkdir -p "$OUT_DIR" "$LOG_DIR"
 POSE_DIR=./assets/halfbody_demo/pose/01/

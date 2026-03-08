@@ -43,7 +43,9 @@ git add model.md progress.md output/hallo3_newphase4/config.json output/hallo3_n
 git commit -m "完成 Hallo3 新 Phase4 短时子集与记录"
 git push origin master
 update_status "Hallo3 已提交推送，继续 Ovi"
-run_model ovi test/ovi/run_phase4_filtered.sh "完成 Ovi 新 Phase4 短时子集与记录" model.md progress.md output/ovi_newphase4/config.json output/ovi_newphase4/results.md test/ovi/run_phase4_filtered.sh
-run_model mova test/mova/run_phase4_filtered.sh "完成 MOVA 新 Phase4 短时子集与记录" model.md progress.md output/mova_newphase4/config.json output/mova_newphase4/results.md test/mova/run_phase4_filtered.sh
-run_model wan22_s2v test/wan2.2-s2v/run_phase4_filtered.sh "完成 Wan2.2-S2V 新 Phase4 短时子集与记录" model.md progress.md output/wan22_s2v_newphase4/config.json output/wan22_s2v_newphase4/results.md test/wan2.2-s2v/run_phase4_filtered.sh
-update_status "队列阶段完成：Hallo3 / Ovi / MOVA / Wan2.2-S2V"
+run_model ovi test/ovi/run_phase4_filtered.sh "完成 Ovi 新 Phase4 短时子集与记录" model.md progress.md output/ovi_newphase4/config.json output/ovi_newphase4/results.md test/ovi/run_phase4_filtered.sh test/update_phase4_docs.py
+run_model mova test/mova/run_phase4_filtered.sh "完成 MOVA 新 Phase4 短时子集与记录" model.md progress.md output/mova_newphase4/config.json output/mova_newphase4/results.md test/mova/run_phase4_filtered.sh test/update_phase4_docs.py
+run_model wan22_s2v test/wan2.2-s2v/run_phase4_filtered.sh "完成 Wan2.2-S2V 新 Phase4 短时子集与记录" model.md progress.md output/wan22_s2v_newphase4/config.json output/wan22_s2v_newphase4/results.md test/wan2.2-s2v/run_phase4_filtered.sh test/update_phase4_docs.py
+run_model multitalk test/multitalk/run_phase4_filtered.sh "完成 MultiTalk 新 Phase4 短时子集与记录" model.md progress.md output/multitalk_newphase4/config.json output/multitalk_newphase4/results.md test/multitalk/run_phase4_filtered.sh test/update_phase4_docs.py
+run_model infinitetalk test/infinitetalk/run_phase4_filtered.sh "完成 InfiniteTalk 新 Phase4 短时子集与记录" model.md progress.md output/infinitetalk_newphase4/config.json output/infinitetalk_newphase4/results.md test/infinitetalk/run_phase4_filtered.sh test/update_phase4_docs.py
+update_status "队列阶段完成：Hallo3 / Ovi / MOVA / Wan2.2-S2V / MultiTalk / InfiniteTalk"

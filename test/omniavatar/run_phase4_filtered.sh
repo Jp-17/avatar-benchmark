@@ -132,7 +132,7 @@ run_case() {
   printf '%s@@%s@@%s\n' "$prompt" "$img" "$audio" > "$input_file"
   rm -f "$log" "$out" "$metrics"
   mkdir -p "$MODEL_DIR/demo_out"
-  find "$MODEL_DIR/demo_out" -maxdepth 1 -type f \( -name '*.mp4' -o -name '*.wav' \) -delete
+  find "$MODEL_DIR/demo_out" -type f \( -name '*.mp4' -o -name '*.wav' \) -delete
   cmd="conda activate $ENV && torchrun --standalone --nproc_per_node=1 scripts/inference.py --config configs/inference.yaml --input_file $input_file"
   cd "$MODEL_DIR"
   source /root/miniconda3/etc/profile.d/conda.sh
@@ -148,7 +148,7 @@ run_case() {
   if [ "$cmd_status" -ne 0 ]; then
     return "$cmd_status"
   fi
-  src=$(find "$MODEL_DIR/demo_out" -maxdepth 1 -name '*.mp4' -type f | sort | tail -1)
+  src=$(find "$MODEL_DIR/demo_out" -name '*.mp4' -type f | sort | tail -1)
   if [ -z "$src" ]; then
     echo "OmniAvatar output not found for $cond" >> "$log"
     return 1

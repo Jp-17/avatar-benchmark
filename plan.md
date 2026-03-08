@@ -295,7 +295,28 @@ autodl-tmp/avatar-benchmark/output/
 | 面部神态丰富度 | 表情变化是否自然、多样 |
 | 全身动作丰富度 | 身体动作是否自然、与内容匹配 |
 
-**任务状态**：[~] EchoMimic v2 / StableAvatar / LiveTalk 已完成新 Phase 4；其他模型顺序执行中
+**任务状态**：[~] 已完成 14 个模型的 Phase 4（3 个 4/4 全量完成 + 11 个 2/4 支持子集完成），部分完成 2 个（OmniAvatar、InfiniteTalk）；当前无失败待复跑项；LongCat-Video-Avatar 已完成最小测试但尚未进入 Phase 4，SkyReels-V3 / HunyuanVideo-Avatar / HunyuanVideo-1.5 暂缓。
+
+### 4.4 Phase 4 审计清单（2026-03-08 19:30）
+
+| 模型 | output 目录 | 实际状态 | 与 Phase 2 最小测试一致性 | 备注 |
+|------|-------------|----------|---------------------------|------|
+| EchoMimic v2 | output/echomimic_v2_newphase4/ | ✅ 4/4 完成 | 基本一致 | 新 Phase 4 产物已从 legacy 目录拆分 |
+| StableAvatar | output/stableavatar_newphase4/ | ✅ 4/4 完成 | 基本一致 | — |
+| LiveTalk | output/livetalk_newphase4/ | ✅ 4/4 完成 | 基本一致 | — |
+| Hallo3 | output/hallo3_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 长音频非绝对不支持，但当前稳定路径/耗时策略未覆盖 |
+| Ovi | output/ovi_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前部署 960x960_10s checkpoint 实际为短时受限 |
+| MOVA | output/mova_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前稳定脚本固定 97 帧 |
+| FantasyTalking | output/fantasy_talking_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前稳定脚本固定 81 帧 |
+| LTX-2 | output/ltx2_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前稳定脚本固定 121 帧 |
+| MultiTalk | output/multitalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | streaming 代码可扩长，但仅验证短时稳定链路 |
+| InfiniteTalk | output/infinitetalk_newphase4/ | ⚠️ 1/2 完成待续跑 | 基本一致 | `C_full_short` 于 2026-03-08 OOM；脚本文案已修正 |
+| OmniAvatar | output/omniavatar_newphase4/ | ⚠️ 1/2 完成待复跑 | 基本一致 | `C_half_short` 已回收；输出回收脚本已改为递归查找 |
+| Wan2.2-S2V | output/wan22_s2v_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
+| LiveAvatar | output/liveavatar_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致（以新 80 帧基线为准） | 已完成 `C_half_short` / `C_full_short`，长时条件仍按当前稳定路径跳过 |
+| SoulX-FlashTalk | output/soulx_flashtalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
+| LongLive | output/longlive_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | text-only，长音频条件不适用 |
+| Self-Forcing | output/self_forcing_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | text-only，长音频条件不适用 |
 
 ---
 
@@ -307,11 +328,11 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] 14/21模型环境+权重完成,可推理测试;当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [~] EchoMimic v2 / StableAvatar / LiveTalk 已完成新组合；其他模型顺序执行中 | output/ 目录 |
+| Phase 4 | 推理生成 | [~] 已完成 14 个模型；OmniAvatar / InfiniteTalk 部分完成；LongCat-Video-Avatar 尚未启动 | output/ 目录 |
 
 ---
 
-## P3/P4 配置进度（2026-03-07 最终更新）
+## P3/P4 配置进度（2026-03-08 审计更新）
 
 ### P3 音视频联合生成（完成）
 
@@ -323,20 +344,24 @@ autodl-tmp/avatar-benchmark/output/
 
 ### P4 通用视频生成（部分完成）
 
-#### 当前优先级（2026-03-07 更新）
+#### 当前优先级（2026-03-08 审计更新）
 
-- **优先推进**：LongCat-Video-Avatar，其次 MultiTalk，最后 InfiniteTalk 的环境配置、权重补齐和最小素材推理测试
-- **暂缓推进**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2 I2V 的环境配置与权重下载
-- **保留结果**：Wan2.2 T2V、Self-Forcing、LongLive 的最小推理结果继续保留
+- **最高优先**：LiveAvatar 按与 Phase 2 一致的稳定参数串行复跑。
+- **随后补跑**：Wan2.2-S2V、SoulX-FlashTalk、InfiniteTalk（补 `C_full_short`）、OmniAvatar（补 `C_full_short`）。
+- **暂后推进**：LongCat-Video-Avatar 已完成最小测试，待存储/队列允许后再进入 Phase 4。
+- **继续暂缓**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2 I2V。
 
 | 模型 | 状态 |
 |------|------|
-| Wan2.2 | [~] 代码✅ + 环境✅(wan2.2-env) + T2V测试✅ + I2V暂停(保留49G) |
-| Self-Forcing | [x] 代码✅ + 环境✅(sf-longlive-env 复用) + 权重✅ + 推理测试✅(1 test) |
-| LongLive | [x] 代码✅ + 环境✅(sf-longlive-env 复用) + 权重✅ + 推理测试✅(1 test) |
-| MultiTalk | [~] 代码✅ + 环境✅(unified-env，overlay 启动链路已通) + 自身权重✅/共享Wan未完 + 第二优先推进 |
-| InfiniteTalk | [~] 代码✅ + 环境✅(unified-env，overlay 启动链路已通) + 权重✖(21G/~115G，剩 7 shard) + 第三优先推进 |
-| LongCat-Video-Avatar | [~] 代码✅ + 环境✅(longcat-env，base-python 启动链路已通) + base基本到位/avatar下载中断待续传 + 第一优先推进 |
-| SkyReels-V3 | [ ] 代码✅ + 环境✅(skyreels-env) + 权重✖(~2G) + 暂缓 |
-| HunyuanVideo-Avatar | [ ] 代码✅ + 环境✅(hunyuan-avatar-env) + 权重✖(14G/~50G) + 暂缓 |
-| HunyuanVideo-1.5 | [ ] 代码✅ + 环境✅(ltx2-hunyuan15-env) + 权重✖(13M) + 暂缓 |
+| LiveAvatar | [x] 环境/权重/最小基线✅；Phase 4 支持子集完成 |
+| Wan2.2 | [x] T2V 最小测试✅ + I2V 暂停(保留49G)；S2V Phase 4 支持子集完成 |
+| SoulX-FlashTalk | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
+| OmniAvatar | [~] 环境/权重/最小测试✅；Phase 4 已回收 `C_half_short`，待补 `C_full_short` |
+| Self-Forcing | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
+| LongLive | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
+| MultiTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
+| InfiniteTalk | [~] 环境/共享 Wan 权重/最小测试✅；Phase 4 已完成 `C_half_short`，`C_full_short` OOM 待续跑 |
+| LongCat-Video-Avatar | [~] 权重补齐 + 最小测试✅；Phase 4 尚未开始 |
+| SkyReels-V3 | [ ] 暂缓 |
+| HunyuanVideo-Avatar | [ ] 暂缓 |
+| HunyuanVideo-1.5 | [ ] 暂缓 |

@@ -5,17 +5,17 @@
 - 执行脚本：test/mova/run_phase4_filtered.sh
 - 配置文件：output/mova_newphase4/config.json
 - 输出目录：output/mova_newphase4/
-- 说明：参考 test/mova/test.md 的最小素材测试经验，沿用固定 97 帧的稳定路径，仅执行 text+image 的短时子集，并记录每个 condition 的命令、显存峰值与耗时。
+- 说明：参考 test/mova/test.md 的最小素材测试经验，沿用固定 97 帧的当前稳定路径，仅执行 text+image 的短时子集；理论上参数可继续外推，但本轮未做同路径长时验证。
 
 ## Condition 明细
 
 ### C_half_long
 - 状态：⏭️ skipped
-- 跳过原因：MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。
+- 跳过原因：当前稳定脚本固定为 97 帧短视频；理论上可进一步调参尝试更长序列，但尚未完成与最小测试同路径的长时验证。
 
 ### C_full_long
 - 状态：⏭️ skipped
-- 跳过原因：MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。
+- 跳过原因：当前稳定脚本固定为 97 帧短视频；理论上可进一步调参尝试更长序列，但尚未完成与最小测试同路径的长时验证。
 
 ### C_half_short
 - 状态：✅ done

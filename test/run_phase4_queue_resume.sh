@@ -28,6 +28,7 @@ run_model() {
   local add_files=("$@")
   update_status "开始 ${model_key}"
   if bash "$script_path"; then
+    /root/miniconda3/bin/python test/verify_phase4_outputs.py "$model_key"
     update_status "${model_key} 推理完成，回填文档"
     /root/miniconda3/bin/python test/update_phase4_docs.py "$model_key"
     commit_model "$commit_msg" "${add_files[@]}"
