@@ -1192,3 +1192,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 1. `hf-mirror` 对 LongCat 大 shard 的单连接下载速度不稳定：改为并行 range 下载脚本，按 shard 续传补齐剩余大文件。
 2. 自动触发首轮测试在视频音频合成阶段报 `FileNotFoundError: ffprobe`：在 LongCat 音频工具中加入 `ffprobe` 缺失 fallback 后重跑通过。
 3. 数据盘在 LongCat 权重补齐后逼近满载：先保留当前可运行状态，不再继续拉取新的大模型权重，并给出优先清理暂缓模型环境 / 扩容数据盘的提示。
+
+
+## 2026-03-08 18:45
+
+### 任务内容
+1. 提交当前 Phase 4 队列状态快照，补充 InfiniteTalk 首轮中断信息与 OmniAvatar 正在运行的信息。
+2. 将当前状态同步回 model.md、对应 results.md 与 progress.md。
+3. 立即执行 git 提交与推送，保证远端文档状态与实际队列一致。
+
+### 结果与效果
+1. InfiniteTalk 当前状态已明确：`C_half_short` 已完成，`C_full_short` 在 2026-03-08 17:54-18:00 期间因 OOM 中断，待后续复跑。
+2. OmniAvatar follow-up 队列已于 2026-03-08 18:00 启动，当前正在执行 `C_half_short`。
+3. model.md 的 Phase 4 总览与模型表已同步更新，后续 LongLive / Self-Forcing 仍在 follow-up 队列中排队。
+
+### 遇到的问题与解决方法
+1. InfiniteTalk 的 `C_full_short` 在模型迁移到 GPU 时 OOM：先在 `output/infinitetalk_newphase4/results.md` 记录失败原因，待当前 follow-up 队列空闲后再复跑。
+2. OmniAvatar 仍在执行中：仅提交其当前 results.md 的进行中状态，不改动脚本终态替换逻辑，避免影响后续自动回填。
