@@ -371,7 +371,7 @@
 | 3 | SkyReels-V3 | 通用离线 | 待确认 | 待确认 | Yes | 待确认 | 无限(V2) | Yes(V3) | t2v, t+i2v, i+a2v | **待确认** |
 | 4 | Self-Forcing | 通用自回归 | 1.3B | 24GB+ | Yes | Yes(HF) | 无限(~4min+) | No | t2v | **可测** |
 | 5 | LongLive | 通用自回归 | 1.3B | 40GB+ | Yes | Yes(HF) | 无限(240s+) | No | t2v | **可测** |
-| 6 | MOVA | 音视频联合 | 18B active | 36GB+(估算) | Yes | Yes(HF) | 8s | Yes | i+a2v, t2v | **待确认** |
+| 6 | MOVA | 音视频联合 | 18B active | 36GB+(估算) | Yes | Yes(HF) | 8s | ✅ 支持子集完成 | 已完成新 Phase 4 的 C_half_short/C_full_short；C_half_long/C_full_long 按最小测试稳定路径跳过；results.md 已记录显存峰值与生成时间 | **待确认** |
 | 7 | LTX-2 | 音视频联合 | 19B | 28GB(distil)/40GB(full) | Yes | Yes(HF) | 待确认(长) | Yes | i+a2v, t2v, t+i2v | **可测** |
 | 8 | OVI | 音视频联合 | 11B | 24GB(FP8)/32GB(BF16) | Yes | Yes(HF) | 10s | Yes | t2v, t+i2v | **可测** |
 | 9 | EchoMimic v2 | Avatar 离线 | ~1.3B | 16-24GB | Yes | Yes(HF) | 5-10s(滑窗) | Yes(半身) | i+a2v | **可测** |
@@ -602,4 +602,13 @@ flash_attn 2.8.3 已从 liveavatar-env/mova-env 复制到以下环境：
 | C_full_long | ⏭️ skipped | - | - | - | Ovi 当前稳定路径为 960x960_10s 固定短视频配置，不支持按 filtered 长音频扩展。 |
 | C_half_short | ✅ done | /root/autodl-tmp/avatar-benchmark/output/ovi_newphase4/C_half_short.mp4 | 40009 MB | 1199 秒 | 沿用 test/ovi/test.md 中已验证的 qint8 + cpu_offload 稳定路径。 |
 | C_full_short | ✅ done | /root/autodl-tmp/avatar-benchmark/output/ovi_newphase4/C_full_short.mp4 | 78627 MB | 943 秒 | 沿用 test/ovi/test.md 中已验证的 qint8 + cpu_offload 稳定路径。 |
+
+#### MOVA（支持子集完成）
+
+| Condition | 状态 | 输出文件 | 显存峰值 | 推理时间 | 备注 |
+|-----------|------|---------|---------|---------|------|
+| C_half_long | ⏭️ skipped | - | - | - | MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。 |
+| C_full_long | ⏭️ skipped | - | - | - | MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。 |
+| C_half_short | ✅ done | /root/autodl-tmp/avatar-benchmark/output/mova_newphase4/C_half_short.mp4 | 41109 MB | 465 秒 | 沿用 test/mova/test.md 中已验证的固定 97 帧短视频路径。 |
+| C_full_short | ✅ done | /root/autodl-tmp/avatar-benchmark/output/mova_newphase4/C_full_short.mp4 | 41211 MB | 461 秒 | 沿用 test/mova/test.md 中已验证的固定 97 帧短视频路径。 |
 

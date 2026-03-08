@@ -1,0 +1,23 @@
+{
+  "model": "mova",
+  "phase": "Phase 4",
+  "resolution": {"width": 512, "height": 512},
+  "num_frames": 97,
+  "num_inference_steps": 30,
+  "seed": 42,
+  "offload": "cpu",
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。",
+    "C_full_long": "MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。"
+  }
+}

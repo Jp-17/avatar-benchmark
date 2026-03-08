@@ -29,7 +29,7 @@ MODEL_MAP = {
         'row_prefix': '| 5 | Ovi |',
         'output_dir': 'output/ovi_newphase4',
         'script': 'test/ovi/run_phase4_filtered.sh',
-        'section_match': None,
+        'section_match': r'#### Ovi（.*?）\n\n\| Condition \| 状态 \|.*?(?=\n#### |\Z)',
         'subset': True,
     },
     'mova': {
@@ -45,6 +45,22 @@ MODEL_MAP = {
         'row_prefix': '| 7 | Wan2.2-S2V |',
         'output_dir': 'output/wan22_s2v_newphase4',
         'script': 'test/wan2.2-s2v/run_phase4_filtered.sh',
+        'section_match': None,
+        'subset': True,
+    },
+    'multitalk': {
+        'display': 'MultiTalk',
+        'row_prefix': '| 18 | MultiTalk |',
+        'output_dir': 'output/multitalk_newphase4',
+        'script': 'test/multitalk/run_phase4_filtered.sh',
+        'section_match': None,
+        'subset': True,
+    },
+    'infinitetalk': {
+        'display': 'InfiniteTalk',
+        'row_prefix': '| 19 | InfiniteTalk |',
+        'output_dir': 'output/infinitetalk_newphase4',
+        'script': 'test/infinitetalk/run_phase4_filtered.sh',
         'section_match': None,
         'subset': True,
     },
@@ -90,8 +106,8 @@ def build_remark(done, skipped, full: bool):
     return f'已完成新 Phase 4 的 {done_text}；{skip_text} 按最小测试稳定路径跳过；results.md 已记录显存峰值与生成时间'
 
 
-def build_section(display: str, items, full: bool, output_dir: str):
-    title = f'#### {display}（{"新 4 条件完成" if full else "支持子集完成"}）'
+def build_section(display: str, items):
+    title = f'#### {display}（支持子集完成）'
     lines = [title, '', '| Condition | 状态 | 输出文件 | 显存峰值 | 推理时间 | 备注 |', '|-----------|------|---------|---------|---------|------|']
     for item in items:
         cond = item['condition']
@@ -132,11 +148,11 @@ def append_progress(meta: dict, items):
     issue_lines = []
     for item in items:
         msg = item.get('失败经验与解决方法', '')
-        if msg and '无新增问题' not in msg:
+        if msg and '无新增问题' not in msg and '沿用 ' not in msg:
             issue_lines.append(msg)
     if not issue_lines:
         issue_lines = ['无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。']
-    entry = f"\n\n## {now}\n\n### 任务内容\n1. 按 plan.md Phase 4 的 filtered 条件完成 {meta['display']} 的正式推理。\n2. 参考 {meta['script']} 与对应 test.md 中的最小素材测试经验，沿用已验证命令、环境变量与避坑方案。\n3. 按最新 4.2 规范补充 {meta['output_dir']}/results.md，记录每个 Condition 的命令、素材、显存峰值、推理生成时间与输出路径。\n\n### 结果与效果\n1. {meta['display']} 已完成 {'支持的全部新 Phase 4 条件' if not meta['subset'] else '支持子集的 Phase 4 条件'}，完成项：{'、'.join(done) if done else '无'}；跳过项：{'、'.join(skipped) if skipped else '无'}。\n2. 结果明细：{'；'.join(result_lines)}。\n3. model.md 已同步更新当前模型的 Phase 4 状态，后续可直接按同一记录格式推进下一个模型。\n\n### 遇到的问题与解决方法\n" + '\n'.join(f'{i+1}. {msg}' for i, msg in enumerate(issue_lines))
+    entry = f"\n\n## {now}\n\n### 任务内容\n1. 按 plan.md Phase 4 的 filtered 条件完成 {meta['display']} 的正式推理。\n2. 参考 {meta['script']} 与对应 test.md 中的最小素材测试经验，沿用已验证命令、环境变量与避坑方案。\n3. 按最新 4.2 规范补充 {meta['output_dir']}/results.md，记录每个 Condition 的命令、素材、显存峰值、推理生成时间与输出路径。\n\n### 结果与效果\n1. {meta['display']} 已完成支持子集的 Phase 4 条件，完成项：{'、'.join(done) if done else '无'}；跳过项：{'、'.join(skipped) if skipped else '无'}。\n2. 结果明细：{'；'.join(result_lines)}。\n3. model.md 已同步更新当前模型的 Phase 4 状态，后续可直接按同一记录格式推进下一个模型。\n\n### 遇到的问题与解决方法\n" + '\n'.join(f'{i+1}. {msg}' for i, msg in enumerate(issue_lines))
     progress.write_text(progress.read_text() + entry)
 
 
@@ -156,7 +172,7 @@ def main():
     model_path = ROOT / 'model.md'
     model_text = model_path.read_text()
     model_text = update_model_row(model_text, meta['row_prefix'], status, remark)
-    section_text = build_section(meta['display'], items, full, meta['output_dir'])
+    section_text = build_section(meta['display'], items)
     model_text = replace_or_append_section(model_text, meta, section_text)
     model_path.write_text(model_text)
 

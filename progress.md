@@ -1112,3 +1112,19 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 1. shared Wan 最后一片通过 `huggingface_hub` 续传时速度降到约 `0.1MB/s`：改用 `wget -c` 直接复用已有 `3.92G` partial file，在 `2m59s` 内完成最后一片。
 2. MultiTalk 首次起跑报 `Cannot copy out of meta tensor`：根因是仍使用基础 Wan 的 index，没有接入 `MeiGen-MultiTalk` 的 adapter index / `multitalk.safetensors`；通过仅在 `models/MultiTalk/weights/Wan2.1-I2V-14B-480P` 建模型局部 overlay 解决，不污染 shared 基座。
 3. InfiniteTalk 首次起跑在图片输入场景下仍无条件调用 `ffprobe`：为 `models/InfiniteTalk/wan/utils/utils.py` 中的 `get_video_codec()` 增加“非视频输入 / 缺失 ffprobe 时直接返回空 codec”的 fallback 后重跑通过。
+
+
+## 2026-03-08 16:09
+
+### 任务内容
+1. 按 plan.md Phase 4 的 filtered 条件完成 MOVA 的正式推理。
+2. 参考 test/mova/run_phase4_filtered.sh 与对应 test.md 中的最小素材测试经验，沿用已验证命令、环境变量与避坑方案。
+3. 按最新 4.2 规范补充 output/mova_newphase4/results.md，记录每个 Condition 的命令、素材、显存峰值、推理生成时间与输出路径。
+
+### 结果与效果
+1. MOVA 已完成支持子集的 Phase 4 条件，完成项：C_half_short、C_full_short；跳过项：C_half_long、C_full_long。
+2. 结果明细：C_half_long 跳过（MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。）；C_full_long 跳过（MOVA 当前稳定路径是固定 97 帧短视频，不扩展到长时。）；C_half_short 41109 MB / 465 秒 / /root/autodl-tmp/avatar-benchmark/output/mova_newphase4/C_half_short.mp4；C_full_short 41211 MB / 461 秒 / /root/autodl-tmp/avatar-benchmark/output/mova_newphase4/C_full_short.mp4。
+3. model.md 已同步更新当前模型的 Phase 4 状态，后续可直接按同一记录格式推进下一个模型。
+
+### 遇到的问题与解决方法
+1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
