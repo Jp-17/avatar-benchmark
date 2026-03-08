@@ -984,3 +984,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 仓库此前同时混有手写测试脚本和生成产物，`git status` 噪音较大；本次通过补充 `.gitignore` 并清理历史误跟踪文件，重新划清源码与产物边界。
 2. 远程环境没有可直接调用的 `python3`，因此本轮改用 shell 方式更新 `.gitignore`，避免被环境差异阻塞。
+
+## 2026-03-08 12:30
+
+### 任务内容
+1. 将 models/、weights_shared/ 和根目录下载日志纳入 git ignore，避免本地大目录持续出现在仓库状态中。
+2. 为 models/、weights_shared/、test/shared_pydeps/ 建立可持续维护的本地资产清单文档。
+3. 保持大目录继续留在仓库内本地使用，但通过文档化方式补足来源、版本和体量信息。
+
+### 结果与效果
+1. 已在 .gitignore 中新增 models/、weights_shared/、dl_wan21_t2v14b.log 的忽略规则，并保留既有 output/ 与 test/ 生成产物忽略策略。
+2. 已新增 20260308-local-assets-manifest.md，记录当前 models/ 下各上游仓库的目录名、体量、HEAD commit 与 origin URL。
+3. 已在同一文档中补充 weights_shared/、test/shared_pydeps/ 与根目录下载日志的快照清单，后续可直接按该文档更新本地资产状态。
+4. 处理完成后，远程主仓库的 git 状态不再被 models/、weights_shared/ 和该下载日志持续干扰，后续只需跟踪脚本、配置与 markdown 文档。
+
+### 遇到的问题与解决方法
+1. 首版清单文档在 shell 生成时受到反引号命令替换影响，导致 markdown 表格错位；随后改为纯文本单元格重写，解决了表格生成问题。
+2. 由于这些目录体量很大且包含大量上游 clone / 权重文件，继续纳入 git 并不现实；本轮通过 ignore + manifest 的组合方式，兼顾了本地可用性与仓库可维护性。

@@ -39,3 +39,8 @@ test/**/*.nohup.log
 test/**/*.log
 test/**/*.status
 test/shared_pydeps/
+
+# 本地模型源码与共享权重
+models/
+weights_shared/
+dl_wan21_t2v14b.log
