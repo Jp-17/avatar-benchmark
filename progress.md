@@ -1209,3 +1209,18 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. InfiniteTalk 的 `C_full_short` 在模型迁移到 GPU 时 OOM：先在 `output/infinitetalk_newphase4/results.md` 记录失败原因，待当前 follow-up 队列空闲后再复跑。
 2. OmniAvatar 仍在执行中：仅提交其当前 results.md 的进行中状态，不改动脚本终态替换逻辑，避免影响后续自动回填。
+
+## 2026-03-08 19:05
+
+### 任务内容
+1. 按 plan.md Phase 4 的 filtered 条件完成 LongLive 的正式推理。
+2. 参考 test/longlive/run_phase4_filtered.sh 与对应 test.md 中的最小素材测试经验，沿用已验证命令、环境变量、依赖补丁与避坑方案。
+3. 按最新 4.2 规范补充 output/longlive_newphase4/results.md，记录每个 Condition 的命令、素材、显存峰值、推理生成时间与输出路径。
+
+### 结果与效果
+1. LongLive 已完成支持子集的 Phase 4 条件，完成项：C_half_short、C_full_short；跳过项：C_half_long、C_full_long。
+2. 结果明细：C_half_long 跳过（参考 test/longlive/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。）；C_full_long 跳过（参考 test/longlive/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。）；C_half_short 24803 MB / 119 秒 / /root/autodl-tmp/avatar-benchmark/output/longlive_newphase4/C_half_short.mp4；C_full_short 24803 MB / 109 秒 / /root/autodl-tmp/avatar-benchmark/output/longlive_newphase4/C_full_short.mp4。
+3. model.md 已同步更新当前模型的 Phase 4 状态，后续可直接按同一记录格式推进下一个模型。
+
+### 遇到的问题与解决方法
+1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
