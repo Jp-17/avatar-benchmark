@@ -1,0 +1,37 @@
+{
+  "model": "livetalk",
+  "phase": "Phase 4",
+  "resolution": {"width": 512, "height": 512},
+  "fps": 16,
+  "num_steps": 4,
+  "seed": 42,
+  "frame_seq_length": 1024,
+  "num_frame_per_block": 3,
+  "local_attn_size": 15,
+  "conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech",
+      "video_duration": 5
+    },
+    "C_half_long": {
+      "image": "input/avatar_img/filtered/half_body/2.png",
+      "audio": "input/audio/filtered/long/A001.wav",
+      "prompt_type": "speech",
+      "video_duration": 98
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing",
+      "video_duration": 8
+    },
+    "C_full_long": {
+      "image": "input/avatar_img/filtered/full_body/3.png",
+      "audio": "input/audio/filtered/long/MT_eng.wav",
+      "prompt_type": "speech",
+      "video_duration": 59
+    }
+  }
+}

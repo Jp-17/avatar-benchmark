@@ -295,7 +295,7 @@ autodl-tmp/avatar-benchmark/output/
 | 面部神态丰富度 | 表情变化是否自然、多样 |
 | 全身动作丰富度 | 身体动作是否自然、与内容匹配 |
 
-**任务状态**：[ ] 标准 4 组筛选素材已确认，待按新 Condition 执行
+**任务状态**：[~] EchoMimic v2 / StableAvatar / LiveTalk 已完成新 Phase 4；其他模型顺序执行中
 
 ---
 
@@ -307,7 +307,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] 14/21模型环境+权重完成,可推理测试;当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [ ] 标准 4 组 Condition 已确定，待按新组合执行 | output/ 目录 |
+| Phase 4 | 推理生成 | [~] EchoMimic v2 / StableAvatar / LiveTalk 已完成新组合；其他模型顺序执行中 | output/ 目录 |
 
 ---
 

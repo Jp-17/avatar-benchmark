@@ -1043,3 +1043,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 
 ### 遇到的问题与解决方法
 1. 当前仓库内还有若干未跟踪的运行脚本与输出目录；本轮仅暂存 plan.md 与 progress.md，避免把无关文件混入这次文档提交。
+
+
+## 2026-03-08 13:17
+
+### 任务内容
+1. 按 plan.md Phase 4 的新 filtered 条件完成 LiveTalk 的正式推理，依次执行 C_half_short、C_half_long、C_full_short、C_full_long。
+2. 参考 test/livetalk/test.md 中的最小素材测试经验，沿用已验证的环境变量、`frame_seq_length=1024` 和 3n+2 时长映射规则。
+3. 按最新 4.2 规范补充 output/livetalk_newphase4/results.md，逐条记录实际命令、素材、显存峰值、推理生成时间、输出路径与日志。
+
+### 结果与效果
+1. LiveTalk 已完成新 Phase 4 的 4/4 条件，输出位于 output/livetalk_newphase4/。
+2. 四个条件的资源与耗时记录如下：C_half_short 21381 MB / 89s，C_half_long 81033 MB / 221s，C_full_short 21867 MB / 96s，C_full_long 80421 MB / 168s。
+3. model.md 与 plan.md 已同步更新为“LiveTalk 新4条件完成 / Phase 4 顺序执行中”的当前状态，后续可直接按同一记录格式推进下一个模型。
+
+### 遇到的问题与解决方法
+1. 首版 LiveTalk 监控脚本在 `start_gpu_monitor` 中通过命令替换读取后台 PID 时，后台进程未断开标准输出，导致脚本阻塞在首个 condition 之前；随后将监控子进程的 stdout/stderr 重定向到 `/dev/null`，恢复正常。
+2. 首版 here-doc 生成的 results.md 中，带反引号的路径片段被 shell 命令替换吞掉；本轮改为事后修正固定文本，确保 results.md 中的配置路径与经验说明完整保留。
