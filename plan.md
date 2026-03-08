@@ -304,7 +304,7 @@ autodl-tmp/avatar-benchmark/output/
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
-| Phase 2 | 环境配置与权重下载 | [~] 12/21模型环境+权重完成,可推理测试;9个权重不完整 | model.md 第五节 |
+| Phase 2 | 环境配置与权重下载 | [~] 14/21模型环境+权重完成,可推理测试;当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [ ] 标准 4 组 Condition 已确定，待按新组合执行 | output/ 目录 |
 
@@ -322,10 +322,20 @@ autodl-tmp/avatar-benchmark/output/
 
 ### P4 通用视频生成（部分完成）
 
+#### 当前优先级（2026-03-07 更新）
+
+- **优先推进**：LongCat-Video-Avatar，其次 MultiTalk，最后 InfiniteTalk 的环境配置、权重补齐和最小素材推理测试
+- **暂缓推进**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2 I2V 的环境配置与权重下载
+- **保留结果**：Wan2.2 T2V、Self-Forcing、LongLive 的最小推理结果继续保留
+
 | 模型 | 状态 |
 |------|------|
-| Wan2.2 | [~] 代码✅ + 环境✅(wan2.2-env) + T2V权重✅ + I2V待下 |
-| HunyuanVideo-1.5 | [~] 代码✅ + 环境✅(ltx2-hunyuan15-env) + 权重✖(13M) |
-| Self-Forcing | [ ] 代码✅ + 环境✖ + 权重✖(143M) |
-| LongLive | [~] 代码✅ + 环境✅(sf-longlive-env) + 权重✖(277M) |
-| SkyReels-V3 | [~] 代码✅ + 环境✅(skyreels-env) + 权重✖(~2G) |
+| Wan2.2 | [~] 代码✅ + 环境✅(wan2.2-env) + T2V测试✅ + I2V暂停(保留49G) |
+| Self-Forcing | [x] 代码✅ + 环境✅(sf-longlive-env 复用) + 权重✅ + 推理测试✅(1 test) |
+| LongLive | [x] 代码✅ + 环境✅(sf-longlive-env 复用) + 权重✅ + 推理测试✅(1 test) |
+| MultiTalk | [~] 代码✅ + 环境✅(unified-env，overlay 启动链路已通) + 自身权重✅/共享Wan未完 + 第二优先推进 |
+| InfiniteTalk | [~] 代码✅ + 环境✅(unified-env，overlay 启动链路已通) + 权重✖(21G/~115G，剩 7 shard) + 第三优先推进 |
+| LongCat-Video-Avatar | [~] 代码✅ + 环境✅(longcat-env，base-python 启动链路已通) + base基本到位/avatar下载中断待续传 + 第一优先推进 |
+| SkyReels-V3 | [ ] 代码✅ + 环境✅(skyreels-env) + 权重✖(~2G) + 暂缓 |
+| HunyuanVideo-Avatar | [ ] 代码✅ + 环境✅(hunyuan-avatar-env) + 权重✖(14G/~50G) + 暂缓 |
+| HunyuanVideo-1.5 | [ ] 代码✅ + 环境✅(ltx2-hunyuan15-env) + 权重✖(13M) + 暂缓 |

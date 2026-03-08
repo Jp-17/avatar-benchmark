@@ -680,3 +680,290 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 首次 `rsync` 复用了旧的 SSH 控制连接，导致同步过程出现卡顿；改用 `ssh -S none` 禁用控制连接复用后，素材同步完成。
 
+---
+
+## 2026-03-07 17:10
+
+### 任务内容
+1. 按 Phase 2 优先级继续推进 Wan2.2 / Self-Forcing，先复核 plan.md、model.md、progress.md 中已有下载经验与复用规则。
+2. 检查 Self-Forcing 是否可直接复用 sf-longlive-env，以及项目内是否已有可复用的 Wan 基座权重。
+3. 在不影响非本人启动程序的前提下，继续权重下载并尽快打通一个模型到最小推理验证。
+
+### 结果与效果
+1. 复核下载经验后确认：HuggingFace 下载继续使用 hf-mirror，不启用 network_turbo；共享权重优先落到 weights_shared 再软链接复用。
+2. 已将 /root/autodl-tmp/avatar-benchmark/weights_shared/Wan2.1-T2V-1.3B 软链接到 Self-Forcing 与 LongLive 的 wan_models/Wan2.1-T2V-1.3B，避免重复下载基座权重。
+3. 已补齐 sf-longlive-env 的 Self-Forcing 最小推理所需依赖，并通过 setup.py develop 将 Self-Forcing 包安装到该环境。
+4. Self-Forcing checkpoint self_forcing_dmd.pt 已完整下载（5.3G），最小推理测试成功：生成 test/self-forcing/output/0-0_ema.mp4，运行时间 119s。
+5. Wan2.2-T2V-A14B 下载继续进行中，当前目录体积约 70G；I2V 权重尚未启动，待 T2V 完成后继续。
+6. 为避免重复占用带宽，已停止一组后启动的重复 Self-Forcing 下载进程，仅保留更早、进度更靠前的下载任务。
+
+### 遇到的问题与解决方法
+1. Self-Forcing 初始状态并非“无环境可用”，而是 sf-longlive-env 缺少 omegaconf、lmdb、opencv-python、av 等推理依赖；补装后即可复用，不再单独新建环境。
+2. 首次 Self-Forcing 推理在输出 MP4 时失败：torchvision.io.write_video 调用 av 16.1.0 报 TypeError: an integer is required。将 av 降级到 12.3.0 后重跑成功。
+3. Self-Forcing checkpoint 下载过程中曾误启动重复任务；按“可停本人启动程序”的规则，保留旧任务并终止后启动的重复下载，避免同文件锁竞争。
+4. Wan2.2 当前表格状态与实际不一致：model.md 原先写“T2V已下”，实测仍有大量 shard 在 .cache 中落盘，已改回“下载中”状态继续跟进。
+---
+
+## 2026-03-07 17:51
+
+### 任务内容
+继续按优先级推进 Wan2.2 与 LongLive 的权重下载，并按阶段性进展同步文档。
+
+### 结果与效果
+1. Wan2.2-T2V-A14B 下载持续推进，当前目录体积约 98G；I2V 仍未启动，待 T2V 明确完成后继续。
+2. LongLive 下载持续推进，当前 longlive_models 约 7.0G；已确认 `models/lora.pt` 已落盘，`longlive_base.pt` 仍在下载中。
+3. 当前 GPU 约占用 21.5G/80G，数据盘约 963G/1.3T（75%），继续下载与后续最小测试仍有资源余量。
+4. 已将以上阶段性状态同步回 `model.md`，保证表格与当前实际进展一致。
+
+### 遇到的问题与解决方法
+1. `model.md` 中 LongLive 与 Wan2.2 的下载量记录已落后于当前实际进展；本次按实时目录大小修正，避免后续判断失真。
+
+
+
+## 2026-03-07 18:40
+
+### 任务内容
+1. 收口 Phase 2 中 12 个“可推理”模型的最小推理验证，重点处理 retry3 剩余的 LiveAvatar、LTX-2、OmniAvatar。
+2. 修复失败模型的环境与脚本问题，并按用户要求把阶段性进度同步回 md 文档。
+
+### 结果与效果
+1. 当前 12 个“可推理”模型中，已有 10 个最小推理输出文件成功落盘：EchoMimic v2、StableAvatar、LiveTalk、Hallo3、Ovi、MOVA、Wan2.2-S2V、LiveAvatar、SoulX-FlashTalk、FantasyTalking。
+2. LiveAvatar 已在 retry3 中成功，状态文件记录为 exit_code=0、runtime_seconds=202；核心修复是移除当前 A800 上不支持的  参数。
+3. OmniAvatar 首次重试已跑完整个主体推理流程，但在最终写 MP4 时失败；已定位为 imageio 缺少视频写出 backend，并已在 omniavatar-env 中安装  后重新后台运行。
+4. LTX-2 首次失败原因已从“fp8 架构不支持”收敛到“FP8 base checkpoint 与 stage-2 distilled LoRA 维度不匹配”；当前已改为去掉 ，并准备以 stage2 LoRA 强度 0.0 的临时最小验证路径继续重跑，以先确认 A2V 基本链路可运行。
+5. model.md 的 Phase 2 状态表已同步更新：MOVA / Wan2.2-S2V / LiveAvatar / SoulX-FlashTalk / FantasyTalking 标记为已完成最小测试，LTX-2 / OmniAvatar 标记为重试中。
+
+### 遇到的问题与解决方法
+1. OmniAvatar 并非主体推理失败，而是  无法直接写 ；通过安装  补齐 backend，避免重复修改主推理代码。
+2. LTX-2 当前本地已有的  与 stage-2 distilled LoRA 在两阶段 A2V 路径下存在尺寸不匹配；短期先切到 LoRA 强度 0.0 做最小链路验证，后续如需标准两阶段高质量结果，再补齐更合适的 base checkpoint 方案。
+---
+
+## 2026-03-07 18:53
+
+### 任务内容
+1. 继续复核当前下载状态，判断 Wan2.2 / LongLive 是否已具备转入最小推理验证的条件。
+2. 对已就绪模型立即执行最小推理验证，并在验证通过后继续推进下一优先项。
+3. 基于当前资源与下载状态，评估是否适合并行推进其他模型。
+
+### 结果与效果
+1. LongLive 两个核心权重 `longlive_base.pt` 与 `lora.pt` 已完整落盘，最小推理测试通过：生成 `test/longlive/output/rank0-0-0_lora.mp4`，运行时间 133s。
+2. Wan2.2 T2V 缺失的最后一个高噪声 shard 已定向补齐，T2V 最小推理测试通过：生成 `test/wan2.2-t2v-i2v/output/wan2.2_t2v_minimal.mp4`，运行时间 402s。
+3. Wan2.2 I2V 权重下载已启动，当前约 5.8G；至此 Phase 2 中 LongLive 已转为完成，Wan2.2 进入“T2V已验证 + I2V下载中”状态。
+4. 当前 GPU 空闲时可直接运行最小测试，网络/磁盘也还能继续承载 1 个大模型下载任务，因此目前最合适的并行方式是：保持 Wan2.2 I2V 下载，同时只做其他模型的非下载准备；不建议同时再拉 XetHub 仓库，避免带宽竞争和超时放大。
+
+### 遇到的问题与解决方法
+1. LongLive 首次测试失败：`ModuleNotFoundError: No module named datasets`。补装 `datasets` 后重跑通过。
+2. Wan2.2 T2V 首轮整仓下载后仍缺一个 shard；通过单文件定向补下载修复，而不是重新拉整个仓库，节省了时间与带宽。
+---
+
+## 2026-03-07 19:06
+
+### 任务内容
+在不新增大体量下载任务的前提下，评估 InfiniteTalk 是否可以利用现有环境与共享权重继续并行准备。
+
+### 结果与效果
+1. 已确认 InfiniteTalk 可继续复用 `unified-env`，核心运行包当前可导入，无需新建环境。
+2. 已为 InfiniteTalk 接好复用路径：`weights/Wan2.1-I2V-14B-480P` 指向 `weights_shared/Wan2.1-I2V-14B-480P`，`weights/chinese-wav2vec2-base` 指向 `weights_shared/chinese-wav2vec2-base`。
+3. 已将 `weights/InfiniteTalk/single/infinitetalk.safetensors` 软链接到仓库内已存在的 `comfyui/infinitetalk_single.safetensors`，避免重复占用空间。
+4. 已创建 `test/infinitetalk/` 最小测试脚手架，包括输入素材、`single_minimal_image.json`、`test_infinitetalk.sh` 与 `test.md`。
+
+### 遇到的问题与解决方法
+1. InfiniteTalk 当前真正阻塞点不是环境，而是共享基座 `Wan2.1-I2V-14B-480P` 与 `chinese-wav2vec2-base` 仍不完整；已在 `test/infinitetalk/test.md` 中明确记录，暂不启动最小推理。
+2. 为避免与 `Wan2.2 I2V` 争抢带宽，本轮仅做复用连接与测试准备，不再额外启动 InfiniteTalk 的新下载任务。
+
+
+
+## 2026-03-07 19:20
+
+### 任务内容
+1. 根据最新最小素材推理结果，更新 model.md 的“五、Phase 2 环境与权重状态”表格，统一修正“已测试”含义，并新增“是否完成Phase4”列。
+2. 补齐当前已做最小推理模型的 test.md 记录，满足 plan.md 2.2.1 的最小推理验证文档要求。
+3. 并行排查用户指出的三个输出质量问题：LiveAvatar 时长不足、MOVA 长宽比异常、SoulX-FlashTalk 长宽比异常。
+
+### 结果与效果
+1. model.md 的 Phase 2 状态表已更新为当前口径：已测试一栏统一按最小素材 inference 统计；新增“是否完成Phase4”列，当前全部为“无”。
+2. 已为 12 个最小素材模型补齐或追加 test.md：包括 EchoMimic v2、StableAvatar、LiveTalk、Hallo3、Ovi、MOVA、Wan2.2-S2V、LiveAvatar、SoulX-FlashTalk、LTX-2、OmniAvatar、FantasyTalking。
+3. 已确认 LiveAvatar 输出时长不足的直接原因是脚本写死了 infer_frames=48；按 25fps 仅对应约 1.84 秒视频，不足以覆盖当前 5 秒音频。
+4. 已确认 MOVA 的脚本当前固定输出 640x352，且代码在推理前会先对输入图做 center crop 再 resize，因此正方形输入图会被裁成横屏比例，容易只保留画面下半部分。
+5. 已确认 SoulX-FlashTalk 的默认目标尺寸来自 flash_talk/configs/infer_params.yaml，当前为 640x640 之前是 768x448/448x768 一类非方形配置；其预处理同样采用 resize_and_centercrop，因此原图比例不会被直接保留。
+6. 已先修正质量问题相关参数并排队重跑：LiveAvatar 的 infer_frames 调整到 124；MOVA 的最小脚本改为 512x512；SoulX-FlashTalk 的 infer_params.yaml 改为 640x640。相关修正版重跑任务已排队，等待 OmniAvatar 与 LTX-2 释放 GPU 后顺序执行。
+
+### 遇到的问题与解决方法
+1. 远程通过 stdin 喂给 Python 的大段更新脚本多次受 shell 转义影响；最终改为本地 python3 通过 subprocess.run + ssh + stdin 的方式下发脚本，稳定完成 model.md 与 test.md 的批量更新。
+2. MOVA 与 SoulX-FlashTalk 的问题并非简单“输出尺寸不理想”，而是代码级别就存在 center crop 后再 resize 的预处理；因此仅从输出文件肉眼观察不足以定位，需回到脚本和仓库源码确认裁切逻辑。
+
+
+## 2026-03-07 20:20
+
+### 任务内容
+1. 收口 OmniAvatar 与 LTX-2 两个剩余最小推理验证结果。
+2. 将最新成功状态同步回 model.md 与对应 test.md。
+
+### 结果与效果
+1. LTX-2 已成功生成 test/ltx2/output/ltx2_minimal.mp4，运行时间 83 秒；当前成功路径为去掉 fp8-cast，并将 stage2 LoRA 强度临时设为 0.0。
+2. LTX-2 输出文件实测为 512x512、24fps、约 5.04 秒，带音频，说明最小 A2V 链路已跑通。
+3. OmniAvatar 的主体推理已完整结束，并生成了 demo_out 下的 result_000_000.mp4 与 audio_out_000.wav；失败点已进一步缩小为后处理链路，而非模型本体。
+4. 已补装 imageio-ffmpeg，并将 OmniAvatar 代码中写死的 /usr/bin/ffmpeg 改为使用 PATH 中的 ffmpeg；随后手工合成 test/omniavatar/output/omniavatar_minimal.mp4。
+5. OmniAvatar 最终输出实测为 720x720、25fps、约 5.38 秒，已可作为最小素材推理通过结果。
+6. model.md 中 LTX-2 与 OmniAvatar 的“已测试”状态已更新为成功；对应 test.md 也已同步写入成功路径与问题修复过程。
+
+### 遇到的问题与解决方法
+1. OmniAvatar 第二次失败不是 imageio 本身，而是仓库内部 subprocess 继续硬编码调用 /usr/bin/ffmpeg；通过代码改为调用 PATH 中的 ffmpeg 后，后续重跑不再会卡在这个固定路径问题。
+2. LTX-2 当前成功配置仍是临时验证路径（stage2 LoRA=0.0），它满足 Phase 2 的“最小链路可跑通”目标，但如需恢复标准两阶段高质量配置，后续仍需补齐更兼容的 base checkpoint 方案。
+---
+
+## 2026-03-07 19:15
+
+### 任务内容
+根据最新优先级调整，停止 SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5 与 Wan2.2 I2V 的后续环境/权重推进，并将 Phase 2 重心切换到 MultiTalk、InfiniteTalk、LongCat-Video-Avatar。
+
+### 结果与效果
+1. 已停止本人启动的 Wan2.2 I2V 下载进程，并保留当前已下载约 49G 内容；Wan2.2 后续仅保留 T2V 已验证结果。
+2. 已在 `model.md` 中把 SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2 I2V 标注为“暂缓”，并把 MultiTalk、InfiniteTalk、LongCat-Video-Avatar 标注为“优先”。
+3. 已在 `plan.md` 中同步更新 Phase 2 / P4 当前优先级：接下来优先完成 MultiTalk、InfiniteTalk、LongCat-Video-Avatar 的环境配置、权重补齐与最小素材推理测试。
+
+### 遇到的问题与解决方法
+1. Wan2.2 I2V 已有进行中的下载任务；按用户新要求直接停止本人启动进程，并保留当前下载结果，避免继续占用带宽。
+---
+
+## 2026-03-07 19:20
+
+### 任务内容
+根据最新要求，进一步细化当前三项优先模型的执行顺序。
+
+### 结果与效果
+1. 已将当前优先级顺序明确为：LongCat-Video-Avatar > MultiTalk > InfiniteTalk。
+2. `model.md` 已同步更新三者在 Phase 2 状态表与未完成模型表中的优先级标注。
+3. `plan.md` 已同步更新 P4 配置进度中的优先顺序描述，后续执行将按该顺序推进。
+
+### 遇到的问题与解决方法
+1. 无新增技术问题；本轮主要是优先级重排与文档同步。
+
+## 2026-03-07 21:52
+
+### 任务内容
+1. 对 LongCat-Video-Avatar、MultiTalk、InfiniteTalk 重新核对 plan.md / model.md 中的 Phase 2 状态与当前仓库实况。
+2. 逐项检查三者的环境可启动性、权重完整度和最小推理测试脚手架准备情况。
+3. 为 MultiTalk、LongCat-Video-Avatar 补建最小测试目录与脚本，并补充/更新对应 test.md 记录。
+
+### 结果与效果
+1. MultiTalk：已补建 `test/multitalk/` 最小测试脚手架；确认当前缺 `multitalk.safetensors`、shared Wan2.1-I2V 主体 shards、`chinese-wav2vec2-base/model.safetensors`，因此仍不能启动最小推理。
+2. InfiniteTalk：已确认 single/multi checkpoint 与 `test/infinitetalk/` 脚手架均已就位；当前真正阻塞仍是 shared Wan2.1-I2V 主体 shards 与 wav2vec 主体权重缺失。
+3. LongCat-Video-Avatar：已补建 `test/longcat-video-avatar/` 最小测试脚手架；确认除 avatar 自身 shards 缺失外，还缺相邻 `weights/LongCat-Video` base 权重、`Kim_Vocal_2.onnx` 和 wav2vec 主体权重。
+4. 额外发现：在当前 SSH 会话下，`unified-env` 与 `longcat-env` 连 `python -S -V` 都会超时挂起，导致本轮只能完成静态检查与脚手架准备，未实际拉起最小推理。
+5. 已将 model.md 中这三个模型的备注更新为当前更精确的阻塞状态。
+
+### 遇到的问题与解决方法
+1. 远程仓库当前存在大量其他模型的未提交改动；本轮按用户要求仅触碰这三个目标模型相关目录与文档，未整理其他脏文件。
+2. 由于服务器基础 Python/conda 在非交互 SSH 会话下不可直接使用，本轮改为通过仓库现有文件、README、权重目录和测试脚手架做静态核对，并把可执行命令先写入 test 脚本，等待环境/权重补齐后再跑。
+
+
+
+## 2026-03-07 23:15
+
+### 任务内容
+1. 继续跟踪 LiveAvatar、SoulX-FlashTalk、LTX-2 的最小素材遗留问题。
+2. 按用户要求开始执行新口径的 Phase 4，并控制为单模型顺序运行，给其他测试留显存余量。
+3. 按 20 分钟汇报规范，把阶段状态同步回 progress.md / model.md / output results 文档。
+
+### 结果与效果
+1. 已确认 LiveAvatar 当前长时长修正版并非 CPU-only，而是 GPU + CPU offload 路径：使用 CUDA_VISIBLE_DEVICES=0、torchrun、offload_model=True、offload_kv_cache=True；但该次运行日志自 20:43 起不再增长，GPU 连续采样 utilization 为 0%，判断为卡住而非正常慢跑，已停止以释放显存。
+2. SoulX-FlashTalk 修正版当前输出已补回音轨：test/soulx-flashtalk/output/soulx_flashtalk_minimal.mp4 现包含 AAC 音轨，时长约 5 秒，分辨率 640x640。
+3. LTX-2 当前最小素材输出并非完全静止；通过抽帧差异分数估算，first_mid≈19.10、mid_last≈10.62、first_last≈22.29，说明视频存在变化。但当前成功路径是 stage2 LoRA=0.0 的临时配置，因此“链路已通”不等于“动作质量已达标”，后续仍需继续优化。
+4. 已正式开始新口径的 Phase 4：EchoMimic v2 已按 plan.md 新 4 个 filtered Condition 依次执行，并生成 C_half_short / C_half_long / C_full_short / C_full_long 四个输出文件。
+5. EchoMimic v2 的 output/echomimic_v2/results.md 已更新为新 Condition 记录，model.md 中 EchoMimic v2 的“是否完成Phase4”已改为“✅ 新4条件完成”。
+6. 当前 GPU 已从 LiveAvatar 卡住状态释放，后续将继续按“一个模型一个任务”的方式顺序推进下一个已完成 Phase 2 最小测试的模型 Phase 4。
+
+### 遇到的问题与解决方法
+1. LiveAvatar 把 infer_frames 从 48 提升到 124 后，简单增加时长会先后遇到 OOM 和长时间无进展卡住两类问题；当前策略改为停止卡住任务、先释放 GPU，再重新寻找更稳定的 GPU 推理配置。
+2. EchoMimic v2 的新 Phase 4 首版脚本在读取音频时长时先后踩到 ffmpeg stdin 与 python3 路径问题；已改为显式使用 /root/miniconda3/bin/python，并成功跑完第一批新条件输出。
+
+## 2026-03-07 23:31
+
+### 任务内容
+1. 继续推进 LongCat-Video-Avatar、MultiTalk、InfiniteTalk 的 Phase 2 环境可启动性排查。
+2. 为 MultiTalk / InfiniteTalk 设计不改动 unified-env 本体的启动兼容方案，并验证 CLI 能否起到 argparse 层。
+3. 补齐 LongCat-Video-Avatar 的缺失音频依赖，修复依赖安装过程中引入的 torch / numpy 漂移问题。
+
+### 结果与效果
+1. 已确认一个稳定绕过方案：`unified-env` 与 `longcat-env` 直接在 SSH 下调用 env 内 `python` 仍会挂起，但可以改用 `/root/miniconda3/bin/python -S` + 对应 env `site-packages` / overlay 的方式正常启动脚本。
+2. MultiTalk / InfiniteTalk：已为两者打上 lazy Kokoro 补丁，仅在 `--audio_mode tts` 时才导入 Kokoro；同时创建 `test/shared_pydeps/unified_transformers_449/` 兼容层（transformers 4.49.0、tokenizers 0.21.0、huggingface-hub 0.28.1 等），现在两者都能通过 `--help` 成功启动到 CLI 层。
+3. MultiTalk 额外完成了 shared Wan / wav2vec 软链接接入，后续可直接复用 `weights_shared/`。
+4. LongCat-Video-Avatar：已补装 `librosa`、`soundfile`、`onnxruntime`、`audio-separator`、`pyloudnorm` 等音频依赖，并验证 `run_demo_avatar_single_audio_to_video.py --help` 可正常启动。
+5. LongCat 环境修复中发现 `audio-separator` 安装把 torch 拉到了 2.10.0+cu128，导致 flash-attn 符号不匹配；随后已恢复到 `torch 2.6.0+cu124` 与 `numpy 1.26.4`，当前导入链路重新正常。
+6. 当前三者仍未真正进入最小推理执行阶段，核心剩余阻塞全部收敛到权重缺失：LongCat 缺 base / avatar / wav2vec / separator 权重，MultiTalk 缺 `multitalk.safetensors` 与 shared Wan/wav2vec 主体权重，InfiniteTalk 缺 shared Wan/wav2vec 主体权重。
+
+### 遇到的问题与解决方法
+1. unified-env 的 `transformers 5.3.0 + tokenizers 0.22.2 + huggingface-hub 1.5.0` 与当前 xfuser/diffusers 链路不兼容；未直接改坏 unified-env，而是改用项目内 overlay 方式为 MultiTalk / InfiniteTalk 单独覆盖兼容版本。
+2. Kokoro 相关依赖（misaki/spacy 等）会在脚本 import 阶段阻断 localfile 模式；通过把 `KPipeline` 改为仅在 TTS 分支懒加载，避免无关依赖继续阻塞音频文件驱动推理。
+3. LongCat 音频依赖补装时误拉高 torch / numpy 版本；已立即回退到项目要求的 torch 2.6.0+cu124 与 numpy 1.26.4，并重新验证 flash-attn 与 CLI 启动正常。
+
+## 2026-03-07 23:57
+
+### 任务内容
+1. 继续为三个优先模型排查可复用权重，并尽量用仓库内现有文件缩小下载缺口。
+2. 验证 shared wav2vec 与 LongCat 本地 wav2vec wrapper 是否已能正常加载。
+3. 在确认 hf-mirror 可访问后，优先为 LongCat-Video-Avatar 启动正式权重下载。
+
+### 结果与效果
+1. 已为 shared Wan2.1-I2V-14B-480P 补接 `models_t5_umt5-xxl-enc-bf16.pth` 与 `models_clip_open-clip-xlm-roberta-large-vit-huge-14.pth` 软链接；shared `chinese-wav2vec2-base` 也已补接 `pytorch_model.bin`。
+2. 已在 MultiTalk 上下文中验证 shared `chinese-wav2vec2-base` 可被 `Wav2Vec2Model.from_pretrained(...)` 正常加载，InfiniteTalk 可直接复用该结果。
+3. 已为 LongCat-Video-Avatar 补接 `chinese-wav2vec2-base/pytorch_model.bin` 与 `vocal_separator/Kim_Vocal_2.onnx`，并验证 `Wav2Vec2ModelWrapper` 可正常初始化。
+4. 通过 hf-mirror 成功获取了 LongCat / LongCat-Avatar / MultiTalk / Wan2.1-I2V 的远程文件清单与大小信息，确认 LongCat-Video base 约 83.3GB、LongCat-Video-Avatar 约 128.6GB、`multitalk.safetensors` 约 9.95GB。
+5. 已启动 LongCat 正式后台下载脚本 `test/longcat-video-avatar/download_longcat_weights.sh`（PID 59808）；当前先下载 `meituan-longcat/LongCat-Video`，随后自动续下 `meituan-longcat/LongCat-Video-Avatar`。
+6. 现在三者的阻塞进一步收敛：LongCat 主要等大权重下载完成；MultiTalk 剩 `multitalk.safetensors` 与 7 个 Wan diffusion shards；InfiniteTalk 剩 7 个 Wan diffusion shards。
+
+### 遇到的问题与解决方法
+1. 远程没有现成 `huggingface-cli`；改用 overlay 中的 `huggingface_hub` Python API 直接调用 `hf_hub_download` / `snapshot_download`，并通过 `HF_ENDPOINT=https://hf-mirror.com` 正常访问。
+2. LongCat 总缺口非常大（base+avatar 合计约 211GB），而当前磁盘剩余约 268GB；因此本轮按优先级只先启动 LongCat 下载，不同时并发启动 MultiTalk / InfiniteTalk 的大权重任务，避免空间和带宽同时被打满。
+
+## 2026-03-08 00:19
+
+### 任务内容
+1. 评估 MultiTalk 是否可以与 LongCat 并行推进。
+2. 基于磁盘与带宽余量，决定并发下载策略。
+
+### 结果与效果
+1. 当前磁盘剩余约 249GB，而 LongCat base+avatar 总缺口约 211GB；因此不适合再并发启动 shared Wan 的 7 个大 shard，但可以并发一个约 9.95GB 的 `multitalk.safetensors`。
+2. 已创建并启动 `test/multitalk/download_multitalk_self_weight.sh`，后台 PID 为 61811，当前与 LongCat 下载并行执行。
+3. LongCat 下载仍在继续，当前 `models/LongCat-Video/weights/LongCat-Video` 已增长到约 23GB。
+
+### 遇到的问题与解决方法
+1. 如果现在把 MultiTalk/InfiniteTalk 共享的 7 个 Wan shard 也一起开下，LongCat 下载完成后磁盘余量会明显不足；因此本轮采用“LongCat + MultiTalk 自身 checkpoint”并行、共享 Wan shard 延后的策略。
+
+
+
+## 2026-03-08 02:25
+
+### 任务内容
+1. 继续顺序推进已完成最小素材测试模型的 Phase 4，新启动 StableAvatar 的 4 组 filtered Condition。
+2. 并行尝试 LiveAvatar 的更稳 GPU 配置（80 帧版本），避免阻塞 Phase 4 主线。
+3. 继续并行定位 LTX-2 动作偏弱问题的根因。
+
+### 结果与效果
+1. StableAvatar 的新 Phase 4 已完成 4/4 条件：C_half_short、C_half_long、C_full_short、C_full_long，输出位于 output/stableavatar_newphase4/。
+2. StableAvatar 本轮沿用了 test/stableavatar/test.md 中已验证的参数组合，主路径稳定，且按单模型顺序执行完成。
+3. LiveAvatar 新开的 80 帧 GPU 实验版（test/liveavatar/test_liveavatar_80gpu.sh）成功进入 GPU 推理流程，但在与 StableAvatar Phase 4 并行时因总显存不足而 OOM；报错显示仅剩约 83 MiB 可用显存，额外申请 200 MiB 失败。
+4. 这说明 LiveAvatar 的 80 帧版本本身并非“只会卡死不运行”，而是在并行占用场景下显存余量不足；后续应在 Phase 4 主任务空闲窗口单独验证这条配置，或进一步降低帧数/显存峰值。
+5. LTX-2 的并行代码排查已进一步收敛：本地不仅有 dev-fp8，还同时有 dev-fp4、distilled、distilled-lora-384；当前问题更像是 checkpoint 与 stage-2 LoRA 组合/映射不对位，而不是单纯推理参数设置不佳。
+
+### 遇到的问题与解决方法
+1. LiveAvatar 与 StableAvatar 并行时总显存升到约 68GB+，StableAvatar 占约 27.8GB，LiveAvatar 占约 40.3GB，最终在初始化 KV cache 时 OOM。解决策略是后续让 LiveAvatar GPU 实验避开 Phase 4 主任务窗口，或者继续找更低峰值配置。
+2. StableAvatar Phase 4 新任务虽然整体成功，但 results.md 尚未自动追加，需要在文档侧显式同步；本次已一并补写。
+
+## 2026-03-08 11:44
+
+### 任务内容
+1. 检查 LongCat 与 MultiTalk 并行下载的实时进展。
+2. 根据实际结果更新当前阶段状态判断。
+
+### 结果与效果
+1. MultiTalk 并行下载任务已成功完成：`multitalk.safetensors` 已落盘，`MeiGen-MultiTalk` 目录当前约 16G。
+2. LongCat 下载的第一阶段（`meituan-longcat/LongCat-Video` base）已基本完成，目录当前约 73G。
+3. LongCat Avatar 第二阶段在下载 `avatar_*` 大 shard 时发生校验失败，日志报错为 `Consistency check failed`；后台任务已经退出，不再继续增长。
+4. 当前磁盘剩余约 110G，因此在修复 LongCat Avatar 续传前，不适合再贸然开启 shared Wan 7 个大 shard 的并发下载。
+
+### 遇到的问题与解决方法
+1. hf-mirror 在下载 LongCat Avatar 首个大分片时出现网络/文件一致性问题，导致拿到 3.8G 的损坏 shard；下一步需要清理损坏文件并针对 Avatar 做可续传重试。
+2. 由于并行下载已经显著抬高磁盘占用，本轮先停止扩张并发面，优先处理 LongCat Avatar 的断点续传和空间控制。
+
