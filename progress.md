@@ -1239,3 +1239,19 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 
 ### 遇到的问题与解决方法
 1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
+
+## 2026-03-08 19:14
+
+### 任务内容
+1. 按用户要求结束本次 Phase 4 队列任务，并对 OmniAvatar 之后的整体结果做收尾总结。
+2. 回填 OmniAvatar / InfiniteTalk / LongLive / Self-Forcing 等模型的最终状态到 model.md、对应 results.md 与 progress.md。
+3. 提交并推送本次任务的最终状态总结。
+
+### 结果与效果
+1. 当前已完成新 Phase 4 的模型：EchoMimic v2、StableAvatar、LiveTalk、Hallo3、Ovi、MOVA、FantasyTalking、LTX-2、MultiTalk、LongLive、Self-Forcing。
+2. 当前未完整完成的模型：LiveAvatar、SoulX-FlashTalk、Wan2.2-S2V（首轮 OOM 待复跑），InfiniteTalk（已完成 `C_half_short`，`C_full_short` OOM 中断），OmniAvatar（已回收 `C_half_short` 输出，`C_full_short` 未执行）。
+3. 当前无 Phase 4 推理任务运行，队列已结束。
+
+### 遇到的问题与解决方法
+1. OmniAvatar 本轮并非主体推理失败，而是在输出回收阶段未识别 `demo_out/OmniAvatar-14B/...` 的嵌套目录，导致 `C_half_short` 结果未被脚本拷回；本次已手动回收该输出并在 results.md 中记录根因。
+2. 用户原要求在 OmniAvatar 后结束任务，但 follow-up 队列在 OmniAvatar 中断后继续自动执行了 LongLive / Self-Forcing；现已停止后续推进，并以最终快照方式收尾。
