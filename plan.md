@@ -280,6 +280,7 @@ autodl-tmp/avatar-benchmark/output/
   - `C_full_short`：`input/audio/filtered/short/S002_adele.wav` + `input/avatar_img/filtered/full_body/1.png`
   - `C_full_long`：`input/audio/filtered/long/MT_eng.wav` + `input/avatar_img/filtered/full_body/3.png`
 - 每个模型最多测试上述 4 组组合，不再按 Phase 3 的 5s/10s/30s/1min/3min/5min 全档位铺开。
+- 模型执行 Phase 4 正式推理时，可优先参考该模型在 Phase 2 最小素材测试阶段沉淀的可运行命令、环境变量、依赖补丁与避坑经验，相关记录统一查看 test/{model_name}/ 下的脚本与说明文件。
 - 若模型不支持长时、全身或 audio-driven，只执行能力范围内可运行的子集，并在 `output/{model_name}/results.md` 中明确记录跳过原因。
 - 同类型模型优先保持完全一致的 Condition 组合，便于横向对比。
 - 每次推理都要将实际命令、素材路径、config 参数、输出路径、失败经验与解决方法同步记录到 `output/{model_name}/results.md`。
