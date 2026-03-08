@@ -1,0 +1,25 @@
+{
+  "model": "multitalk",
+  "phase": "Phase 4",
+  "size": "multitalk-480",
+  "sample_steps": 8,
+  "mode": "streaming",
+  "motion_frame": 9,
+  "num_persistent_param_in_dit": 0,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "MultiTalk 当前稳定路径为最小短时链路，长音频 filtered 条件尚未验证。",
+    "C_full_long": "MultiTalk 当前稳定路径为最小短时链路，长音频 filtered 条件尚未验证。"
+  }
+}
