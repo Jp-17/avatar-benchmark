@@ -1,0 +1,27 @@
+{
+  "model": "fantasy-talking",
+  "phase": "Phase 4",
+  "resolution": {"width": 512, "height": 512},
+  "fps": 23,
+  "max_num_frames": 81,
+  "seed": 42,
+  "audio_scale": 1.0,
+  "prompt_cfg_scale": 5.0,
+  "audio_cfg_scale": 5.0,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "FantasyTalking 当前稳定路径固定为 81 帧短视频，不扩展到长时。",
+    "C_full_long": "FantasyTalking 当前稳定路径固定为 81 帧短视频，不扩展到长时。"
+  }
+}
