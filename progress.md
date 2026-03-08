@@ -1173,3 +1173,22 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 
 ### 遇到的问题与解决方法
 1. 无新增问题，沿用该模型在 Phase 2 最小素材测试中已验证的稳定路径。
+## 2026-03-08 18:18
+
+### 任务内容
+1. 继续补齐 LongCat-Video-Avatar 缺失的 `avatar_single` checkpoint shards，并等待自动触发 `plan.md` Phase 2 / 2.2.1 的最小素材推理测试。
+2. 在自动测试失败时定位并修复根因，随后重跑最小素材测试。
+3. 持续监控下载进度、显存占用与数据盘容量，并在容量达到提醒线后同步提示。
+
+### 结果与效果
+1. 已补齐 LongCat-Video-Avatar 权重：`avatar_single 6/6`、`avatar_multi 6/6`；最后 3 个缺失 shard 通过并行 range 下载续传完成。
+2. 自动触发的首轮最小测试在输出阶段失败，根因为 `models/LongCat-Video/longcat_video/audio_process/torch_utils.py` 中 `get_audio_duration()` 直接调用 `ffprobe`，而 base Python wrapper 环境下无 `ffprobe` 可用。
+3. 已为 `get_audio_duration()` 增加 fallback：优先 `ffprobe`，缺失时对 `.wav` 走 `wave` / `librosa`；修复后重跑通过。
+4. LongCat-Video-Avatar 最小推理已通过：输出 `test/longcat-video-avatar/output/ai2v_demo_1.mp4`（457K），脚本记录运行时长 `709s`，监控峰值显存约 `57540 MiB`。
+5. `test/longcat-video-avatar/test.md`、`model.md` 已同步更新到最新状态。
+6. LongCat 权重补齐并完成测试后，`/root/autodl-tmp` 占用升至 `98%`，剩余约 `39G`，已按用户要求在达到 `97%` / `98%` 时提醒。
+
+### 遇到的问题与解决方法
+1. `hf-mirror` 对 LongCat 大 shard 的单连接下载速度不稳定：改为并行 range 下载脚本，按 shard 续传补齐剩余大文件。
+2. 自动触发首轮测试在视频音频合成阶段报 `FileNotFoundError: ffprobe`：在 LongCat 音频工具中加入 `ffprobe` 缺失 fallback 后重跑通过。
+3. 数据盘在 LongCat 权重补齐后逼近满载：先保留当前可运行状态，不再继续拉取新的大模型权重，并给出优先清理暂缓模型环境 / 扩容数据盘的提示。
