@@ -1092,3 +1092,23 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 沿用 test/ovi/test.md 中已验证的 qint8 + cpu_offload 稳定路径。
 2. 沿用 test/ovi/test.md 中已验证的 qint8 + cpu_offload 稳定路径。
+
+## 2026-03-08 15:20
+
+### 任务内容
+1. 按用户要求清理暂缓模型的遗留权重：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5。
+2. 优先补齐 MultiTalk / InfiniteTalk 共用的 `weights_shared/Wan2.1-I2V-14B-480P` diffusion shards，并清理 `weights_shared/Wan2.1-I2V-14B-720P` 未完成缓存。
+3. 按 `plan.md` 2.2.1 对 MultiTalk / InfiniteTalk 执行最小素材推理测试，并在遇到阻塞时即时修复。
+
+### 结果与效果
+1. 已删除 `models/SkyReels-V3/weights`、`models/HunyuanVideo-Avatar/weights`、`models/HunyuanVideo-1.5/weights` 三个暂缓模型的遗留权重目录。
+2. 已清理 `weights_shared/Wan2.1-I2V-14B-720P` 未完成缓存；随后在 480P 测试完成后，也清掉了 `weights_shared/Wan2.1-I2V-14B-480P/.cache/huggingface/download` 中遗留的 `.incomplete/.lock`，download cache 从 `2.5G` 降到 `136K`。
+3. 已补齐 shared `Wan2.1-I2V-14B-480P` 的 7/7 diffusion shards；最后一片通过 `wget -c` 复用已有 partial file 续传完成。
+4. MultiTalk 最小推理已通过：输出 `test/multitalk/output/multitalk_minimal.mp4`（398K），脚本记录运行时长 `2053s`，监控峰值显存约 `14884 MiB`。
+5. InfiniteTalk 最小推理已通过：输出 `test/infinitetalk/output/infinitetalk_minimal.mp4`（356K），修复后重跑时长 `1030s`。
+6. `test/multitalk/test.md`、`test/infinitetalk/test.md`、`model.md` 已同步更新到最新状态。
+
+### 遇到的问题与解决方法
+1. shared Wan 最后一片通过 `huggingface_hub` 续传时速度降到约 `0.1MB/s`：改用 `wget -c` 直接复用已有 `3.92G` partial file，在 `2m59s` 内完成最后一片。
+2. MultiTalk 首次起跑报 `Cannot copy out of meta tensor`：根因是仍使用基础 Wan 的 index，没有接入 `MeiGen-MultiTalk` 的 adapter index / `multitalk.safetensors`；通过仅在 `models/MultiTalk/weights/Wan2.1-I2V-14B-480P` 建模型局部 overlay 解决，不污染 shared 基座。
+3. InfiniteTalk 首次起跑在图片输入场景下仍无条件调用 `ffprobe`：为 `models/InfiniteTalk/wan/utils/utils.py` 中的 `get_video_codec()` 增加“非视频输入 / 缺失 ffprobe 时直接返回空 codec”的 fallback 后重跑通过。
