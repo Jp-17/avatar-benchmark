@@ -1,0 +1,23 @@
+{
+  "model": "self-forcing",
+  "phase": "Phase 4",
+  "mode": "text-to-video",
+  "config": "configs/self_forcing_dmd.yaml",
+  "checkpoint": "models/Self-Forcing/checkpoints/self_forcing_dmd.pt",
+  "num_output_frames": 21,
+  "condition_mapping": "Self-Forcing 不支持 audio-driven，本轮使用 text-only prompt 分别映射 half/full shot 的短时语义。",
+  "supported_conditions": {
+    "C_half_short": {
+      "prompt_file": "output/self_forcing_newphase4/prompts/C_half_short.txt",
+      "prompt_text": "A waist-up portrait shot of a person speaking directly to the camera, natural facial expressions, subtle head motion, clean studio lighting."
+    },
+    "C_full_short": {
+      "prompt_file": "output/self_forcing_newphase4/prompts/C_full_short.txt",
+      "prompt_text": "A full-body shot of a person singing in front of the camera, expressive body movement, rhythmic performance, cinematic lighting."
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "参考 test/self-forcing/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。",
+    "C_full_long": "参考 test/self-forcing/test.md，当前稳定路径只验证到 21 帧短视频；长时推理尚未纳入本轮横评。"
+  }
+}
