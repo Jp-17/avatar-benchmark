@@ -128,7 +128,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[~] 进行中（P1/P2模型全部启动配置，环境+权重下载并行）；P3/P4待续
+**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；原始音频时长补跑在 LiveAvatar `C_half_short` 阶段长时间无新进展后暂停；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 补跑尚未开始；Wan2.2-T2V 继续暂停。
 
 ---
 
@@ -295,7 +295,7 @@ autodl-tmp/avatar-benchmark/output/
 | 面部神态丰富度 | 表情变化是否自然、多样 |
 | 全身动作丰富度 | 身体动作是否自然、与内容匹配 |
 
-**任务状态**：[~] 已完成 14 个模型的 Phase 4（3 个 4/4 全量完成 + 11 个 2/4 支持子集完成），部分完成 2 个（OmniAvatar、InfiniteTalk）；当前无失败待复跑项；LongCat-Video-Avatar 已完成最小测试但尚未进入 Phase 4，SkyReels-V3 / HunyuanVideo-Avatar / HunyuanVideo-1.5 暂缓。
+**任务状态**：[~] 已完成 15 个模型的 Phase 4（3 个 4/4 全量完成 + 12 个 2/4 支持子集完成），OmniAvatar 正在补跑 `C_full_short`；LongCat-Video-Avatar 已接入夜间队列；Wan2.2-T2V 暂停；随后将对 LiveAvatar、Wan2.2-S2V、LTX-2、FantasyTalking 进行“按原始音频时长”补跑。
 
 ### 4.4 Phase 4 审计清单（2026-03-08 19:30）
 
@@ -310,7 +310,7 @@ autodl-tmp/avatar-benchmark/output/
 | FantasyTalking | output/fantasy_talking_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前稳定脚本固定 81 帧 |
 | LTX-2 | output/ltx2_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 当前稳定脚本固定 121 帧 |
 | MultiTalk | output/multitalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | streaming 代码可扩长，但仅验证短时稳定链路 |
-| InfiniteTalk | output/infinitetalk_newphase4/ | ⚠️ 1/2 完成待续跑 | 基本一致 | `C_full_short` 于 2026-03-08 OOM；脚本文案已修正 |
+| InfiniteTalk | output/infinitetalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
 | OmniAvatar | output/omniavatar_newphase4/ | ⚠️ 1/2 完成待复跑 | 基本一致 | `C_half_short` 已回收；输出回收脚本已改为递归查找 |
 | Wan2.2-S2V | output/wan22_s2v_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
 | LiveAvatar | output/liveavatar_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致（以新 80 帧基线为准） | 已完成 `C_half_short` / `C_full_short`，长时条件仍按当前稳定路径跳过 |
@@ -328,7 +328,7 @@ autodl-tmp/avatar-benchmark/output/
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
 | Phase 2 | 环境配置与权重下载 | [~] 14/21模型环境+权重完成,可推理测试;当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
-| Phase 4 | 推理生成 | [~] 已完成 14 个模型；OmniAvatar / InfiniteTalk 部分完成；LongCat-Video-Avatar 尚未启动 | output/ 目录 |
+| Phase 4 | 推理生成 | [~] 已完成 17 个模型；OmniAvatar 与 LongCat-Video-Avatar 已完成支持子集；原始音频时长补跑在 LiveAvatar 阶段暂停；Wan2.2-S2V / LTX-2 / FantasyTalking 尚未开始；当前全部任务已按指示停止 | output/ 目录 |
 
 ---
 
@@ -346,22 +346,52 @@ autodl-tmp/avatar-benchmark/output/
 
 #### 当前优先级（2026-03-08 审计更新）
 
-- **最高优先**：LiveAvatar 按与 Phase 2 一致的稳定参数串行复跑。
-- **随后补跑**：Wan2.2-S2V、SoulX-FlashTalk、InfiniteTalk（补 `C_full_short`）、OmniAvatar（补 `C_full_short`）。
-- **暂后推进**：LongCat-Video-Avatar 已完成最小测试，待存储/队列允许后再进入 Phase 4。
-- **继续暂缓**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2 I2V。
+- **当前现状**：OmniAvatar 与 LongCat-Video-Avatar 均已完成 `C_half_short` / `C_full_short`。
+- **暂停点**：LiveAvatar 原始音频时长补跑 `C_half_short`（`infer_frames=136`）运行约 7 小时后仍停留在 `complete prepare conditional inputs`，GPU 利用率归零且未产出 mp4。
+- **已停止**：按当前指示，夜间总控队列与相关推理进程已全部停止，等待下一步决策。
+- **待续推进**：若继续 full-audio 补跑，建议先定位 LiveAvatar 挂起根因，再决定是否继续 Wan2.2-S2V → LTX-2 → FantasyTalking。
+- **继续暂缓**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2-T2V。
 
 | 模型 | 状态 |
 |------|------|
 | LiveAvatar | [x] 环境/权重/最小基线✅；Phase 4 支持子集完成 |
 | Wan2.2 | [x] T2V 最小测试✅ + I2V 暂停(保留49G)；S2V Phase 4 支持子集完成 |
 | SoulX-FlashTalk | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
-| OmniAvatar | [~] 环境/权重/最小测试✅；Phase 4 已回收 `C_half_short`，待补 `C_full_short` |
+| OmniAvatar | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | Self-Forcing | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | LongLive | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | MultiTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
-| InfiniteTalk | [~] 环境/共享 Wan 权重/最小测试✅；Phase 4 已完成 `C_half_short`，`C_full_short` OOM 待续跑 |
-| LongCat-Video-Avatar | [~] 权重补齐 + 最小测试✅；Phase 4 尚未开始 |
+| InfiniteTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
+| LongCat-Video-Avatar | [x] 权重补齐 + 最小测试✅；Phase 4 支持子集完成 |
 | SkyReels-V3 | [ ] 暂缓 |
 | HunyuanVideo-Avatar | [ ] 暂缓 |
 | HunyuanVideo-1.5 | [ ] 暂缓 |
+
+### 4.5 2026-03-09 夜间队列与原始音频时长补跑
+
+| 项目 | 当前状态 | 说明 |
+|------|----------|------|
+| OmniAvatar | 运行中 | `test/omniavatar/run_phase4_resume_cfull.sh` 正在补 `C_full_short`。 |
+| LongCat-Video-Avatar | 已入队 | `test/phase4_overnight_queue.sh` 会在 OmniAvatar 结束后启动 `test/longcat-video-avatar/run_phase4_filtered.sh`。 |
+| LiveAvatar | 已入队 | 以 `test/liveavatar/test.md` 的稳定 80 帧基线为底，仅将短时条件按原始音频时长重算 `infer_frames`（136 / 216）。 |
+| Wan2.2-S2V | 已入队 | 沿用 `test/wan2.2-s2v/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `infer_frames`（88 / 140）。 |
+| LTX-2 | 已入队 | 沿用 `test/ltx2/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `num_frames`（129 / 206）。 |
+| FantasyTalking | 已入队 | 沿用 `test/fantasy-talking/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `max_num_frames`（124 / 197）。 |
+| Wan2.2-T2V | 暂停 | 按最新用户指示，本轮夜间任务不再尝试。 |
+
+- 夜间总控脚本：`test/phase4_overnight_queue.sh`
+- 夜间日志：`test/phase4_overnight_queue.log`
+- 当前 PID：以 `test/phase4_overnight_queue.pid` 为准
+- 存储提醒：`/root/autodl-tmp` 当前约 98% 已用，仅约 39G 可用；队列会持续在日志中记录磁盘告警。
+
+
+### 4.6 2026-03-09 停机前快照
+
+| 项目 | 状态 | 说明 |
+|------|------|------|
+| OmniAvatar | 已完成支持子集 | `output/omniavatar_newphase4/C_half_short.mp4` 与 `output/omniavatar_newphase4/C_full_short.mp4` 均已落盘。 |
+| LongCat-Video-Avatar | 已完成支持子集 | `output/longcat_video_avatar_newphase4/C_half_short.mp4` 与 `output/longcat_video_avatar_newphase4/C_full_short.mp4` 均已落盘。 |
+| LiveAvatar full-audio | 挂起后暂停 | `C_half_short` 以 `infer_frames=136` 启动，运行约 7 小时后仍停在 `complete prepare conditional inputs`；未生成 `output/liveavatar_newphase4_fullaudio/C_half_short.mp4`。 |
+| Wan2.2-S2V / LTX-2 / FantasyTalking full-audio | 尚未开始 | 被 LiveAvatar full-audio 卡住，当前尚未进入执行。 |
+| 夜间总控队列 | 已停止 | 原 `test/phase4_overnight_queue.sh` 已按用户要求停止。 |
+| 存储 | 风险持续 | 截至 2026-03-09 10:37:29 CST，`/root/autodl-tmp` 仍约 98% 已用，剩余约 39G。 |

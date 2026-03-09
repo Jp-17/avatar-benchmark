@@ -1325,3 +1325,41 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 - 2026-03-08 22:03 SoulX-FlashTalk 修复输出临时文件与最终文件同名导致成片被删的问题，已完成 Phase 4 短时子集（C_half_short/C_full_short）；随后已后台启动 Wan2.2-S2V 复跑（PID 450909）。
 
 - 2026-03-08 22:27 Wan2.2-S2V 已完成 Phase 4 短时子集（C_half_short/C_full_short），显存峰值 43523 MB，单 case 约 776-778 秒；至此失败待复跑项已清空，剩余为 OmniAvatar / InfiniteTalk 的部分完成补齐。
+
+- 2026-03-08 23:38 InfiniteTalk 已完成 Phase 4 短时子集补跑（C_half_short/C_full_short），显存峰值 46437 MB；随后已启动 OmniAvatar 缺失的 C_full_short 补跑，并串接 LongCat-Video-Avatar 与 Wan2.2-T2V 队列。
+
+## 2026-03-09 00:33
+
+### 任务内容
+1. 按最新要求取消 Wan2.2-T2V 夜间尝试，改为：等待 OmniAvatar `C_full_short` 结束后，继续 LongCat-Video-Avatar，再顺序补跑“可按原始音频时长扩展”的模型。
+2. 新增原始音频时长补跑脚本：LiveAvatar、Wan2.2-S2V、LTX-2、FantasyTalking；均保持与各自 Phase 2 最小测试一致的稳定命令，只调整帧数/时长相关参数。
+3. 用 `nohup` 启动新的夜间总控队列，并替换掉旧的仅 LongCat 等待队列。
+4. 同步更新 `plan.md`、`model.md` 的 Phase 4 当前状态与夜间执行顺序。
+
+### 结果与效果
+1. `test/phase4_overnight_queue.sh` 已经通过 `nohup` 后台启动，当前 PID 记录于 `test/phase4_overnight_queue.pid`；日志写入 `test/phase4_overnight_queue.log`。
+2. 夜间队列顺序已固定为：OmniAvatar（等待当前补跑完成）→ LongCat-Video-Avatar → LiveAvatar 原始音频时长补跑 → Wan2.2-S2V 原始音频时长补跑 → LTX-2 原始音频时长补跑 → FantasyTalking 原始音频时长补跑。
+3. 本轮原始音频时长补跑采用的参数为：LiveAvatar `infer_frames=136/216`、Wan2.2-S2V `infer_frames=88/140`、LTX-2 `num_frames=129/206`、FantasyTalking `max_num_frames=124/197`。
+4. 当前磁盘 `/root/autodl-tmp` 仍处于约 98% 使用率、可用约 39G；夜间总控日志会持续写入磁盘告警，便于醒来后快速检查是否需要清理扩容。
+
+### 遇到的问题与解决方法
+1. 远端无 `python3` 与 `ffprobe` 命令，导致初版时长换算脚本取不到音频长度；现已改为优先 `ffprobe`，否则回退到 `/root/miniconda3/bin/python` 的 WAV 解析和 `ffmpeg -i` 的时长提取。
+2. 旧队列 `test/phase4_tail_queue_longcat_only.sh` 只能在 OmniAvatar 后启动 LongCat，不能继续执行后续补跑；现已停止旧队列并改为统一的 `test/phase4_overnight_queue.sh`。
+
+
+## 2026-03-09 10:37
+
+### 任务内容
+1. 复查夜间队列执行现状，确认 OmniAvatar、LongCat-Video-Avatar、LiveAvatar full-audio 的最新进展。
+2. 将当前快照整理回写到 `model.md`、`plan.md`、`progress.md`。
+3. 按最新要求停止当前所有相关推理与队列程序，等待下一步指示。
+
+### 结果与效果
+1. 已确认 `OmniAvatar` 的 `C_full_short` 于夜间补跑成功，`LongCat-Video-Avatar` 的 `C_half_short` / `C_full_short` 也已成功生成；两者当前均可视为 Phase 4 支持子集完成。
+2. `LiveAvatar` 原始音频时长补跑卡在 `C_half_short`：命令以 `infer_frames=136` 运行约 7 小时，日志停留在 `complete prepare conditional inputs`，GPU 利用率归零，且未产出 mp4，因此后续 `Wan2.2-S2V` / `LTX-2` / `FantasyTalking` 的 full-audio 补跑尚未开始。
+3. 夜间总控 `test/phase4_overnight_queue.sh` 及其衍生的 LiveAvatar full-audio 相关进程已全部停止，当前进入人工等待状态。
+4. 截至 2026-03-09 10:37:29 CST，`/root/autodl-tmp` 仍为约 98% 使用率、剩余约 39G，可继续运行但存储风险较高。
+
+### 遇到的问题与解决方法
+1. `LiveAvatar` 的 full-audio 并非立即报错退出，而是长时间停滞在生成阶段，导致夜间顺序队列被动阻塞；本轮先按要求停机，后续应先定位挂起根因再继续扩展时长。
+2. 夜间队列执行过的脚本中仍存在少量 Markdown 反引号触发的 shell 噪声提示，但 LongCat 实际结果已正常落盘，当前真正阻塞点仍是 LiveAvatar full-audio 的长时间挂起。

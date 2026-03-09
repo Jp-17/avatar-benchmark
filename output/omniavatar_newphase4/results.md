@@ -1,7 +1,7 @@
 # OmniAvatar Phase 4 结果记录（新 Condition）
 
 ## 状态
-- 当前状态：部分完成，待复跑
+- 当前状态：已完成支持子集
 - 执行脚本：test/omniavatar/run_phase4_filtered.sh
 - 配置文件：output/omniavatar_newphase4/config.json
 - 输出目录：output/omniavatar_newphase4/
@@ -31,6 +31,12 @@
 
 
 ### C_full_short
-- 状态：❌ not_run
+- 状态：✅ done
 - 素材：/root/autodl-tmp/avatar-benchmark/input/avatar_img/filtered/full_body/1.png + /root/autodl-tmp/avatar-benchmark/input/audio/filtered/short/S002_adele.wav + /root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/prompts/C_full_short.txt
-- 跳过原因：首轮运行在 `C_half_short` 输出回收阶段中断，未进入 `C_full_short`。现已修正 `test/omniavatar/run_phase4_filtered.sh` 为递归查找 `demo_out` 嵌套结果，后续可直接补跑剩余条件。
+- 实际命令：conda activate /root/autodl-tmp/envs/omniavatar-env && torchrun --standalone --nproc_per_node=1 scripts/inference.py --config configs/inference.yaml --input_file /root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/logs/C_full_short.infer.txt
+- config 参数：见 output/omniavatar_newphase4/config.json
+- 输出路径：/root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/C_full_short.mp4
+- 显存峰值：21565 MB
+- 推理生成时间：5414 秒
+- 日志：/root/autodl-tmp/avatar-benchmark/output/omniavatar_newphase4/logs/C_full_short.log
+- 失败经验与解决方法：沿用 test/omniavatar/test.md 中已验证的 `scripts/inference.py + configs/inference.yaml` 稳定路径，并继续使用 PATH 中的 ffmpeg。
