@@ -1398,3 +1398,21 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 若音频裁得过短，则无法观察 `80f` 单 clip 后段是否退化；本次改为使用约 `3s` 的片段，使 `80f` 输出能覆盖足够长的尾段进行观察。
 2. 由于 pipeline 在首个 clip 解码后会丢弃前 `3` 帧，最终 `48f` 与 `80f` 的有效帧数分别为 `45` 和 `77`；本次在结果文档中显式记录该行为，避免误判为音视频合并异常。
+
+## 2026-03-09 19:13
+
+### 任务内容
+1. 只读核查当前所有可执行 Phase 4 模型在长音频条件下的真实运行情况，重点复盘 SoulX-FlashTalk 与 OmniAvatar。
+2. 复核长音频基准素材 `A001.wav` 与 `MT_eng.wav` 的真实时长，并交叉核对各模型成片时长，区分“真实长音频完成”和“被脚本截断的名义长条件完成”。
+3. 在不启动新推理的前提下，同步更新 `model.md` 与 `plan.md`，为下一轮长音频顺序队列做准备。
+
+### 结果与效果
+1. 已确认长音频基准素材真实时长：`A001.wav = 100.03s`，`MT_eng.wav = 60.00s`。
+2. 当前可直接认定为真实长音频已跑通的模型为：`LiveTalk`、`StableAvatar`，以及 `SoulX-FlashTalk` 的 `C_full_long` 探针（成片约 `60.06s`）。
+3. 已确认 `EchoMimic v2` 的两个 long 输出都被 `336` 帧上限截断到约 `14.02s`，不能作为真实长音频结论。
+4. 已确认 `OmniAvatar`、`InfiniteTalk`、`LongCat-Video-Avatar` 当前仅完成短时支持子集，长音频条件尚未执行。
+5. 当前 GPU 仍被 `output/liveavatar_singleclip_compare/` 的 LiveAvatar 对照实验占用，因此本次只完成核查与文档同步，未启动新的 Phase 4 长音频任务。
+
+### 遇到的问题与解决方法
+1. `output/soulx_flashtalk_newphase4_longaudio/results.md` 中把 `C_full_long` 的音频/视频时长记成 `1.000s`；根因是旧脚本使用 `ffmpeg -i ... | awk` 解析 `Duration` 时发生字段错位。当前先在文档中标注该统计错误，后续再修脚本本身。
+2. `SoulX-FlashTalk` 的 `C_half_long` 日志只记录到 `Data preparation done. Start to generate video...` 后即结束，暂无明确 Python Traceback；当前先记录为“部分完成”，待后续顺序队列继续补跑验证。

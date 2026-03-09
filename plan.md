@@ -395,3 +395,18 @@ autodl-tmp/avatar-benchmark/output/
 | Wan2.2-S2V / LTX-2 / FantasyTalking full-audio | 尚未开始 | 被 LiveAvatar full-audio 卡住，当前尚未进入执行。 |
 | 夜间总控队列 | 已停止 | 原 `test/phase4_overnight_queue.sh` 已按用户要求停止。 |
 | 存储 | 风险持续 | 截至 2026-03-09 10:37:29 CST，`/root/autodl-tmp` 仍约 98% 已用，剩余约 39G。 |
+
+### 4.7 2026-03-09 长音频核查（以实际产物为准）
+
+| 模型 | 当前结论 | 说明 |
+|------|----------|------|
+| LiveTalk | ✅ 真长音频完成 | `A001.wav 100.03s -> C_half_long 98.06s`，`MT_eng.wav 60.00s -> C_full_long 59.06s`。 |
+| StableAvatar | ✅ 真长音频完成 | `C_half_long 99.88s`、`C_full_long 59.90s`，与输入音频基本对齐。 |
+| EchoMimic v2 | ⚠️ 名义长条件完成但被脚本截断 | `test/echomimic_v2/run_phase4_filtered.sh` 将帧数上限固定为 `336`，两个 long 输出都只有约 `14.02s`。 |
+| SoulX-FlashTalk | ⚠️ 长音频探针部分完成 | `C_full_long` 实际成片约 `60.06s`；`C_half_long` 在进入生成阶段后提前结束，当前日志无明确 Traceback。 |
+| OmniAvatar | ⏭️ 未执行长音频 | 当前仅完成短时支持子集；单个 short case 已耗时约 `3679s / 5414s`。 |
+| InfiniteTalk | ⏭️ 未执行长音频 | 当前仅完成短时 image-input fallback + streaming 稳定链路。 |
+| LongCat-Video-Avatar | ⏭️ 未执行长音频 | 当前仅完成短时 ai2v 稳定链路。 |
+
+- 当前 GPU 仍被 `output/liveavatar_singleclip_compare/` 的 LiveAvatar 对照实验占用，本轮核查未启动新的 Phase 4 长音频推理。
+- `output/soulx_flashtalk_newphase4_longaudio/results.md` 中 `1.000s` 的时长字段来自旧脚本统计 bug，真实产物时长应以 `ffmpeg -i` / 实际文件为准。
