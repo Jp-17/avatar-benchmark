@@ -1363,3 +1363,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. `LiveAvatar` 的 full-audio 并非立即报错退出，而是长时间停滞在生成阶段，导致夜间顺序队列被动阻塞；本轮先按要求停机，后续应先定位挂起根因再继续扩展时长。
 2. 夜间队列执行过的脚本中仍存在少量 Markdown 反引号触发的 shell 噪声提示，但 LongCat 实际结果已正常落盘，当前真正阻塞点仍是 LiveAvatar full-audio 的长时间挂起。
+
+## 2026-03-09 17:59
+
+### 任务内容
+1. 对照 LiveAvatar 官方单卡脚本 `infinite_inference_single_gpu.sh`，整理出一条“最接近官方、但适配当前本地权重环境”的候选命令。
+2. 仅针对 `C_half_short` 执行一次前台验证，使用当前项目的半身图、短音频和 speech prompt，重点验证多 clip 路径能否修复“视频时长偏短”问题。
+3. 记录本次命令与官方脚本的差异，并判断失败类型是 OOM 还是软卡住。
+
+### 结果与效果
+1. 已确认官方近似命令会按音频长度进入多 clip 路径：当前音频 `5.355s`，在 `25fps`、`infer_frames=48` 下需要 `num_clip=3`，这与此前错误地固定 `num_clip=1` 的旧短时结果不同。
+2. 本次前台实测未能出片，失败点非常明确：在 `Generating video ...` 之后、KV cache 初始化阶段触发 CUDA OOM，而不是软卡住。
+3. 这说明“最接近官方”的 `48f + 多 clip + no offload_kv_cache + fp8` 路径，在当前 80GB 单卡环境下仍然不能直接用于我们的素材；旧结果的“视频时长偏短”问题在参数设计层面虽可通过多 clip 修正，但执行链路尚未恢复可用。
+4. 已将详细命令、报错与结论单独记录到 `output/liveavatar_official_nearby/results.md`，避免与现有已修改的 LiveAvatar 结果文件混杂。
+
+### 遇到的问题与解决方法
+1. 官方脚本中的 `--lora_path_dmd "Quark-Vision/Live-Avatar"` 不适合当前本地离线权重环境，因此本次测试改为本地路径 `ckpt/LiveAvatar/liveavatar.safetensors`。
+2. 即便保留官方的 `infer_frames=48`、`single_gpu`、`offload_model=True`、`fp8`，只把素材替换为项目当前输入并按音频长度计算 `num_clip`，仍然会在 KV cache 初始化阶段 OOM；说明当前瓶颈不是 prompt 或素材，而是单卡多 clip 的显存需求。
