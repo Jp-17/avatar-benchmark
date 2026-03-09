@@ -29,6 +29,7 @@ output/*/*_tmp/
 output/*/animated_images/
 !output/*/results.md
 !output/*/config.json
+output/*/tmp/
 
 # 生成产物与测试临时文件
 output/*/*.log
@@ -38,6 +39,7 @@ test/**/output/
 test/**/*.nohup.log
 test/**/*.log
 test/**/*.status
+test/**/*.pid
 test/shared_pydeps/
 
 # 本地模型源码与共享权重
