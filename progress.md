@@ -1434,3 +1434,24 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. LiveAvatar 相关目录此前同时混有“正式结果”“官方近似复测”“单 clip 对照实验”“后台排查残留”，容易让人误以为仍有活跃执行链路；本次通过归档排查目录和补充最终结论，统一了目录语义。
 2. `liveavatar_newphase4/results.md` 中存在旧的 `liveavatar_phase4_audiofix_bg` 路径引用；本次已同步改成归档后的 `output/liveavatar_debug_archive/phase4_audiofix_bg/`，避免文档路径失效。
+
+## 2026-03-09 19:28
+
+### 任务内容
+1. 基于最新长音频核查结论，为 `OmniAvatar`、`InfiniteTalk`、`LongCat-Video-Avatar`、`SoulX-FlashTalk` 准备正式 Phase 4 长音频执行脚本。
+2. 更新 `plan.md` 与 `model.md`，明确下一轮长音频正式执行顺序、脚本名与输出目录。
+3. 对 4 个新脚本做静态语法检查，确认当前不启动推理也能先完成排队准备。
+
+### 结果与效果
+1. 已新增 4 个正式长音频脚本：
+   - `test/omniavatar/run_phase4_longaudio.sh`
+   - `test/infinitetalk/run_phase4_longaudio.sh`
+   - `test/longcat-video-avatar/run_phase4_longaudio.sh`
+   - `test/soulx-flashtalk/run_phase4_longaudio_official.sh`
+2. `plan.md` 已新增正式顺序执行计划，顺序固定为 `OmniAvatar -> InfiniteTalk -> LongCat-Video-Avatar -> SoulX-FlashTalk`，并写明各自输出目录。
+3. `model.md` 已同步回填四个模型的正式长音频脚本路径与输出目录，避免后续把旧探针、短时子集和正式长音频结果混淆。
+4. 4 个脚本均已通过 `bash -n` 静态检查，可在 GPU 空闲时直接串行执行。
+
+### 遇到的问题与解决方法
+1. `SoulX-FlashTalk` 目录下同时存在旧探针脚本和未完成的半程补跑脚本，容易误把历史排查链路当成正式 benchmark；本次单独新增 `run_phase4_longaudio_official.sh` 并切换到新输出目录，显式区分正式结果与旧探针。
+2. 远程仓库当前存在较多无关脏改动与未跟踪目录；本次只整理并准备与长音频正式执行直接相关的脚本和文档，不触碰其他队列或输出目录。

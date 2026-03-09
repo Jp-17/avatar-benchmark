@@ -408,5 +408,18 @@ autodl-tmp/avatar-benchmark/output/
 | InfiniteTalk | ⏭️ 未执行长音频 | 当前仅完成短时 image-input fallback + streaming 稳定链路。 |
 | LongCat-Video-Avatar | ⏭️ 未执行长音频 | 当前仅完成短时 ai2v 稳定链路。 |
 
-- 当前 GPU 仍被 `output/liveavatar_singleclip_compare/` 的 LiveAvatar 对照实验占用，本轮核查未启动新的 Phase 4 长音频推理。
+- 长音频核查阶段未启动新的 Phase 4 推理；截至 `2026-03-09 19:28 CST`，GPU 已空闲，可进入下一轮顺序执行。
 - `output/soulx_flashtalk_newphase4_longaudio/results.md` 中 `1.000s` 的时长字段来自旧脚本统计 bug，真实产物时长应以 `ffmpeg -i` / 实际文件为准。
+
+### 4.8 2026-03-09 长音频正式顺序执行计划
+
+| 顺序 | 模型 | 执行脚本 | 输出目录 | 说明 |
+|------|------|----------|----------|------|
+| 1 | OmniAvatar | `test/omniavatar/run_phase4_longaudio.sh` | `output/omniavatar_newphase4_longaudio/` | 沿用 `scripts/inference.py + configs/inference.yaml` 稳定链路，正式执行 `C_half_long` / `C_full_long`。 |
+| 2 | InfiniteTalk | `test/infinitetalk/run_phase4_longaudio.sh` | `output/infinitetalk_newphase4_longaudio/` | 沿用 image-input fallback + streaming 稳定链路，正式执行 `C_half_long` / `C_full_long`。 |
+| 3 | LongCat-Video-Avatar | `test/longcat-video-avatar/run_phase4_longaudio.sh` | `output/longcat_video_avatar_newphase4_longaudio/` | 沿用 base Python wrapper + `--context_parallel_size=1` 稳定链路，正式执行 `C_half_long` / `C_full_long`。 |
+| 4 | SoulX-FlashTalk | `test/soulx-flashtalk/run_phase4_longaudio_official.sh` | `output/soulx_flashtalk_newphase4_longaudio_official/` | 使用正式 benchmark prompt 映射（`C_half_long` / `C_full_long` 均为 `speech`），不再沿用旧探针输出目录。 |
+
+- 本轮按用户最新顺序执行：`OmniAvatar -> InfiniteTalk -> LongCat-Video-Avatar -> SoulX-FlashTalk`。
+- 四个脚本都已补齐 `config.json`、`results.md`、显存峰值、音视频时长、失败记录与可重跑跳过逻辑；执行前已通过 `bash -n` 静态检查。
+- `SoulX-FlashTalk` 旧探针目录 `output/soulx_flashtalk_newphase4_longaudio/` 仅保留历史排查信息；正式结果统一写入 `output/soulx_flashtalk_newphase4_longaudio_official/`。
