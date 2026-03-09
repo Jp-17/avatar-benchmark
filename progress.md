@@ -1416,3 +1416,21 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. `output/soulx_flashtalk_newphase4_longaudio/results.md` 中把 `C_full_long` 的音频/视频时长记成 `1.000s`；根因是旧脚本使用 `ffmpeg -i ... | awk` 解析 `Duration` 时发生字段错位。当前先在文档中标注该统计错误，后续再修脚本本身。
 2. `SoulX-FlashTalk` 的 `C_half_long` 日志只记录到 `Data preparation done. Start to generate video...` 后即结束，暂无明确 Python Traceback；当前先记录为“部分完成”，待后续顺序队列继续补跑验证。
+
+## 2026-03-09 19:20
+
+### 任务内容
+1. 按最新结论为 LiveAvatar 做收尾整理，明确写入“停止继续投入单卡多 clip / full-audio 路径”的最终决定。
+2. 更新 `output/liveavatar_newphase4/results.md` 与 `output/liveavatar_newphase4_fullaudio/results.md`，补充官方近似命令 OOM、`offload_kv_cache` 多 clip 软卡、`80f + 1clip` 尾段退化三类证据，并将当前短时产物降级为历史参考。
+3. 整理 `output/` 下分散的 LiveAvatar 排查目录，将 `liveavatar_phase4_audiofix_bg` 与 `liveavatar_phase4_audiofix_test` 归档到 `output/liveavatar_debug_archive/`，并补充归档说明。
+4. 同步更新 `plan.md` 与 `model.md` 中当前仍显示“暂停/待继续”的 LiveAvatar 状态，改为停止继续投入单卡多 clip 路径。
+
+### 结果与效果
+1. `output/liveavatar_newphase4/results.md` 已明确：当前 `C_half_short` / `C_full_short` 仅保留为历史支持子集基线，不再作为推荐交付结果。
+2. `output/liveavatar_newphase4_fullaudio/results.md` 已从“进行中”改为“已停止继续投入”，并写明在当前 80GB 单卡环境下不存在可交付的多 clip / full-audio 推理路径。
+3. `output/liveavatar_debug_archive/` 已创建，`phase4_audiofix_bg` 与 `phase4_audiofix_test` 两个原始排查目录已统一归档，`output/` 根目录中的 LiveAvatar 结果/实验目录层次更清晰。
+4. `plan.md` / `model.md` 的当前状态已同步为：LiveAvatar 仅保留历史短时基线，停止继续投入单卡多 clip / full-audio 路径，后续若恢复只考虑代码级内存策略改造或更大显存/多卡环境。
+
+### 遇到的问题与解决方法
+1. LiveAvatar 相关目录此前同时混有“正式结果”“官方近似复测”“单 clip 对照实验”“后台排查残留”，容易让人误以为仍有活跃执行链路；本次通过归档排查目录和补充最终结论，统一了目录语义。
+2. `liveavatar_newphase4/results.md` 中存在旧的 `liveavatar_phase4_audiofix_bg` 路径引用；本次已同步改成归档后的 `output/liveavatar_debug_archive/phase4_audiofix_bg/`，避免文档路径失效。

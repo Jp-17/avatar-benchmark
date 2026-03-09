@@ -128,7 +128,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；原始音频时长补跑在 LiveAvatar `C_half_short` 阶段长时间无新进展后暂停；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 补跑尚未开始；Wan2.2-T2V 继续暂停。
+**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。
 
 ---
 
@@ -313,7 +313,7 @@ autodl-tmp/avatar-benchmark/output/
 | InfiniteTalk | output/infinitetalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
 | OmniAvatar | output/omniavatar_newphase4/ | ⚠️ 1/2 完成待复跑 | 基本一致 | `C_half_short` 已回收；输出回收脚本已改为递归查找 |
 | Wan2.2-S2V | output/wan22_s2v_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
-| LiveAvatar | output/liveavatar_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致（以新 80 帧基线为准） | 已完成 `C_half_short` / `C_full_short`，长时条件仍按当前稳定路径跳过 |
+| LiveAvatar | output/liveavatar_newphase4/ | ⚠️ 2/4 历史支持子集保留 | 仅短时基线存在明显局限 | `80f + 1clip` 可出片但尾段明显退化；`48f + 多 clip` 在 80GB 单卡上无可交付路径，停止继续投入 |
 | SoulX-FlashTalk | output/soulx_flashtalk_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | 已完成 C_half_short / C_full_short，长时条件按当前稳定路径跳过 |
 | LongLive | output/longlive_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | text-only，长音频条件不适用 |
 | Self-Forcing | output/self_forcing_newphase4/ | ✅ 2/4 支持子集完成 | 基本一致 | text-only，长音频条件不适用 |
@@ -347,9 +347,9 @@ autodl-tmp/avatar-benchmark/output/
 #### 当前优先级（2026-03-08 审计更新）
 
 - **当前现状**：OmniAvatar 与 LongCat-Video-Avatar 均已完成 `C_half_short` / `C_full_short`。
-- **暂停点**：LiveAvatar 原始音频时长补跑 `C_half_short`（`infer_frames=136`）运行约 7 小时后仍停留在 `complete prepare conditional inputs`，GPU 利用率归零且未产出 mp4。
+- **最终判定**：LiveAvatar 单卡多 clip / 原始音频时长补跑已停止继续投入；官方近似 `48f + 多 clip` 路径稳定 OOM，`offload_kv_cache` 多 clip 路径稳定软卡住，`80f + 1clip` 虽可出片但尾段质量明显退化。
 - **已停止**：按当前指示，夜间总控队列与相关推理进程已全部停止，等待下一步决策。
-- **待续推进**：若继续 full-audio 补跑，建议先定位 LiveAvatar 挂起根因，再决定是否继续 Wan2.2-S2V → LTX-2 → FantasyTalking。
+- **待续推进**：不再以 LiveAvatar 作为后续 full-audio 扩展前置条件；Wan2.2-S2V → LTX-2 → FantasyTalking 是否继续，改由后续单独决策。
 - **继续暂缓**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2-T2V。
 
 | 模型 | 状态 |
@@ -391,8 +391,8 @@ autodl-tmp/avatar-benchmark/output/
 |------|------|------|
 | OmniAvatar | 已完成支持子集 | `output/omniavatar_newphase4/C_half_short.mp4` 与 `output/omniavatar_newphase4/C_full_short.mp4` 均已落盘。 |
 | LongCat-Video-Avatar | 已完成支持子集 | `output/longcat_video_avatar_newphase4/C_half_short.mp4` 与 `output/longcat_video_avatar_newphase4/C_full_short.mp4` 均已落盘。 |
-| LiveAvatar full-audio | 挂起后暂停 | `C_half_short` 以 `infer_frames=136` 启动，运行约 7 小时后仍停在 `complete prepare conditional inputs`；未生成 `output/liveavatar_newphase4_fullaudio/C_half_short.mp4`。 |
-| Wan2.2-S2V / LTX-2 / FantasyTalking full-audio | 尚未开始 | 被 LiveAvatar full-audio 卡住，当前尚未进入执行。 |
+| LiveAvatar full-audio | 停止继续投入 | 官方近似 `48f + 多 clip` 在当前 80GB 单卡上稳定 OOM / 软卡，`80f + 1clip` 又存在明显尾段退化，因此不再继续单卡多 clip / full-audio 补跑。 |
+| Wan2.2-S2V / LTX-2 / FantasyTalking full-audio | 尚未开始 | 不再受 LiveAvatar 作为前置条件约束，是否继续改为后续单独决策。 |
 | 夜间总控队列 | 已停止 | 原 `test/phase4_overnight_queue.sh` 已按用户要求停止。 |
 | 存储 | 风险持续 | 截至 2026-03-09 10:37:29 CST，`/root/autodl-tmp` 仍约 98% 已用，剩余约 39G。 |
 
