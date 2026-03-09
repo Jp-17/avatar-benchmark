@@ -1,0 +1,23 @@
+{
+  "model": "longcat-video-avatar",
+  "phase": "Phase 4",
+  "stage_1": "ai2v",
+  "context_parallel_size": 1,
+  "num_inference_steps": 8,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "skipped_conditions": {
+    "C_half_long": "LongCat 当前稳定路径仅验证了最小短时单条输入；长音频条件暂不扩展。",
+    "C_full_long": "LongCat 当前稳定路径仅验证了最小短时单条输入；长音频条件暂不扩展。"
+  }
+}

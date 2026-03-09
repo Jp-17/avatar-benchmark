@@ -1,0 +1,24 @@
+{
+  "model": "liveavatar",
+  "phase": "Phase 4 full-audio rerun",
+  "baseline_output": "output/liveavatar_newphase4/",
+  "description": "沿用 test/liveavatar/test.md 中已验证的 80 帧稳定基线参数，仅将短时条件的 infer_frames 按原始音频时长扩展。",
+  "sample_fps": 25,
+  "align_multiple": 4,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  },
+  "notes": [
+    "保留 offload_kv_cache、expandable_segments、compile disable、single GPU 等稳定参数。",
+    "本轮只补跑短时条件，使输出时长更接近原始音频；长时条件仍不在本轮夜间队列范围内。"
+  ]
+}
