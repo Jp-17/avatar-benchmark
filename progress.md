@@ -1455,3 +1455,20 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. `SoulX-FlashTalk` 目录下同时存在旧探针脚本和未完成的半程补跑脚本，容易误把历史排查链路当成正式 benchmark；本次单独新增 `run_phase4_longaudio_official.sh` 并切换到新输出目录，显式区分正式结果与旧探针。
 2. 远程仓库当前存在较多无关脏改动与未跟踪目录；本次只整理并准备与长音频正式执行直接相关的脚本和文档，不触碰其他队列或输出目录。
+
+## 2026-03-09 19:34
+
+### 任务内容
+1. 新增一个会先等待 GPU 连续空闲、再按固定顺序依次执行 4 个长音频脚本的后台队列脚本。
+2. 以 `nohup` 启动该队列，让 `OmniAvatar -> InfiniteTalk -> LongCat-Video-Avatar -> SoulX-FlashTalk` 在后台顺序推进。
+3. 记录 PID、状态文件与日志路径，便于后续只读跟踪。
+
+### 结果与效果
+1. 已新增后台顺序队列脚本：`test/phase4_longaudio_queue.sh`。
+2. 已用 `nohup bash test/phase4_longaudio_queue.sh > test/phase4_longaudio_queue.nohup.log 2>&1 &` 启动后台队列；队列内部 worker PID 为 `240743`。
+3. 队列状态文件已写入 `test/phase4_longaudio_queue.status`，主日志为 `test/phase4_longaudio_queue.log`，外层 nohup 启动日志为 `test/phase4_longaudio_queue.nohup.log`。
+4. 启动后队列已连续完成 3 次 GPU 空闲检测，并于 `2026-03-09 19:34:26 CST` 开始第 1 项 `OmniAvatar` 长音频正式脚本。
+
+### 遇到的问题与解决方法
+1. 用户此前明确要求不要在 GPU 被占用时直接开启新推理；本次队列脚本内置“连续 3 次空闲检测”门槛，确保只在 GPU 稳定空闲后才启动下一个模型。
+2. 为避免队列被重复启动，脚本增加了 `phase4_longaudio_queue.pid` 检查；若旧 PID 仍存活则直接退出，不会并发启动第二条长音频队列。
