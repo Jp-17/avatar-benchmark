@@ -1380,3 +1380,21 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 官方脚本中的 `--lora_path_dmd "Quark-Vision/Live-Avatar"` 不适合当前本地离线权重环境，因此本次测试改为本地路径 `ckpt/LiveAvatar/liveavatar.safetensors`。
 2. 即便保留官方的 `infer_frames=48`、`single_gpu`、`offload_model=True`、`fp8`，只把素材替换为项目当前输入并按音频长度计算 `num_clip`，仍然会在 KV cache 初始化阶段 OOM；说明当前瓶颈不是 prompt 或素材，而是单卡多 clip 的显存需求。
+
+## 2026-03-09 18:55
+
+### 任务内容
+1. 针对 LiveAvatar 旧短时结果中的“后半段发灰/发暗”现象，设计单 clip 对照实验，验证问题是否主要由 `80` 帧单 clip 路径引起。
+2. 固定图片、prompt、seed、`num_clip=1`、`offload_model=True`、`offload_kv_cache=True`、`sample_steps=4`、`euler`、`single_gpu`、`ENABLE_COMPILE=false`，仅对比 `infer_frames=48` 与 `infer_frames=80`。
+3. 将 `EM2_no_smoking.wav` 裁剪为约 `3s` 的音频片段，分别执行 `48f + 1clip` 和 `80f + 1clip`，并用 ffmpeg `signalstats` 做前/中/后帧亮度与饱和度分析。
+
+### 结果与效果
+1. 两条命令都成功出片，说明在当前单卡环境下，`48f + 1clip` 与 `80f + 1clip` 都可作为可重复的最小对照实验路径。
+2. `48f` 输出 `45` 帧（`1.80s`），前中后帧亮度/饱和度基本稳定：`YAVG 148.19 -> 149.33`，`SATAVG 10.87 -> 11.18`，没有出现尾段退化。
+3. `80f` 输出 `77` 帧（`3.08s`），末帧指标明显塌陷：`YAVG 148.03 -> 95.40`，`SATAVG 10.86 -> 5.02`，与之前旧短时结果中“后半段发灰/发暗”的现象高度一致。
+4. 这说明此前 LiveAvatar 的质量退化问题，主要是 `80f + 1clip` 这条 workaround 路径本身的尾段生成稳定性问题，而不是 ffmpeg 合并或保存流程导致的。
+5. 本次完整命令、时长和 signalstats 指标已单独写入 `output/liveavatar_singleclip_compare/results.md`。
+
+### 遇到的问题与解决方法
+1. 若音频裁得过短，则无法观察 `80f` 单 clip 后段是否退化；本次改为使用约 `3s` 的片段，使 `80f` 输出能覆盖足够长的尾段进行观察。
+2. 由于 pipeline 在首个 clip 解码后会丢弃前 `3` 帧，最终 `48f` 与 `80f` 的有效帧数分别为 `45` 和 `77`；本次在结果文档中显式记录该行为，避免误判为音视频合并异常。
