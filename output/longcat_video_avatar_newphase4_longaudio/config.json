@@ -4,16 +4,6 @@
   "stage_1": "ai2v",
   "context_parallel_size": 1,
   "num_inference_steps": 8,
-  "supported_conditions": {
-    "C_half_long": {
-      "image": "input/avatar_img/filtered/half_body/2.png",
-      "audio": "input/audio/filtered/long/A001.wav",
-      "prompt_type": "speech"
-    },
-    "C_full_long": {
-      "image": "input/avatar_img/filtered/full_body/3.png",
-      "audio": "input/audio/filtered/long/MT_eng.wav",
-      "prompt_type": "speech"
-    }
-  }
+  "num_segments": 12,
+  "note": "C_half_long skipped; C_full_long uses MT_eng.wav 60s with num_segments=12"
 }
