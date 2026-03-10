@@ -94,6 +94,7 @@
 |------|------|
 | LiveTalk | [x] 环境+权重完成 |
 | SoulX-FlashTalk | [x] 环境✅(flashtalk-env) + 权重✅(42.5G) + 测试脚本✅ |
+| SoulX-FlashHead(Pro/Lite) | [x] 环境✅(flashhead-env) + 权重✅(~14G) + 测试脚本✅ + 最小推理✅(Lite 174s/Pro 283s) |
 | LiveAvatar | [x] 环境✅(liveavatar-env) + 权重✅(47G) + 测试脚本✅ |
 
 #### 第二优先：其他音频驱动 Avatar
@@ -128,7 +129,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。
+**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。**SoulX-FlashHead（新增 2026-03-11）**：Lite + Pro 各 4 条件推理已启动，预计完成后补充至 20 个模型。
 
 ---
 
