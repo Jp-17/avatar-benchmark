@@ -1,0 +1,20 @@
+{
+  "model": "wan2.2-s2v",
+  "phase": "Phase 4 full-audio rerun",
+  "baseline_output": "output/wan22_s2v_newphase4/",
+  "description": "沿用 test/wan2.2-s2v/test.md 的稳定路径，仅将短时条件的 infer_frames 按原始音频时长扩展。",
+  "sample_fps": 16,
+  "align_multiple": 4,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  }
+}

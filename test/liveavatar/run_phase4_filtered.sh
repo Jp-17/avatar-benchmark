@@ -2,10 +2,21 @@
 set -euo pipefail
 MODEL_DIR=/root/autodl-tmp/avatar-benchmark/models/LiveAvatar
 ENV=/root/autodl-tmp/envs/liveavatar-env
-OUT_DIR=/root/autodl-tmp/avatar-benchmark/output/liveavatar_newphase4
-LOG_DIR=$OUT_DIR/logs
-RESULTS_MD=$OUT_DIR/results.md
+OUT_DIR=${OUT_DIR:-/root/autodl-tmp/avatar-benchmark/output/liveavatar_newphase4}
+LOG_DIR=${LOG_DIR:-$OUT_DIR/logs}
+RESULTS_MD=${RESULTS_MD:-$OUT_DIR/results.md}
 MASTER_PORT=${MASTER_PORT:-29131}
+INFER_FRAMES=${INFER_FRAMES:-48}
+USE_OFFLOAD_KV_CACHE=${USE_OFFLOAD_KV_CACHE:-0}
+USE_FP8=${USE_FP8:-0}
+KV_CACHE_ARG=""
+FP8_ARG=""
+if [ "$USE_OFFLOAD_KV_CACHE" = "1" ]; then
+  KV_CACHE_ARG="--offload_kv_cache"
+fi
+if [ "$USE_FP8" = "1" ]; then
+  FP8_ARG="--fp8"
+fi
 mkdir -p "$OUT_DIR" "$LOG_DIR"
 SPEECH_PROMPT="A person speaking directly to the camera with natural facial expressions and synchronized lip movements."
 SING_PROMPT="A person singing naturally with expressive facial animation and synchronized mouth motion."
@@ -33,6 +44,15 @@ stop_gpu_monitor() {
   kill "$pid" 2>/dev/null || true
   wait "$pid" 2>/dev/null || true
 }
+clip_count_for_audio() {
+  /root/miniconda3/bin/python - "$1" "$INFER_FRAMES" <<'PY'
+import contextlib, math, wave, sys
+with contextlib.closing(wave.open(sys.argv[1], "rb")) as wf:
+    sec = wf.getnframes() / float(wf.getframerate())
+infer_frames = float(sys.argv[2])
+print(max(1, math.ceil(sec * 25 / infer_frames - 1e-9)))
+PY
+}
 write_config_json() {
   cat > "$OUT_DIR/config.json" <<JSON
 {
@@ -40,7 +60,7 @@ write_config_json() {
   "phase": "Phase 4",
   "resolution": {"width": 704, "height": 384},
   "task": "s2v-14B",
-  "infer_frames": 80,
+  "infer_frames": $INFER_FRAMES,
   "sample_steps": 4,
   "seed": 42,
   "supported_conditions": {
@@ -71,7 +91,7 @@ init_results_md() {
 - 执行脚本：test/liveavatar/run_phase4_filtered.sh
 - 配置文件：output/liveavatar_newphase4/config.json
 - 输出目录：output/liveavatar_newphase4/
-- 说明：参考 test/liveavatar/test.md 的最小素材测试经验，沿用已验证成功的 80 帧稳定链路；并保持串行执行，避免与其他大模型并行导致显存冲突。
+- 说明：参考 test/liveavatar/test.md 的最小素材测试经验，沿用更接近官方单卡脚本的 ${INFER_FRAMES} 帧链路；并保持串行执行，避免与其他大模型并行导致显存冲突。
 
 ## Condition 明细
 MD
@@ -118,7 +138,7 @@ run_case() {
   local img="$2"
   local audio="$3"
   local prompt_type="$4"
-  local prompt log out start_ts end_ts metrics gpu_pid peak cmd cmd_status
+  local prompt log out start_ts end_ts metrics gpu_pid peak cmd cmd_status num_clip
   if [ "$prompt_type" = "singing" ]; then
     prompt="$SING_PROMPT"
   else
@@ -127,13 +147,14 @@ run_case() {
   log="$LOG_DIR/${cond}.log"
   out="$OUT_DIR/${cond}.mp4"
   metrics="$LOG_DIR/${cond}.gpu_peak"
+  num_clip=$(clip_count_for_audio "$audio")
   rm -f "$log" "$out" "$metrics"
-  cmd="/root/miniconda3/bin/conda run --no-capture-output -p $ENV env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 TORCH_COMPILE_DISABLE=1 TORCHDYNAMO_DISABLE=1 ENABLE_COMPILE=false NCCL_DEBUG=WARN PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True torchrun --nproc_per_node=1 --master_port=$MASTER_PORT minimal_inference/s2v_streaming_interact.py --ulysses_size 1 --task s2v-14B --size 704*384 --base_seed 42 --training_config liveavatar/configs/s2v_causal_sft.yaml --offload_model True --convert_model_dtype --prompt '$prompt' --image $img --audio $audio --save_file $out --infer_frames 80 --load_lora --lora_path_dmd ckpt/LiveAvatar/liveavatar.safetensors --sample_steps 4 --sample_guide_scale 0 --num_clip 1 --num_gpus_dit 1 --sample_solver euler --single_gpu --offload_kv_cache --ckpt_dir ckpt/Wan2.2-S2V-14B/"
+  cmd="/root/miniconda3/bin/conda run --no-capture-output -p $ENV env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 TORCH_COMPILE_DISABLE=1 TORCHDYNAMO_DISABLE=1 ENABLE_COMPILE=false NCCL_DEBUG=WARN PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True torchrun --nproc_per_node=1 --master_port=$MASTER_PORT minimal_inference/s2v_streaming_interact.py --ulysses_size 1 --task s2v-14B --size 704*384 --base_seed 42 --training_config liveavatar/configs/s2v_causal_sft.yaml --offload_model True --convert_model_dtype --prompt '$prompt' --image $img --audio $audio --save_file $out --infer_frames $INFER_FRAMES --load_lora --lora_path_dmd ckpt/LiveAvatar/liveavatar.safetensors --sample_steps 4 --sample_guide_scale 0 --num_clip $num_clip --num_gpus_dit 1 --sample_solver euler --single_gpu $KV_CACHE_ARG --ckpt_dir ckpt/Wan2.2-S2V-14B/ $FP8_ARG"
   cd "$MODEL_DIR"
   start_ts=$(date +%s)
   gpu_pid=$(start_gpu_monitor "$metrics")
   set +e
-  /root/miniconda3/bin/conda run --no-capture-output -p "$ENV" env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 TORCH_COMPILE_DISABLE=1 TORCHDYNAMO_DISABLE=1 ENABLE_COMPILE=false NCCL_DEBUG=WARN PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True torchrun --nproc_per_node=1 --master_port=$MASTER_PORT minimal_inference/s2v_streaming_interact.py --ulysses_size 1 --task s2v-14B --size 704*384 --base_seed 42 --training_config liveavatar/configs/s2v_causal_sft.yaml --offload_model True --convert_model_dtype --prompt "$prompt" --image "$img" --audio "$audio" --save_file "$out" --infer_frames 80 --load_lora --lora_path_dmd ckpt/LiveAvatar/liveavatar.safetensors --sample_steps 4 --sample_guide_scale 0 --num_clip 1 --num_gpus_dit 1 --sample_solver euler --single_gpu --offload_kv_cache --ckpt_dir ckpt/Wan2.2-S2V-14B/ >> "$log" 2>&1
+  /root/miniconda3/bin/conda run --no-capture-output -p "$ENV" env TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 TORCH_COMPILE_DISABLE=1 TORCHDYNAMO_DISABLE=1 ENABLE_COMPILE=false NCCL_DEBUG=WARN PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True torchrun --nproc_per_node=1 --master_port=$MASTER_PORT minimal_inference/s2v_streaming_interact.py --ulysses_size 1 --task s2v-14B --size 704*384 --base_seed 42 --training_config liveavatar/configs/s2v_causal_sft.yaml --offload_model True --convert_model_dtype --prompt "$prompt" --image "$img" --audio "$audio" --save_file "$out" --infer_frames "$INFER_FRAMES" --load_lora --lora_path_dmd ckpt/LiveAvatar/liveavatar.safetensors --sample_steps 4 --sample_guide_scale 0 --num_clip "$num_clip" --num_gpus_dit 1 --sample_solver euler --single_gpu $KV_CACHE_ARG --ckpt_dir ckpt/Wan2.2-S2V-14B/ $FP8_ARG >> "$log" 2>&1
   cmd_status=$?
   set -e
   end_ts=$(date +%s)

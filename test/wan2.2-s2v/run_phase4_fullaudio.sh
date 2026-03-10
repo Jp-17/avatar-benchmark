@@ -13,7 +13,7 @@ mkdir -p "$OUT_DIR" "$LOG_DIR"
 SPEECH_PROMPT="A person speaking directly to the camera with natural facial expressions and synchronized lip movements."
 SING_PROMPT="A person singing naturally with expressive facial animation and synchronized mouth motion."
 write_config_json() {
-  cat > "$OUT_DIR/config.json" <<JSON
+  cat > "$OUT_DIR/config.json" <<'JSON'
 {
   "model": "wan2.2-s2v",
   "phase": "Phase 4 full-audio rerun",
@@ -37,7 +37,7 @@ write_config_json() {
 JSON
 }
 init_results_md() {
-  cat > "$RESULTS_MD" <<MD
+  cat > "$RESULTS_MD" <<'MD'
 # Wan2.2-S2V Phase 4 原始音频时长补跑
 
 ## 状态

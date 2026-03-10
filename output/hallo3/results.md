@@ -113,3 +113,16 @@ singing prompt: "A person singing naturally with expressive facial animations an
 **当前完成度：3/10（C_en_3m/C_en_5m 不计入）**
 
 *最后更新：2026-03-07*
+
+## 2026-03-09 排查补记
+
+- 复核发现旧产物“看起来没声音”主要是封装兼容性问题：源文件内音轨存在，但部分播放器对 `MP3-in-MP4` 支持较差，因此现已统一在测试脚本和 Phase 4 脚本中加入 `ffmpeg` AAC remux。
+- 当前仓库内已验证：`output/hallo3_newphase4/C_half_short.mp4` 与 `output/hallo3_newphase4/C_full_short.mp4` 的视频时长分别约为 `5.41s` / `8.59s`，与对应音频 `5.355s` / `8.557s` 基本对齐；`test/hallo3/output/hallo3_minimal.mp4` 约 `5.04s`，也与 `5.0s` 音频对齐。
+- README 中额外值得注意的要求是：输入图像尽量满足 `1:1` 或 `3:2`，音频优先使用 `WAV`，英文/清晰人声效果通常更稳；现有 full-body 样本并非严格按该比例准备，可能是人物观感略弱于预期的原因之一。
+- 下一步会在不覆盖旧文件的前提下，前台重跑最小素材测试，生成新的 `test/hallo3/output/` 文件以确认 AAC 封装后的稳定链路。
+
+## 2026-03-09 15:25 CST 最小重测补记
+
+- 已按“不覆盖旧文件”的要求前台重跑最小素材，目标输出为 `test/hallo3/output/hallo3_minimal_rerun_aac_20260309.mp4`。
+- 本次失败并非 Hallo3 自身链路回退，而是运行中出现新的外部 GPU 占用：日志记录 `Process 205579`（SoulX-FlashTalk 长音频任务）同时占用了最高约 `38.93 GiB` 显存，导致 Hallo3 在音频分离阶段触发 CUDA OOM。
+- 因此，当前 Hallo3 需要在真正独占 GPU 的窗口下再重跑一次；已有 AAC remux 与时长对齐结论仍然有效。

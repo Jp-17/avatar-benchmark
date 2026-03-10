@@ -111,12 +111,13 @@ run_step() {
 main() {
   local failures=0
   log "Phase 4 长音频顺序队列启动"
-  log "执行顺序：OmniAvatar -> InfiniteTalk -> LongCat-Video-Avatar -> SoulX-FlashTalk"
+  log "执行顺序：InfiniteTalk -> LongCat -> MultiTalk -> OmniAvatar(C_full_long补跑)"
 
   run_step "OmniAvatar 长音频" "$ROOT/test/omniavatar/run_phase4_longaudio.sh" || failures=$((failures + 1))
   run_step "InfiniteTalk 长音频" "$ROOT/test/infinitetalk/run_phase4_longaudio.sh" || failures=$((failures + 1))
   run_step "LongCat-Video-Avatar 长音频" "$ROOT/test/longcat-video-avatar/run_phase4_longaudio.sh" || failures=$((failures + 1))
-  run_step "SoulX-FlashTalk 长音频（正式版）" "$ROOT/test/soulx-flashtalk/run_phase4_longaudio_official.sh" || failures=$((failures + 1))
+  run_step "MultiTalk 长音频" "$ROOT/test/multitalk/run_phase4_longaudio.sh" || failures=$((failures + 1))
+  run_step "OmniAvatar 长音频（C_full_long 补跑）" "$ROOT/test/omniavatar/run_phase4_longaudio.sh" || failures=$((failures + 1))
 
   warn_disk
   if [ "$failures" -eq 0 ]; then

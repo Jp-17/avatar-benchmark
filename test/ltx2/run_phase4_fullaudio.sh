@@ -12,7 +12,7 @@ mkdir -p "$OUT_DIR" "$LOG_DIR"
 SPEECH_PROMPT="A person speaking directly to the camera with natural facial expressions and synchronized lip movements."
 SING_PROMPT="A person singing naturally with expressive facial animation and synchronized mouth motion."
 write_config_json() {
-  cat > "$OUT_DIR/config.json" <<JSON
+  cat > "$OUT_DIR/config.json" <<'JSON'
 {
   "model": "ltx2",
   "phase": "Phase 4 full-audio rerun",
@@ -35,7 +35,7 @@ write_config_json() {
 JSON
 }
 init_results_md() {
-  cat > "$RESULTS_MD" <<MD
+  cat > "$RESULTS_MD" <<'MD'
 # LTX-2 Phase 4 原始音频时长补跑
 
 ## 状态
@@ -131,7 +131,14 @@ run_case() {
   metrics="$LOG_DIR/${cond}.gpu_peak"
   case_json="$LOG_DIR/${cond}.json"
   audio_sec=$(audio_duration "$audio")
-  num_frames=$(frames_for_audio "$audio" 24 1)
+  num_frames=$(/root/miniconda3/bin/python - "$audio_sec" <<'PY2'
+import sys
+audio_sec = float(sys.argv[1])
+audio_latent_frames = round(audio_sec * 25)
+num_frames = round(audio_latent_frames * 24 / 25)
+print(max(1, num_frames))
+PY2
+)
   cat > "$case_json" <<JSON
 {
   "condition": "$cond",

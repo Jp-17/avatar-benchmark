@@ -198,7 +198,7 @@ main() {
   local failures=0
   ensure_results_md
   write_config_json
-  run_case C_half_long "$ROOT/input/avatar_img/filtered/half_body/2.png" "$ROOT/input/audio/filtered/long/A001.wav" 30241 || failures=1
+  # C_half_long already done (C_half_long.mp4 exists); skipped per user instruction
   run_case C_full_long "$ROOT/input/avatar_img/filtered/full_body/3.png" "$ROOT/input/audio/filtered/long/MT_eng.wav" 30242 || failures=1
   finalize_results "$failures"
   [ "$failures" -eq 0 ]

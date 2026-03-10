@@ -1,0 +1,19 @@
+{
+  "model": "ltx2",
+  "phase": "Phase 4 full-audio rerun",
+  "baseline_output": "output/ltx2_newphase4/",
+  "description": "沿用 test/ltx2/test.md 的稳定路径，仅将短时条件的 num_frames 按原始音频时长扩展。",
+  "frame_rate": 24,
+  "supported_conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    }
+  }
+}

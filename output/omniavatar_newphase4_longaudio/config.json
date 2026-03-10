@@ -1,0 +1,17 @@
+{
+  "model": "omniavatar",
+  "phase": "Phase 4 long-audio",
+  "config": "configs/inference.yaml",
+  "supported_conditions": {
+    "C_half_long": {
+      "image": "input/avatar_img/filtered/half_body/2.png",
+      "audio": "input/audio/filtered/long/A001.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_long": {
+      "image": "input/avatar_img/filtered/full_body/3.png",
+      "audio": "input/audio/filtered/long/MT_eng.wav",
+      "prompt_type": "speech"
+    }
+  }
+}

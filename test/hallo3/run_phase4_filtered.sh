@@ -146,7 +146,15 @@ run_case() {
     echo "Hallo3 output not found for $cond" >> "$log"
     exit 1
   fi
-  mv "$src" "$out"
+  tmp_out="${out%.mp4}.aac.mp4"
+  rm -f "$tmp_out"
+  if ffmpeg -y -i "$src" -c:v copy -c:a aac -b:a 192k -movflags +faststart "$tmp_out" >> "$log" 2>&1; then
+    mv "$tmp_out" "$out"
+  else
+    echo "AAC remux failed for $cond, fallback to original mp4 container" >> "$log"
+    rm -f "$tmp_out"
+    mv "$src" "$out"
+  fi
   rm -rf "$tmp_dir"
   peak=$(cat "$metrics" 2>/dev/null || echo 0)
   echo "gpu_peak_mb=$peak" >> "$log"

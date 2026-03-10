@@ -44,3 +44,21 @@
 - 推理生成时间：2459 秒
 - 日志：/root/autodl-tmp/avatar-benchmark/output/hallo3_newphase4/logs/C_full_short.log
 - 失败经验与解决方法：无新增问题；继续沿用 test/hallo3/test.md 中已验证的单条件输入格式与禁用 expandable_segments 经验。
+
+## 2026-03-09 排查补记
+
+- README 明确要求：参考图应为 `1:1` 或 `3:2`，驱动音频必须为 `WAV`，且音频最好是英文、声线清晰；Hallo3 本身是 `talking-head` 路线，因此对唱歌与 full-body 条件天然会更敏感。
+- 复查现有产物后确认并非真正“无声”：文件内有音轨且音量正常，但此前输出为 `MP3-in-MP4`，部分播放器兼容性较差，容易表现成“视频有画面但没声音”。
+- 已将现有 `output/hallo3_newphase4/*.mp4` 与 `test/hallo3/output/hallo3_minimal.mp4` 统一转为 `AAC` 音轨，并修正 `test/hallo3/test_hallo3.sh` 与 `test/hallo3/run_phase4_filtered.sh`，后续生成结果默认输出兼容性更好的 `AAC` 音频。
+- 权重侧未发现会直接阻断推理的核心缺失；`face_analysis` 相关 onnx 与 landmarker 已正常加载。`buffalo_l.zip` 虽未解压成目录，但当前日志显示检测、识别与 landmark 模型均已工作，不是本轮画质/音频问题主因。
+
+## 2026-03-09 排查补记
+
+- 两个短音频 Phase 4 结果的时长已经基本贴合音频时长；目前主要修复点是统一改为 AAC 音轨，避免播放器误判为“无声”。
+- 长音频组合本轮暂未前台重跑，原因不是功能缺失，而是 Hallo3 长时链路历史耗时极长；在 GPU 需串行排队的前提下，优先级低于 LiveAvatar 的明显时长异常修复。
+- 若本轮最终仍不执行长音频条件，将以“GPU 排队 + 单条长音频耗时过长，不利于本轮横评闭环”为最终原因保留在本文件。
+
+## 2026-03-09 15:25 CST 最小重测补记
+
+- 为了补一个新的 `test/` 最小素材文件，已前台启动 `test/hallo3/test_hallo3.sh` 的不覆盖版本；但执行过程中被新的外部 SoulX-FlashTalk 任务抢占显存，最终在音频分离阶段 OOM。
+- 当前 `output/hallo3_newphase4/` 下已有短音频 Phase 4 结果的音轨与时长结论不受这次失败影响；待 GPU 真正空闲后，再补新的 `test/hallo3/output/` 文件即可。
