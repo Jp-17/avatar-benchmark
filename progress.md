@@ -1472,3 +1472,52 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 1. 用户此前明确要求不要在 GPU 被占用时直接开启新推理；本次队列脚本内置“连续 3 次空闲检测”门槛，确保只在 GPU 稳定空闲后才启动下一个模型。
 2. 为避免队列被重复启动，脚本增加了 `phase4_longaudio_queue.pid` 检查；若旧 PID 仍存活则直接退出，不会并发启动第二条长音频队列。
+
+---
+
+## 2026-03-11 | jp-video-3 | SoulX-FlashHead 接入：环境配置 + 权重下载 + Phase 2/4 推理
+
+### 任务内容
+
+按计划完整接入 SoulX-FlashHead（Pro/Lite）模型，包括：
+1. model.md / plan.md 文档更新（添加 SoulX-FlashHead 条目）
+2. 创建独立 flashhead-env（Python 3.10，transformers 4.57.3，与 flashtalk-env 的 5.3.0 不兼容）
+3. 克隆代码仓库 + 通过 hf-mirror 下载权重（~14 GB）
+4. 最小推理验证（Lite 174s + Pro 283s，均成功）
+5. Phase 4 批推理（Lite + Pro 各 4 条件，全部完成）
+
+### 执行过程
+
+1. **model.md 更新**：在自回归 Avatar 分类下 SoulX-FlashTalk 条目后新增 SoulX-FlashHead 条目（含模型描述、显存需求、Phase 2 状态等）
+2. **flashhead-env 创建**：
+   - conda create --prefix /root/autodl-tmp/envs/flashhead-env python=3.10
+   - rsync flashtalk-env site-packages（复用 torch 2.7.1+cu128、flash_attn 2.8.3、nvidia-cuda 等）
+   - pip install transformers==4.57.3 diffusers==0.37.0 accelerate==1.8.1 mediapipe==0.10.9 xfuser==0.4.5 等
+3. **权重下载**：snapshot_download（hf-mirror，不启用 network_turbo），18 个文件共 ~14 GB，用时约 17 分钟
+4. **wav2vec2 软链接**：ln -s weights_shared/wav2vec2-base-960h models/soulx-flashhead/weights/
+5. **最小推理测试**：Lite 成功（174s，135KB mp4），Pro 成功（283s，175KB mp4）
+6. **Phase 4 批推理**：Lite+Pro 各 4 条件（C_half_short/long + C_full_short/long），全部完成
+
+### 推理结果
+
+| 版本 | Condition | 音频时长 | 耗时 | 输出大小 |
+|------|-----------|---------|------|---------|
+| Lite | C_half_short | ~5.4s | ~174s | 229K |
+| Lite | C_half_long | ~100s | ~118s | 5.6M |
+| Lite | C_full_short | ~8.6s | ~300s | 516K |
+| Lite | C_full_long | ~60s | ~450s | 3.3M |
+| Pro | C_half_short | ~5.4s | ~283s | 321K |
+| Pro | C_half_long | ~100s | ~390s | 7.3M |
+| Pro | C_full_short | ~8.6s | ~360s | 649K |
+| Pro | C_full_long | ~60s | 239s | 4.2M |
+
+### 遇到的问题与解决方法
+
+| 问题 | 解决方法 |
+|------|---------|
+| rsync 复用 flashtalk-env torch 时缺少 torchgen/cusparselt 等依赖 | 改用 --ignore-existing rsync 全量同步 site-packages |
+| xformers 0.0.31 要求 flash_attn <=2.8.0，但环境中是 2.8.3 | 设置 `export XFORMERS_IGNORE_FLASH_VERSION_CHECK=1` |
+| `--use_face_crop` 参数 type=bool，不能用纯 flag，需传 True/False | 修改脚本为 `--use_face_crop True` |
+| shell 管道导致 Lite 失败被忽略 | 改用 bash pipefail + 不用 tee 管道 |
+| pip 安装时重新下载 torch（dist-info 未复制） | 补充复制 torch dist-info，然后改为 rsync 全量 |
+

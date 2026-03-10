@@ -1,0 +1,13 @@
+{
+  "model": "SoulX-FlashHead-Pro",
+  "model_type": "pro",
+  "ckpt_dir": "weights/SoulX-FlashHead-1_3B",
+  "wav2vec_dir": "weights/wav2vec2-base-960h",
+  "audio_encode_mode": "stream",
+  "conditions": [
+    {"name": "C_half_short", "image": "input/avatar_img/filtered/half_body/13.png", "audio": "input/audio/filtered/short/EM2_no_smoking.wav"},
+    {"name": "C_half_long", "image": "input/avatar_img/filtered/half_body/2.png", "audio": "input/audio/filtered/long/A001.wav"},
+    {"name": "C_full_short", "image": "input/avatar_img/filtered/full_body/1.png", "audio": "input/audio/filtered/short/S002_adele.wav", "use_face_crop": true},
+    {"name": "C_full_long", "image": "input/avatar_img/filtered/full_body/3.png", "audio": "input/audio/filtered/long/MT_eng.wav", "use_face_crop": true}
+  ]
+}
