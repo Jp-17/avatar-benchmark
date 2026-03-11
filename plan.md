@@ -129,7 +129,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。**SoulX-FlashHead（新增 2026-03-11）**：Lite + Pro 各 4 条件推理**已全部完成**。输出目录：`output/soulx_flashhead_lite_phase4/` 和 `output/soulx_flashhead_pro_phase4/`，各含 4 个 mp4 和 results.md。
+**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。**SoulX-FlashHead（新增 2026-03-11）**：Lite + Pro 各 4 条件推理**已全部完成**（face_crop 版 + nofacecrop 对比版）。输出目录：`output/soulx_flashhead_lite_phase4/`、`output/soulx_flashhead_pro_phase4/`（face_crop）及 `_nofacecrop/` 对应目录（无 face_crop），各含 4 个 mp4 和 results.md。注意 argparse type=bool bug：`--use_face_crop False` 实际解析为 True，需完全省略该参数。
 
 ---
 

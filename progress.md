@@ -1521,3 +1521,41 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 | shell 管道导致 Lite 失败被忽略 | 改用 bash pipefail + 不用 tee 管道 |
 | pip 安装时重新下载 torch（dist-info 未复制） | 补充复制 torch dist-info，然后改为 rsync 全量 |
 
+
+---
+
+## 2026-03-11 | jp-video-3 | SoulX-FlashHead 无 face_crop 对比推理
+
+### 任务内容
+
+对 SoulX-FlashHead Lite/Pro 全部 4 条件重新推理，不使用 face_crop，观察全身图输入时的生成效果（与原始 face_crop 版对比）。
+
+### 执行过程
+
+1. **问题发现**：原始 Phase 4 中 `--use_face_crop True` 对全身图使用了 mediapipe 人脸裁剪，用户希望看到不裁剪时的效果
+2. **首次尝试（错误）**：创建脚本传入 `--use_face_crop False` → 视频仍然裁剪
+3. **根因分析**：检查 `generate_video.py` 发现 `--use_face_crop` 使用 `type=bool`，Python 的 `bool("False")` 返回 `True`（非空字符串均为真），导致传入任意字符串值实际上都开启了 face_crop
+4. **修复**：创建新脚本 `run_phase4_nofacecrop.sh`，完全不传 `--use_face_crop` 参数，使用默认值 `False`
+5. **验证**：新版日志中无 mediapipe EGL 初始化输出，确认 face_crop 未被调用
+6. **推理结果**：Lite + Pro 各 4 条件全部完成，输出到 `_nofacecrop/` 对应目录
+
+### 推理结果（无 face_crop 版）
+
+| 版本 | Condition | 耗时 | 输出大小 |
+|------|-----------|------|---------|
+| Lite | C_half_short | ~61s | 232K |
+| Lite | C_half_long | ~97s | 5.6M |
+| Lite | C_full_short | ~61s | 428K |
+| Lite | C_full_long | ~81s | 2.4M |
+| Pro | C_half_short | ~79s | 280K |
+| Pro | C_half_long | ~236s | 14M |
+| Pro | C_full_short | ~80s | 612K |
+| Pro | C_full_long | ~166s | 3.3M |
+
+### 遇到的问题与解决方法
+
+| 问题 | 解决方法 |
+|------|---------|
+| `--use_face_crop False` 仍然触发 face_crop | argparse `type=bool` bug：`bool("False")` == True；解决：完全省略该参数，使用默认值 False |
+| SSH heredoc 中 `$` 和特殊字符被展开 | 改为在本地写脚本文件，用 scp 上传到服务器 |
+
