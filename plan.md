@@ -106,7 +106,7 @@
 | InfiniteTalk | [~] 环境✅(unified-env) + 权重✖(21G/~115G, XetHub CDN超时) |
 | FantasyTalking | [x] 环境✅(fantasy-talking-env) + 权重✅(32G) + 测试脚本✅ |
 | OmniAvatar | [x] 环境✅(omniavatar-env) + 权重✅(66G) + 测试脚本✅ |
-| HunyuanVideo-Avatar | [~] 环境✅(hunyuan-avatar-env) + 权重✖(14G/~50G) |
+| HunyuanVideo-Avatar | [x] 已清理（2026-03-22 删除 hunyuan-avatar-env + 权重） |
 | Hallo3 | [x] 环境✅(hallo3-env) + 权重✅(49G) + Phase4推理3/10 |
 | LongCat-Video-Avatar | [~] 环境✅(longcat-env) + 权重✖(495M, XetHub CDN超时) |
 | Wan2.2-S2V | [x] 环境✅(wan2.2-env) + 权重✅(46G) + 测试脚本✅ |
@@ -125,7 +125,7 @@
 | HunyuanVideo-1.5 | [ ] 待配置 |
 | Self-Forcing | [ ] 待配置 |
 | LongLive | [ ] 待配置 |
-| SkyReels-V3 | [ ] 待配置（权重需确认） |
+| SkyReels-V3 | [x] 已清理（2026-03-22 删除 skyreels-env + 权重） |
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
@@ -351,12 +351,12 @@ autodl-tmp/avatar-benchmark/output/
 - **最终判定**：LiveAvatar 单卡多 clip / 原始音频时长补跑已停止继续投入；官方近似 `48f + 多 clip` 路径稳定 OOM，`offload_kv_cache` 多 clip 路径稳定软卡住，`80f + 1clip` 虽可出片但尾段质量明显退化。
 - **已停止**：按当前指示，夜间总控队列与相关推理进程已全部停止，等待下一步决策。
 - **待续推进**：不再以 LiveAvatar 作为后续 full-audio 扩展前置条件；Wan2.2-S2V → LTX-2 → FantasyTalking 是否继续，改由后续单独决策。
-- **继续暂缓**：SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5、Wan2.2-T2V。
+- **继续暂缓**：HunyuanVideo-1.5、Wan2.2-T2V。SkyReels-V3 与 HunyuanVideo-Avatar 环境+权重已于 2026-03-22 清理；Wan2.2 I2V 权重已于 2026-03-22 删除。
 
 | 模型 | 状态 |
 |------|------|
 | LiveAvatar | [x] 环境/权重/最小基线✅；Phase 4 支持子集完成 |
-| Wan2.2 | [x] T2V 最小测试✅ + I2V 暂停(保留49G)；S2V Phase 4 支持子集完成 |
+| Wan2.2 | [x] T2V 最小测试✅ + I2V 权重已删除(2026-03-22)；S2V Phase 4 支持子集完成 |
 | SoulX-FlashTalk | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | OmniAvatar | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | Self-Forcing | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
@@ -364,8 +364,8 @@ autodl-tmp/avatar-benchmark/output/
 | MultiTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
 | InfiniteTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
 | LongCat-Video-Avatar | [x] 权重补齐 + 最小测试✅；Phase 4 支持子集完成 |
-| SkyReels-V3 | [ ] 暂缓 |
-| HunyuanVideo-Avatar | [ ] 暂缓 |
+| SkyReels-V3 | [x] 已清理（2026-03-22） |
+| HunyuanVideo-Avatar | [x] 已清理（2026-03-22） |
 | HunyuanVideo-1.5 | [ ] 暂缓 |
 
 ### 4.5 2026-03-09 夜间队列与原始音频时长补跑
