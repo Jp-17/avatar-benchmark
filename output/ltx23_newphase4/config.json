@@ -1,0 +1,34 @@
+{
+  "model": "ltx-2.3",
+  "model_version": "22B",
+  "phase": "Phase 4",
+  "resolution": {"width": 512, "height": 512},
+  "frame_rate": 24,
+  "seed": 42,
+  "lora_strength": 0.8,
+  "checkpoint": "ltx-2.3-22b-dev.safetensors",
+  "gemma_root": "weights/gemma-3-12b",
+  "spatial_upsampler": "ltx-2.3-spatial-upscaler-x2-1.1.safetensors",
+  "conditions": {
+    "C_half_short": {
+      "image": "input/avatar_img/filtered/half_body/13.png",
+      "audio": "input/audio/filtered/short/EM2_no_smoking.wav",
+      "prompt_type": "speech"
+    },
+    "C_half_long": {
+      "image": "input/avatar_img/filtered/half_body/2.png",
+      "audio": "input/audio/filtered/long/A001.wav",
+      "prompt_type": "speech"
+    },
+    "C_full_short": {
+      "image": "input/avatar_img/filtered/full_body/1.png",
+      "audio": "input/audio/filtered/short/S002_adele.wav",
+      "prompt_type": "singing"
+    },
+    "C_full_long": {
+      "image": "input/avatar_img/filtered/full_body/3.png",
+      "audio": "input/audio/filtered/long/MT_eng.wav",
+      "prompt_type": "speech"
+    }
+  }
+}
