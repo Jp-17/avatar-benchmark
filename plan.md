@@ -28,7 +28,7 @@
 |------|------|
 | 离线生成 | Wan2.2, HunyuanVideo-1.5, Skyreels-v3 |
 | 自回归生成 | Self-forcing, LongLive |
-| 联合音视频生成 | MoVA, LTX-2, OVI |
+| 联合音视频生成 | MoVA, LTX-2, daVinci-MagiHuman, OVI |
 
 ### Avatar 视频生成
 
@@ -115,6 +115,7 @@
 | 模型 | 状态 |
 |------|------|
 | LTX-2 | [ ] 待配置 |
+| daVinci-MagiHuman | [x] 环境✅(davinci-magihuman-env) + 代码✅ + exact 官方权重✅（GAIR base / google t5gemma-9b-9b-ul2 / stabilityai stable-audio-open-1.0） + 最小验证✅ + full_body/3 自定义 768x768 推理记录✅ |
 | OVI | [ ] 待配置 |
 | MOVA | [ ] 待配置（单卡可行性待确认） |
 
@@ -327,7 +328,7 @@ autodl-tmp/avatar-benchmark/output/
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
-| Phase 2 | 环境配置与权重下载 | [~] 14/21模型环境+权重完成,可推理测试;当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
+| Phase 2 | 环境配置与权重下载 | [~] 15/21模型环境+权重完成,可推理测试;新增 daVinci-MagiHuman 已完成 exact ModelScope 权重与最小验证；当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [~] 已完成 17 个模型；OmniAvatar 与 LongCat-Video-Avatar 已完成支持子集；原始音频时长补跑在 LiveAvatar 阶段暂停；Wan2.2-S2V / LTX-2 / FantasyTalking 尚未开始；当前全部任务已按指示停止 | output/ 目录 |
 
@@ -364,6 +365,7 @@ autodl-tmp/avatar-benchmark/output/
 | MultiTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
 | InfiniteTalk | [x] 环境/共享 Wan 权重/最小测试✅；Phase 4 支持子集完成 |
 | LongCat-Video-Avatar | [x] 权重补齐 + 最小测试✅；Phase 4 支持子集完成 |
+| daVinci-MagiHuman | [x] 环境/exact 官方权重/最小测试✅；custom full_body/3 768x768 记录已完成 |
 | SkyReels-V3 | [x] 已清理（2026-03-22） |
 | HunyuanVideo-Avatar | [x] 已清理（2026-03-22） |
 | HunyuanVideo-1.5 | [x] 已清理（2026-03-22） |

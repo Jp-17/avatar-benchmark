@@ -1559,3 +1559,51 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 | `--use_face_crop False` 仍然触发 face_crop | argparse `type=bool` bug：`bool("False")` == True；解决：完全省略该参数，使用默认值 False |
 | SSH heredoc 中 `$` 和特殊字符被展开 | 改为在本地写脚本文件，用 scp 上传到服务器 |
 
+---
+
+## 2026-03-29 14:08
+
+### 任务内容
+
+参考 `/root/autodl-tmp/fusion_forcing/test_outputs/ltx23_distilled_compare_20260322_053332/distilled_compare_768x768_249f.mp4` 的运行设定，为 Ovi 和 MOVA 分别执行同一张 `input/avatar_img/filtered/full_body/3.png` 与同一段长 prompt 的自定义推理，并把本次脚本、config、日志和结果按原有目录结构写入 `output/ovi_newphase4/` 与 `output/mova_newphase4/`。
+
+### 结果与效果
+
+- Ovi 自定义推理成功：
+  - 请求配置为 `768x768 / 249f`
+  - 由于当前稳定 i2v 路径受 `960x960_10s` checkpoint 约束，实际按最接近稳定路径生成 `output/ovi_newphase4/full_body_3_fusion_prompt_approx_960x960_241f.mp4`
+  - 实际输出规格为 `960x960 / 241f / 24fps`
+  - 推理耗时 `857s`，显存峰值 `36229 MB`
+- MOVA exact 配置 `768x768 / 249f` 两次均失败，均为 `SIGKILL`：
+  - attempt 1：前台运行至 `27/30`，于 `2026-03-29 05:24:49` 被 kill
+  - attempt 2：改用 `nohup` 后台运行至 `10/30`，于 `2026-03-29 06:02:44` 再次被 kill
+  - 第二次运行峰值显存 `59679 MB`
+  - 当前未生成可交付 mp4
+- 已将本次自定义运行写入 `output/ovi_newphase4/results.md` 和 `output/mova_newphase4/results.md`，并保留 `full_body_3_fusion_prompt_768x768_249f.attempt1_sigkill.log` 供后续排查
+
+### 遇到的问题与解决方法
+
+- Ovi 无法原样复现 `768x768 / 249f`：其当前稳定 i2v 路径绑定 `960x960_10s` checkpoint；本次通过同时记录“请求配置”和“实际执行配置”解决了结果记账歧义。
+- MOVA 在长序列 exact run 中两次收到 `SIGKILL`：当前先完成脚本、config、主日志与第一次失败归档日志留存，确保下一步可以在同一配置上继续专项定位 kill 来源。
+
+
+---
+
+## 2026-03-29 14:29
+
+### 任务内容
+
+接入 `daVinci-MagiHuman` 到 benchmark：完成 `davinci-magihuman-env` 环境配置、通过 ModelScope 官方仓库下载并校验 `GAIR/daVinci-MagiHuman` base / `google/t5gemma-9b-9b-ul2` / `stabilityai/stable-audio-open-1.0` exact 权重，执行 Phase 2 最小推理验证，并按 `full_body/3.png + fusion prompt + 768x768` 目标补做自定义推理与结果归档。
+
+### 结果与效果
+
+- `daVinci-MagiHuman` Base 链路已在 A800 80G 单卡上跑通，导入预检 `flash_attn.flash_attn_interface` / `magi_compiler` / `inference.pipeline.entry` 均通过。
+- 最小验证成功：产物 `test/davinci_magihuman/output/davinci_magihuman_minimal_4s_384x384.mp4`，实际规格 `384x384 / 25fps / 101f`，耗时 `303s`，显存峰值 `49489 MB`。
+- 自定义全身 prompt 推理成功：产物 `output/davinci_magihuman_newphase4/full_body_3_fusion_prompt_approx_768x768_251f_10s_384x384.mp4`，实际规格 `768x768 / 25fps / 249f`，耗时 `264s`，显存峰值 `49487 MB`。
+- 已补齐 `test/davinci_magihuman/test.md`、`output/davinci_magihuman_newphase4/results.md`、`plan.md`、`model.md` 对应记录。
+
+### 遇到的问题与解决方法
+
+1. 自定义脚本最初把 benchmark 元数据和运行配置混在同一个 JSON 里，导致 `--config-load-path` 被 Pydantic 以 extra fields 拒绝；已拆分成 `config_*.json`（记录）和 `runtime_*.json`（实际推理）。
+2. 远程机不保证存在裸 `python` 命令；已将校验、预检和 probe 全部改为显式调用环境内 `$ENV/bin/python`。
+3. 服务器缺少 `ffprobe`，首次最小验证后无法直接探测视频属性；补装 `opencv-python-headless` 并使用 `cv2.VideoCapture` 生成 probe 文件解决。

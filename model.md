@@ -142,6 +142,24 @@
 
 ---
 
+#### daVinci-MagiHuman
+
+
+| 字段              | 信息                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GitHub**      | [https://github.com/GAIR-NLP/daVinci-MagiHuman](https://github.com/GAIR-NLP/daVinci-MagiHuman)                                             |
+| **模型规格**        | Base 15B（约 30.64GB）/ Distill 15B（约 61.20GB，8 steps）/ 540p SR / 1080p SR                                                                |
+| **推理显存**        | README 主要给出单 H100 数据；A800 80G 需连同 `google/t5gemma-9b-9b-ul2`（约 40.67GB）、`stable-audio-open-1.0`（约 4.85GB）和 Wan2.2 VAE 一并评估 |
+| **推理代码**        | Yes                                                                                                                                          |
+| **可下载权重**       | Yes（主模型公开；外部依赖为 `google/t5gemma-9b-9b-ul2`、`stabilityai/stable-audio-open-1.0`、`Wan2.2-TI2V-5B`；当前可从同名官方仓库下载）                 |
+| **最大视频时长**      | 代码以 `seconds` 控制时长，固定 `fps=25`，实际帧数为 `seconds * 25 + 1`；README 示例为 4s / 5s                                                       |
+| **Avatar 生成**   | Yes（人像音视频同步、front-facing talking avatar 是主要示例场景）                                                                                         |
+| **输入模态**        | text+image→video+audio / text+image+audio→video+audio（可选 ref audio lipsync）                                                               |
+| **80G A800 适配** | **已验证可跑**（A800 80G 单卡已完成 exact 官方权重加载、4s 384x384 最小验证和 768x768 自定义推理；实测显存峰值约 49.5GB，Distill / SR 路径仍更重）                                              |
+
+
+---
+
 #### OVI (Ovi)
 
 

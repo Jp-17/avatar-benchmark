@@ -1,0 +1,25 @@
+{
+  "run_id": "full_body_3_fusion_prompt_approx_768x768_251f",
+  "reference": "fusion_forcing ltx23_distilled_compare_20260322_053332",
+  "requested_config": {
+    "image": "/root/autodl-tmp/avatar-benchmark/input/avatar_img/filtered/full_body/3.png",
+    "prompt": "A cheerful full-body young woman stands facing the camera in a bright indoor scene, speaking directly to the viewer with natural lip sync and a warm smile. She says, Hi everyone, I am really happy to see you today, thank you for being here with me. While talking, she gently waves one hand, alternates small expressive hand gestures near her chest, and lightly sways her head from side to side in a lively and friendly way. Her posture stays relaxed and confident, her eyes stay engaged with the camera, and the motion remains smooth, realistic, and suitable for a front-facing talking avatar video.",
+    "output_path": "/root/autodl-tmp/fusion_forcing/test_outputs/ltx23_distilled_compare_20260322_053332/distilled_compare_768x768_249f.mp4",
+    "num_frames": 249,
+    "height": 768,
+    "width": 768
+  },
+  "actual_strategy": {
+    "model_variant": "base",
+    "num_inference_steps": 32,
+    "seconds": 10,
+    "br_width": 384,
+    "br_height": 384,
+    "output_width": 768,
+    "output_height": 768,
+    "upsample_mode": "bicubic",
+    "cpu_offload_t5": true,
+    "output_path": "/root/autodl-tmp/avatar-benchmark/output/davinci_magihuman_newphase4/full_body_3_fusion_prompt_approx_768x768_251f_10s_384x384.mp4"
+  },
+  "compatibility_note": "daVinci-MagiHuman 当前 CLI 不支持直接传入 num_frames，实际帧数由 seconds * 25 + 1 决定；与 249f 最接近的稳定路径是 10s -> 251f。本次按 official base + 768x768 上采样路径执行，并保留 exact 官方依赖模型。"
+}
