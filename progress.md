@@ -1669,3 +1669,29 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 - README / model card 声称模型带有 “MoE”，但公开代码和权重命名中没有直接可见的 `router` / `expert` 模块。为避免把论文表述直接当成代码事实，本次通过两步交叉核对处理：
   - 一是检查 `video_dit`、`video_dit_2`、`audio_dit`、`dual_tower_bridge` 的配置与权重索引，确认不存在公开可见的 token-level sparse MoE 结构；
   - 二是直接统计参数量，验证 `32B total / 18B active` 是否与“按噪声区间切换两套视频 tower”的实现严格对上。最终在文档中将其表述为“基于代码的强推断”，而不是已被仓库显式证实的事实。
+
+---
+
+## 2026-03-30 02:43
+
+### 任务内容
+
+按用户追问，继续专项补充 `docs/20260330-mova-code-analysis.md` 中关于 `cross-modal RoPE` 的解释：明确它在 MOVA 里的具体实现路径，并与当前仓库 `models/LTX-2/packages/ltx-core` 对应的 LTX-2.x / 2.3 cross-attention 代码做逐项对照。
+
+### 结果与效果
+
+- 已在文档 `5.4` 小节中补充解释 `cross-modal RoPE` 的具体含义：它不是新增一个 attention 层，而是先把 audio / video token 的时间位置映射到同一条时间轴，再在 cross-attention 前对 query / key 施加共享时间轴上的 RoPE。
+- 已补充 MOVA 代码级实现细节：
+  - `DualTowerConditionalBridge.build_aligned_freqs()` 以 `audio_pos=[0...L_a-1]` 为参考时间轴；
+  - 通过 `scale = audio_fps / (video_fps / 4.0)` 把视频 latent 帧映射到音频 latent 步长单位；
+  - 同一视频 latent frame 的全部 `h*w` token 共享同一个 cross-modal 时间位置；
+  - 当前 checkpoint 实际开启 `apply_cross_rope=true`，但 `apply_first_frame_bias_in_rope=false`。
+- 已补充与 LTX 路线的关系与差异：
+  - 两者都属于 temporal-only cross-modal RoPE 对齐这一设计家族；
+  - MOVA 在 bridge 前向里临时按 `video_fps + audio_fps` 现算对齐位置，单位是 audio latent step；
+  - LTX 则在 patchifier / latent tools 阶段先构造秒级时间坐标，再在 `MultiModalTransformerArgsPreprocessor` 中只取时间轴做 cross-attention RoPE，并叠加 cross-modality AdaLN。
+- 已在文档总结段补充一句，对比说明 MOVA 与 LTX 在 cross-modal 时间对齐上的继承关系与实现差异。
+
+### 遇到的问题与解决方法
+
+- 初看 `transformer_args.py` 时，容易把 LTX 的 `positions[:, 0:1, :]` 误读成“只取离散时间索引”；为避免这个误判，本次继续追到 `AudioPatchifier`、`VideoLatentPatchifier` 和 `ltx_core.tools`，确认 LTX 在进入 transformer 之前就已经把 audio / video 时间坐标换算成共享的真实时间轴，然后再在 cross-attention 中只保留时间维做 RoPE。文档已据此修正为更准确的比较结论。
