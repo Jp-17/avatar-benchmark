@@ -130,7 +130,7 @@
 
 **产出**：model.md 中各模型补充"环境配置状态"列
 
-**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 继续暂停。**SoulX-FlashHead（新增 2026-03-11）**：Lite + Pro 各 4 条件推理**已全部完成**（face_crop 版 + nofacecrop 对比版）。输出目录：`output/soulx_flashhead_lite_phase4/`、`output/soulx_flashhead_pro_phase4/`（face_crop）及 `_nofacecrop/` 对应目录（无 face_crop），各含 4 个 mp4 和 results.md。注意 argparse type=bool bug：`--use_face_crop False` 实际解析为 True，需完全省略该参数。
+**任务状态**：[~] 已完成 17 个模型的 Phase 4（3 个 4/4 全量完成 + 14 个 2/4 支持子集完成）；OmniAvatar 与 LongCat-Video-Avatar 已补齐短时支持子集；LiveAvatar 已判定停止继续投入单卡多 clip / full-audio 路径；Wan2.2-S2V / LTX-2 / FantasyTalking 的 full-audio 是否继续改为后续单独决策；Wan2.2-T2V 已于 2026-03-29 清理。**SoulX-FlashHead（新增 2026-03-11）**：Lite + Pro 各 4 条件推理**已全部完成**（face_crop 版 + nofacecrop 对比版）。输出目录：`output/soulx_flashhead_lite_phase4/`、`output/soulx_flashhead_pro_phase4/`（face_crop）及 `_nofacecrop/` 对应目录（无 face_crop），各含 4 个 mp4 和 results.md。注意 argparse type=bool bug：`--use_face_crop False` 实际解析为 True，需完全省略该参数。
 
 ---
 
@@ -297,7 +297,7 @@ autodl-tmp/avatar-benchmark/output/
 | 面部神态丰富度 | 表情变化是否自然、多样 |
 | 全身动作丰富度 | 身体动作是否自然、与内容匹配 |
 
-**任务状态**：[~] 已完成 15 个模型的 Phase 4（3 个 4/4 全量完成 + 12 个 2/4 支持子集完成），OmniAvatar 正在补跑 `C_full_short`；LongCat-Video-Avatar 已接入夜间队列；Wan2.2-T2V 暂停；随后将对 LiveAvatar、Wan2.2-S2V、LTX-2、FantasyTalking 进行“按原始音频时长”补跑。
+**任务状态**：[~] 已完成 15 个模型的 Phase 4（3 个 4/4 全量完成 + 12 个 2/4 支持子集完成），OmniAvatar 正在补跑 `C_full_short`；LongCat-Video-Avatar 已接入夜间队列；Wan2.2-T2V 已清理；随后将对 LiveAvatar、Wan2.2-S2V、LTX-2、FantasyTalking 进行“按原始音频时长”补跑。
 
 ### 4.4 Phase 4 审计清单（2026-03-08 19:30）
 
@@ -328,7 +328,7 @@ autodl-tmp/avatar-benchmark/output/
 |-------|------|------|----------|
 | Phase 0 | 项目初始化、git 配置 | 完成 | claude.md, progress.md |
 | Phase 1 | 模型调研 | [x] 完成 | model.md |
-| Phase 2 | 环境配置与权重下载 | [~] 15/21模型环境+权重完成,可推理测试;新增 daVinci-MagiHuman 已完成 exact ModelScope 权重与最小验证；当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
+| Phase 2 | 环境配置与权重下载 | [~] 14/21模型当前保留环境+权重完成并可推理；新增 daVinci-MagiHuman 已完成 exact ModelScope 权重与最小验证；Wan2.2-T2V 已于 2026-03-29 清理；当前优先 MultiTalk/InfiniteTalk/LongCat，4个模型暂缓 | model.md 第五节 |
 | Phase 3 | 素材收集与 input.md | [x] 用户人工筛选完成，filtered 目录已同步 | input.md, input/ 目录 |
 | Phase 4 | 推理生成 | [~] 已完成 17 个模型；OmniAvatar 与 LongCat-Video-Avatar 已完成支持子集；原始音频时长补跑在 LiveAvatar 阶段暂停；Wan2.2-S2V / LTX-2 / FantasyTalking 尚未开始；当前全部任务已按指示停止 | output/ 目录 |
 
@@ -352,12 +352,12 @@ autodl-tmp/avatar-benchmark/output/
 - **最终判定**：LiveAvatar 单卡多 clip / 原始音频时长补跑已停止继续投入；官方近似 `48f + 多 clip` 路径稳定 OOM，`offload_kv_cache` 多 clip 路径稳定软卡住，`80f + 1clip` 虽可出片但尾段质量明显退化。
 - **已停止**：按当前指示，夜间总控队列与相关推理进程已全部停止，等待下一步决策。
 - **待续推进**：不再以 LiveAvatar 作为后续 full-audio 扩展前置条件；Wan2.2-S2V → LTX-2 → FantasyTalking 是否继续，改由后续单独决策。
-- **继续暂缓**：Wan2.2-T2V。SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5 环境+权重已于 2026-03-22 清理；Wan2.2 I2V 权重已于 2026-03-22 删除。
+- **已清理**：Wan2.2-T2V（2026-03-29 删除 118G T2V 权重与专用脚本）。SkyReels-V3、HunyuanVideo-Avatar、HunyuanVideo-1.5 环境+权重已于 2026-03-22 清理；Wan2.2 I2V 权重已于 2026-03-22 删除。
 
 | 模型 | 状态 |
 |------|------|
 | LiveAvatar | [x] 环境/权重/最小基线✅；Phase 4 支持子集完成 |
-| Wan2.2 | [x] T2V 最小测试✅ + I2V 权重已删除(2026-03-22)；S2V Phase 4 支持子集完成 |
+| Wan2.2 | [x] S2V Phase 4 支持子集完成；T2V 权重与专用脚本已于 2026-03-29 清理；I2V 权重已于 2026-03-22 删除 |
 | SoulX-FlashTalk | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | OmniAvatar | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
 | Self-Forcing | [x] 环境/权重/最小测试✅；Phase 4 支持子集完成 |
@@ -380,7 +380,7 @@ autodl-tmp/avatar-benchmark/output/
 | Wan2.2-S2V | 已入队 | 沿用 `test/wan2.2-s2v/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `infer_frames`（88 / 140）。 |
 | LTX-2 | 已入队 | 沿用 `test/ltx2/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `num_frames`（129 / 206）。 |
 | FantasyTalking | 已入队 | 沿用 `test/fantasy-talking/test.md` 的稳定命令，短时条件改为按原始音频时长重算 `max_num_frames`（124 / 197）。 |
-| Wan2.2-T2V | 暂停 | 按最新用户指示，本轮夜间任务不再尝试。 |
+| Wan2.2-T2V | 已清理 | 2026-03-29 删除 `Wan2.2-T2V-A14B` 118G 权重与专用脚本；保留历史最小测试记录，不再纳入夜间队列。 |
 
 - 夜间总控脚本：`test/phase4_overnight_queue.sh`
 - 夜间日志：`test/phase4_overnight_queue.log`
