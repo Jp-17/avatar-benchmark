@@ -1647,3 +1647,25 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 ### 遇到的问题与解决方法
 
 - `LiveAvatar` 源码内仍保留来自上游 Wan 通用组件的 `task=t2v-A14B` 默认值，但实际 benchmark 脚本与测试文档均显式指定 `s2v-14B + ckpt/Wan2.2-S2V-14B/`；本次通过同时核查进程、软链接、脚本命令和测试记录，确认删除 T2V 权重不会影响当前 LiveAvatar / Wan2.2-S2V 链路。
+
+## 2026-03-30 01:04
+
+### 任务内容
+
+按用户要求专项分析 `models/MOVA` 的公开代码实现，重点核对 `video_dit_2` 的职责、video/audio VAE 是否 causal、训练与推理阶段划分、`dual_tower_bridge` 的工作方式、README 中 `32B total / 18B active` 与 “MoE” 说法在代码里的对应关系，并把分析结果整理保存到 `docs/`。
+
+### 结果与效果
+
+- 已新增分析文档：`docs/20260330-mova-code-analysis.md`。
+- 已确认 `MOVA` 的公开视频代码不是 self-forcing / 流式推理模型，而是整段 clip latent 一次性去噪的双模态 diffusion 管线。
+- 已确认 `video_dit_2` 不是小型 refinement head，而是第二套完整的 `WanModel` 视频 tower；推理中按 `boundary_ratio=0.9` 在高噪声 / 低噪声区间之间切换，其中 `video_dit_2` 对应低噪声阶段。
+- 已确认 video VAE 使用 `diffusers` 的 `AutoencoderKLWan`，内部时间卷积为 `WanCausalConv3d`，因此 video VAE 是 causal；同时确认 audio VAE 虽然类名为 `DAC`，但当前 checkpoint 是 `continuous=true` 的连续 latent 版本，并且卷积实现为对称 padding + delay 补偿，因此 audio VAE 不是 causal。
+- 已从权重统计中确认 diffusion 核心参数量：`video_dit + video_dit_2 + audio_dit + dual_tower_bridge` 合计约 `32.657B`，单步活跃参数约 `18.368B`，与 model card 的 “32B total / 18B active” 高度匹配。
+- 已在文档中明确区分：公开代码里没有显式 `router` / `expert` / `moe` 模块名，因此更合理的代码级解释是“两个完整视频 expert 按噪声区间 hard switch”，而不是传统 token-level sparse MoE。
+- 已补充说明 `dual_tower_bridge` 的几个关键设计：双向 conditional cross-attention、前 30 个对齐层的 full interaction，以及利用 cross-modal RoPE 把 video latent 时间轴（`fps/4`）与 audio latent 50Hz 时间轴对齐。
+
+### 遇到的问题与解决方法
+
+- README / model card 声称模型带有 “MoE”，但公开代码和权重命名中没有直接可见的 `router` / `expert` 模块。为避免把论文表述直接当成代码事实，本次通过两步交叉核对处理：
+  - 一是检查 `video_dit`、`video_dit_2`、`audio_dit`、`dual_tower_bridge` 的配置与权重索引，确认不存在公开可见的 token-level sparse MoE 结构；
+  - 二是直接统计参数量，验证 `32B total / 18B active` 是否与“按噪声区间切换两套视频 tower”的实现严格对上。最终在文档中将其表述为“基于代码的强推断”，而不是已被仓库显式证实的事实。
