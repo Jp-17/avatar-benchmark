@@ -1607,3 +1607,23 @@ Phase 2 收尾：权重下载完成验证、环境修复、测试脚本创建、
 1. 自定义脚本最初把 benchmark 元数据和运行配置混在同一个 JSON 里，导致 `--config-load-path` 被 Pydantic 以 extra fields 拒绝；已拆分成 `config_*.json`（记录）和 `runtime_*.json`（实际推理）。
 2. 远程机不保证存在裸 `python` 命令；已将校验、预检和 probe 全部改为显式调用环境内 `$ENV/bin/python`。
 3. 服务器缺少 `ffprobe`，首次最小验证后无法直接探测视频属性；补装 `opencv-python-headless` 并使用 `cv2.VideoCapture` 生成 probe 文件解决。
+
+---
+
+## 2026-03-29 14:38
+
+### 任务内容
+
+按用户确认清理远程服务器上可安全删除的存储：删除 `models/davinci-magihuman/weights/.cache` 下载缓存、孤儿共享权重 `weights_shared/t5gemma-9b-2b-ul2-encoder-only`，以及 `/root/autodl-tmp/conda-pkgs`。
+
+### 结果与效果
+
+- 已删除 `models/davinci-magihuman/weights/.cache`，释放约 `11G` 未完成下载缓存。
+- 已删除 `weights_shared/t5gemma-9b-2b-ul2-encoder-only`，释放约 `1.3G` 未被当前仓库脚本、结果记录或软链接引用的孤儿共享权重。
+- 已删除 `/root/autodl-tmp/conda-pkgs`，释放约 `740M` Conda 包缓存。
+- `df -h /root/autodl-tmp` 显示可用空间由约 `23G` 提升到约 `35G`，磁盘使用率由 `99%` 降到 `98%`。
+- 清理前已确认当前无 GPU 推理进程运行，本次删除未影响现有 benchmark 产物与已验证推理链路。
+
+### 遇到的问题与解决方法
+
+- `df -h` 显示的可用空间回升值略小于三项目录名义体积之和，属于文件系统统计粒度与元数据占用差异；本次以目标目录已实际删除且可用空间明显回升作为清理完成依据。
